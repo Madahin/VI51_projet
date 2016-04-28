@@ -1,0 +1,28 @@
+CAHIER DES CHARGES
+
+ANALYSE DES BESOINS
+Acteurs :
+
+Modérateur de la simulation : la personne en charge de lancer la simulation, changer les paramètres de la simulation.
+
+Procédé :
+
+(Sujet du projet)
+
+Problème rencontrés :
+
+Eléments de solutions :
+
+SPECIFICATIONS
+
+Le but du projet consiste à créer un simulateur multi agents de guerre entre plusieurs civilisations. Il doit pouvoir faire apparaitre au moins 5 000 agents. Les civilisations sont en guerre de ressources nécessaire à leur survie.
+
+Éléments obligatoires: 
+1. modèle de l'environnement 
+2. mouvement comportements 
+3. comportements alimentaires 
+
+Éléments facultatifs: 
+1. Naissance / Evolution 
+2. algorithmes d'addition interactive de la nourriture 
+3. Interface utilisateur graphique

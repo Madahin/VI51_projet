@@ -20,7 +20,7 @@ public class AntAgent extends Agent {
 		Random rand = new Random();
 		// return a value between 0 and 7.
 		// each number means a direction.
-		int direction = rand.nextInt(8);
+		int direction = rand.nextInt(Direction.values().length);
 		
 		switch(direction){
 			case 0:

@@ -67,6 +67,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	@Override
 	public void dispose () {
 		simu.isRunning = false;
+		
+		try {
+			simu.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -144,6 +150,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			if(Gdx.input.isKeyPressed(Keys.D) ||
 			   Gdx.input.isKeyPressed(Keys.RIGHT)){
 				dirVect.add(new Vector2(1.0f, 0.0f));
+			}
+			if(Gdx.input.isKeyPressed(Keys.P)){
+				camera.zoom *= 0.99f;
+			}
+			if(Gdx.input.isKeyPressed(Keys.O)){ // TODO : Why the fuck "minus" doesn't work ?!
+				camera.zoom *= 1.01f;
 			}
 			dirVect.nor();
 			dirVect.scl(5.0f);

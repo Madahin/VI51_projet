@@ -6,17 +6,39 @@ import java.util.Random;
 import Environment.AgentBody;
 import Environment.Direction;
 import Environment.Perceivable;
+import Environment.PheromoneBody;
 
 public class AntAgent extends Agent {
 
+	private boolean isCariingFood;
+	
+	
 	public AntAgent(AgentBody b){
 		body = b;
+		isCariingFood = false;
 	}
 	
 	@Override
 	public void live() {
 		ArrayList<Perceivable> perceptions = getPerception();
+		// Check for pheromones on the same faction
+		/*for(Perceivable p : perceptions){
+			if(p.getType() == PheromoneBody.class){
+				
+			}
+		}
 		
+		if(isCariingFood){
+			
+		}else{
+			
+		}*/
+		
+		wander();
+		
+	}
+	
+	public void wander(){
 		Random rand = new Random();
 		// return a value between 0 and 7.
 		// each number means a direction.
@@ -47,7 +69,6 @@ public class AntAgent extends Agent {
 			case 7:
 				move(Direction.WEST);
 			break;
-	
 		}
 	}
 

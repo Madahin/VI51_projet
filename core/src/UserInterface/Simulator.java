@@ -18,14 +18,17 @@ import Environment.AntBody;
 import Environment.Environment;
 import Environment.EnvironmentListener;
 import Environment.Faction;
+import Environment.Position;
 
 public class Simulator extends ApplicationAdapter implements EnvironmentListener {
 	
 	ShapeRenderer shapeRenderer;
 	OrthographicCamera camera;
 	
-	int worldWidth = 1000;
-	int worldHeight = 1000;
+	int worldWidth = 800;
+	int worldHeight = 800;
+	int baseRadius = 30;
+	int percentageFood = 5;
 	Environment environment;
 	ArrayList<Agent> agents;
 	
@@ -40,7 +43,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		
 		/* Agents relative Initialization */
 		agents = new ArrayList<Agent>();
-		environment = new Environment(worldWidth, worldHeight, agents);
+		foodPiles = new ArrayList<Position>();
+		environment = new Environment(worldWidth, worldHeight, baseRadius, percentageFood, agents);
 		
 		// Each race have 3000 ants at the beginning
 		for(int i = 0 ; i < 3000 ; i++){
@@ -78,6 +82,19 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			shapeRenderer.setColor(212.0f/255.0f, 161.0f/255.0f, 144.0f/255.0f, 1);
 			shapeRenderer.rect(-worldWidth/2, -worldHeight/2, worldWidth, worldHeight);
 		
+			// Render the blackBase
+			shapeRenderer.setColor(104.0f/255.0f, 114.0f/255.0f, 117.0f/255.0f, 1);
+			shapeRenderer.circle(bbX - worldWidth/2, bbY - worldHeight/2, baseRadius);
+			
+			// Render the Red Base
+			shapeRenderer.setColor(1, 105.0f/255.0f, 105.0f/255.0f, 1);
+			shapeRenderer.circle(rbX - worldWidth/2, rbY - worldHeight/2, baseRadius);
+			
+			// Display the food
+			shapeRenderer.setColor(169.0f/255.0f, 1, 138.0f/255.0f, 1);
+			for(Position p : foodPiles)
+				shapeRenderer.rect(p.getX() - worldWidth/2, p.getY() - worldHeight/2, 1, 1);
+			
 			// We check all agents and display only ants
 			for(Agent agent : agents){
 				if(agent instanceof AntAgent){
@@ -135,9 +152,17 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		
 	}
 
+	private int bbX, bbY, rbX, rbY;
+	private ArrayList<Position> foodPiles;
+	
 	@Override
-	public void environmentChanged() {
+	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY, ArrayList<Position> foods) {
 		// When the environment change we render the frame
+		bbX = blackBaseX;
+		bbY = blackBaseY;
+		rbX = redBaseX;
+		rbY = redBaseY;
+		foodPiles = foods;
 		Gdx.graphics.requestRendering();
 	}
 }

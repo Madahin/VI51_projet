@@ -6,7 +6,7 @@ public class Perceivable {
 	//private Direction direction;
 	private Class type;
 	
-	public Perceivable(AgentBody b){
+	public Perceivable(EnvironmentObject b){
 		x = b.getX();
 		y = b.getY();
 		type = b.getClass();

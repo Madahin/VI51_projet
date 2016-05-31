@@ -10,6 +10,10 @@ public class AntBody extends AgentBody{
 		environmentReference = env;
 	}
 
+	public void createPheromone(PheromoneType pt){
+		environmentReference.createPheromone(pt, this);
+	}
+	
 	@Override
 	public void setPosition(int x, int y) {
 		// TODO Auto-generated method stub

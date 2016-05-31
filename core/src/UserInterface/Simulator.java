@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import Agent.Agent;
 import Agent.AntAgent;
+import Agent.PheromoneAgent;
 import Environment.AntBody;
 import Environment.Environment;
 import Environment.EnvironmentListener;
@@ -25,13 +26,13 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	ShapeRenderer shapeRenderer;
 	OrthographicCamera camera;
 	
-	int worldWidth = 800;
-	int worldHeight = 800;
+	int worldWidth = 500;
+	int worldHeight = 500;
 	int baseRadius = 30;
 	int percentageFood = 5;
 	Environment environment;
 	ArrayList<Agent> agents;
-	
+	public Object lockAgentList = new Object();
 	SimulationThread simu;
 	
 	
@@ -44,10 +45,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		/* Agents relative Initialization */
 		agents = new ArrayList<Agent>();
 		foodPiles = new ArrayList<Position>();
-		environment = new Environment(worldWidth, worldHeight, baseRadius, percentageFood, agents);
+		environment = new Environment(worldWidth, worldHeight, baseRadius, percentageFood);
 		
 		// Each race have 3000 ants at the beginning
-		for(int i = 0 ; i < 3000 ; i++){
+		for(int i = 0 ; i < 1000 ; i++){
 			agents.add(new AntAgent(environment.createBlackAntBody()));
 			agents.add(new AntAgent(environment.createRedAntBody()));
 		}
@@ -102,14 +103,20 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 				shapeRenderer.rect(p.getX() - worldWidth/2, p.getY() - worldHeight/2, 1, 1);
 			
 			// We check all agents and display only ants
-			for(Agent agent : agents){
-				if(agent instanceof AntAgent){
-					if( ((AntBody)agent.body).faction == Faction.BlackAnt){
-						shapeRenderer.setColor(Color.BLACK);
-					}else{
-						shapeRenderer.setColor(Color.RED);
+			synchronized (lockAgentList) {
+				for(Agent agent : agents){
+					if(agent instanceof PheromoneAgent){
+						shapeRenderer.setColor(Color.WHITE);
+						shapeRenderer.rect(agent.body.getX() - worldWidth/2, agent.body.getY() - worldHeight/2, 1, 1);
+					}else if(agent instanceof AntAgent){
+						if( ((AntBody)agent.body).faction == Faction.BlackAnt){
+							shapeRenderer.setColor(Color.BLACK);
+						}else{
+							shapeRenderer.setColor(Color.RED);
+						}
+						shapeRenderer.rect(agent.body.getX() - worldWidth/2, agent.body.getY() - worldHeight/2, 1, 1);
 					}
-					shapeRenderer.rect(agent.body.getX() - worldWidth/2, agent.body.getY() - worldHeight/2, 1, 1);
+					
 				}
 			}
 			
@@ -128,6 +135,13 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 				
 				for(Agent agent : agents){
 					agent.live();
+				}
+				
+				synchronized (lockAgentList) {
+					for(Agent a : newAgents){
+						agents.add(a);
+					}
+					newAgents.clear();
 				}
 				
 			}
@@ -166,15 +180,18 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 	private int bbX, bbY, rbX, rbY;
 	private ArrayList<Position> foodPiles;
+	public ArrayList<Agent> newAgents;
 	
 	@Override
-	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY, ArrayList<Position> foods) {
+	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY, ArrayList<Position> foods, ArrayList<Agent> newAgentList ) {
 		// When the environment change we render the frame
 		bbX = blackBaseX;
 		bbY = blackBaseY;
 		rbX = redBaseX;
 		rbY = redBaseY;
 		foodPiles = foods;
+		newAgents = new ArrayList<Agent>(newAgentList);
+		
 		Gdx.graphics.requestRendering();
 	}
 }

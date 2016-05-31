@@ -4,25 +4,29 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import Environment.AgentBody;
+import Environment.AntBody;
 import Environment.Direction;
 import Environment.Perceivable;
 import Environment.PheromoneBody;
+import Environment.PheromoneType;
 
 public class AntAgent extends Agent {
 
 	private boolean isCariingFood;
-	
+	private int pheromoneTicks;
 	
 	public AntAgent(AgentBody b){
 		body = b;
 		isCariingFood = false;
+		pheromoneTicks = 0;
 	}
 	
 	@Override
 	public void live() {
+		
 		ArrayList<Perceivable> perceptions = getPerception();
 		// Check for pheromones on the same faction
-		/*for(Perceivable p : perceptions){
+		for(Perceivable p : perceptions){
 			if(p.getType() == PheromoneBody.class){
 				
 			}
@@ -32,9 +36,10 @@ public class AntAgent extends Agent {
 			
 		}else{
 			
-		}*/
+			wander();
+			createPheromone(PheromoneType.Base);
+		}
 		
-		wander();
 		
 	}
 	
@@ -69,6 +74,15 @@ public class AntAgent extends Agent {
 			case 7:
 				move(Direction.WEST);
 			break;
+		}
+	}
+	
+	public void createPheromone(PheromoneType pt){
+		pheromoneTicks += 1;
+		
+		if(pheromoneTicks == 2){
+			((AntBody)this.body).createPheromone(pt);
+			pheromoneTicks = 0;
 		}
 	}
 

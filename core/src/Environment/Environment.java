@@ -6,6 +6,7 @@ import java.util.Random;
 import com.badlogic.gdx.utils.Array;
 
 import Agent.Agent;
+import Agent.PheromoneAgent;
 import UserInterface.Simulator;
 
 public class Environment {
@@ -23,14 +24,14 @@ public class Environment {
 	
 	private ArrayList<EnvironmentListener> listeners;
 	private ArrayList<EnvironmentObject>[][] objects;
-	private ArrayList<Agent> referenceAgents;
+	private ArrayList<Agent> newAgents;
 	
-	public Environment(int w, int h,int radius,int _percentageFood,  ArrayList<Agent> as){
+	public Environment(int w, int h,int radius,int _percentageFood){
 		width = w;
 		height = h;
 		nbAgents = 0;
 		cptAgents = 0;
-		referenceAgents = as;
+		newAgents = new ArrayList<Agent>() ;
 		baseRadius = radius;
 		percentageFood = _percentageFood;
 		
@@ -142,7 +143,9 @@ public class Environment {
 		}
 		
 		for(EnvironmentListener el : listeners)
-			el.environmentChanged(blackBaseX, blackBaseY, redBaseX, redBaseY, foods);
+			el.environmentChanged(blackBaseX, blackBaseY, redBaseX, redBaseY, foods, newAgents);
+		
+		newAgents.clear();
 	}
 	
 	public AgentBody createBlackAntBody(){
@@ -181,6 +184,20 @@ public class Environment {
 		return b;
 	}
 	
-	
+	public void createPheromone(PheromoneType pt, AgentBody ab){
+		// We want to know if there is a pheromone of the same faction and type on this
+		// place
+		for(EnvironmentObject eo : objects[ab.getX()][ab.getY()]){
+			if(eo instanceof PheromoneBody){
+				if(((PheromoneBody) eo).faction == ((AntBody) ab).faction && ((PheromoneBody) eo).pheromoneType == pt){
+					((PheromoneBody) eo).life += 100;
+				}
+			}
+		}
+		
+		PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody)ab).faction, pt);
+		newAgents.add(new PheromoneAgent(pb));
+		objects[ab.getX()][ab.y].add(pb);
+	}
 	
 }

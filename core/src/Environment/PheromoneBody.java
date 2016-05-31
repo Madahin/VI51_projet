@@ -5,13 +5,14 @@ public class PheromoneBody extends AgentBody {
 	public PheromoneType pheromoneType;
 	public int life; 
 	
-	public PheromoneBody(int x, int y, Faction f, PheromoneType pt) {
+	public PheromoneBody(int x, int y, Faction f, PheromoneType pt, Environment env) {
 		// TODO Auto-generated constructor stub
+		environmentReference = env;
 		this.x = x;
 		this.y = y;
 		faction = f;
 		pheromoneType = pt;
-		life = 100;
+		life = 10;
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package UserInterface;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -105,7 +106,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			// We check all agents and display only ants
 			synchronized (lockAgentList) {
 				for(Agent agent : agents){
-					if(agent instanceof PheromoneAgent){
+					if(agent instanceof PheromoneAgent && agent.body != null){
 						shapeRenderer.setColor(Color.WHITE);
 						shapeRenderer.rect(agent.body.getX() - worldWidth/2, agent.body.getY() - worldHeight/2, 1, 1);
 					}else if(agent instanceof AntAgent){
@@ -142,6 +143,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 						agents.add(a);
 					}
 					newAgents.clear();
+					
+					// Destroy dying agents
+					Iterator<Agent> iter = agents.iterator();
+					while (iter.hasNext()){
+						Agent a = iter.next();
+						if (a.body == null){
+							iter.remove();
+						}
+					}
 				}
 				
 			}
@@ -183,7 +193,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	public ArrayList<Agent> newAgents;
 	
 	@Override
-	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY, ArrayList<Position> foods, ArrayList<Agent> newAgentList ) {
+	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY, ArrayList<Position> foods, ArrayList<Agent> newAgentList) {
 		// When the environment change we render the frame
 		bbX = blackBaseX;
 		bbY = blackBaseY;

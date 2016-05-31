@@ -120,6 +120,8 @@ public class Environment {
 			objects[b.getX()][b.getY()].add(b);
 		}
 		
+
+		
 		// All agent have moved.
 		if(nbAgents == cptAgents){
 			cptAgents = 0;
@@ -127,6 +129,10 @@ public class Environment {
 			notifyListeners();
 		}
 	}
+	
+	public void destroy(AgentBody b){
+		objects[b.getX()][b.getY()].remove(b);
+		}
 	
 	public void notifyListeners(){
 		// build food positions
@@ -190,12 +196,12 @@ public class Environment {
 		for(EnvironmentObject eo : objects[ab.getX()][ab.getY()]){
 			if(eo instanceof PheromoneBody){
 				if(((PheromoneBody) eo).faction == ((AntBody) ab).faction && ((PheromoneBody) eo).pheromoneType == pt){
-					((PheromoneBody) eo).life += 100;
+					((PheromoneBody) eo).life += 10;
 				}
 			}
 		}
 		
-		PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody)ab).faction, pt);
+		PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody)ab).faction, pt, this);
 		newAgents.add(new PheromoneAgent(pb));
 		objects[ab.getX()][ab.y].add(pb);
 	}

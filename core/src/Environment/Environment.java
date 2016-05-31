@@ -6,6 +6,7 @@ import java.util.Random;
 import com.badlogic.gdx.utils.Array;
 
 import Agent.Agent;
+import Agent.AntAgent;
 import Agent.PheromoneAgent;
 import UserInterface.Simulator;
 
@@ -14,6 +15,9 @@ public class Environment {
 	private int height;
 	private int nbAgents;
 	private int cptAgents;
+	
+	private int foodInBlackBase = 1000;
+	private int foodInRedBase = 1000;
 	
 	// Designing Bases;
 	private int blackBaseX, blackBaseY;
@@ -52,7 +56,7 @@ public class Environment {
 				
 				int test = rand.nextInt(100);
 				if(test <= percentageFood){
-					objects[i][j].add(new FoodPile(i, j, 100, 500));
+					objects[i][j].add(new FoodPile(i, j, 100, 100));
 				}
 				
 				// And we check if the case is in the base.
@@ -187,17 +191,64 @@ public class Environment {
 	public void createPheromone(PheromoneType pt, AgentBody ab){
 		// We want to know if there is a pheromone of the same faction and type on this
 		// place
+		boolean needToCreatePheromone = true;
 		for(EnvironmentObject eo : objects[ab.getX()][ab.getY()]){
 			if(eo instanceof PheromoneBody){
 				if(((PheromoneBody) eo).faction == ((AntBody) ab).faction && ((PheromoneBody) eo).pheromoneType == pt){
 					((PheromoneBody) eo).life += 100;
+					needToCreatePheromone = false;
 				}
 			}
 		}
 		
-		PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody)ab).faction, pt);
-		newAgents.add(new PheromoneAgent(pb));
-		objects[ab.getX()][ab.y].add(pb);
+		if(needToCreatePheromone){
+			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody)ab).faction, pt);
+			newAgents.add(new PheromoneAgent(pb));
+			objects[ab.getX()][ab.y].add(pb);
+		}
+	}
+	
+	public boolean pickUpFood(AgentBody b){
+		boolean isGettingFood = false;
+		EnvironmentObject haveToRemove = null;
+		
+		for(EnvironmentObject o : objects[b.getX()][b.getY()]){
+			if(o instanceof FoodPile){
+				((FoodPile) o).FoodAmount -= 100;
+				isGettingFood = true;
+				if(((FoodPile) o).FoodAmount == 0){
+					haveToRemove = o;
+				}
+			}
+		}
+		
+		if(haveToRemove != null){
+			objects[b.getX()][b.getY()].remove(haveToRemove);
+		}
+		cptAgents++;
+		
+		if(nbAgents == cptAgents){
+			cptAgents = 0;
+			// And we notify all listeners.
+			notifyListeners();
+		}
+		
+		return isGettingFood;
+	}
+	
+	public void addFoodToBase(AgentBody b){
+		if(((AntBody)b).faction == Faction.BlackAnt){
+			foodInBlackBase += 100;
+		}else{
+			foodInRedBase += 100;
+		}
+		
+		cptAgents++;
+		if(nbAgents == cptAgents){
+			cptAgents = 0;
+			// And we notify all listeners.
+			notifyListeners();
+		}
 	}
 	
 }

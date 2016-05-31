@@ -9,6 +9,7 @@ public class Perceivable {
 	private Class type;
 	private Faction faction;
 	private PheromoneType pType;
+	private int pheromoneLife;
 	
 	public Perceivable(EnvironmentObject b){
 		x = b.getX();
@@ -21,6 +22,7 @@ public class Perceivable {
 		if(b instanceof PheromoneBody){
 			faction = ((PheromoneBody) b).faction;
 			pType = ((PheromoneBody) b).pheromoneType;
+			pheromoneLife = ((PheromoneBody) b).life;
 		}
 		
 	}
@@ -31,6 +33,10 @@ public class Perceivable {
 	
 	public int getY(){
 		return y;
+	}
+	
+	public int getPheromoneLife(){
+		return pheromoneLife;
 	}
 	
 	public Faction getFaction(){
@@ -46,3 +52,4 @@ public class Perceivable {
 	}
 	
 }
+

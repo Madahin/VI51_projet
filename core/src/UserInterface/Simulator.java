@@ -46,9 +46,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		agents = new ArrayList<Agent>();
 		foodPiles = new ArrayList<Position>();
 		environment = new Environment(worldWidth, worldHeight, baseRadius, percentageFood);
+		newAgents = new ArrayList<Agent>();
 		
 		// Each race have 3000 ants at the beginning
-		for(int i = 0 ; i < 1000 ; i++){
+		for(int i = 0 ; i < 2500 ; i++){
 			agents.add(new AntAgent(environment.createBlackAntBody()));
 			agents.add(new AntAgent(environment.createRedAntBody()));
 		}
@@ -62,7 +63,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// In order to save performance for the application we
 		// want to call the render as we wish
 		Gdx.graphics.setContinuousRendering(false);
-		Gdx.graphics.requestRendering();
+		//Gdx.graphics.requestRendering();
 	}
 
 	@Override

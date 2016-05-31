@@ -7,7 +7,7 @@ public class FoodPile extends StaticObject{
 	
 	public FoodPile(int x, int y, int min, int max){
 		Random rand = new Random();
-		FoodAmount = rand.nextInt(max - min) + min;
+		FoodAmount = /*rand.nextInt(max - min) +*/ min;
 		this.x = x;
 		this.y = y;
 	}

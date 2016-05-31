@@ -11,4 +11,8 @@ public abstract class AgentBody extends DynamicObject {
 	public void move(Direction d){
 		environmentReference.move(d, this);
 	}
+	
+	public void destroy(){
+		environmentReference.destroy(this);
+	}
 }

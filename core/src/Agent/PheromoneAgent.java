@@ -15,9 +15,11 @@ public class PheromoneAgent extends Agent {
 		((PheromoneBody) body).life--;
 		
 		if(((PheromoneBody) body).life == 0){
-			
+			destroy();
 		}
 		
 	}
 
 }
+
+	

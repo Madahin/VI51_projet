@@ -18,4 +18,9 @@ public abstract class Agent {
 	protected void move(Direction d){
 		body.move(d);
 	}
+	
+	protected void destroy(){
+		body.destroy();
+		body = null;
+	}
 }

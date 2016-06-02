@@ -168,34 +168,10 @@ public class AntAgent extends Agent {
 		Random rand = new Random();
 		// return a value between 0 and 7.
 		// each number means a direction.
-		int direction = rand.nextInt(Direction.values().length);
 		
-		switch(direction){
-			case 0:
-				move(Direction.EAST);
-			break;
-			case 1:
-				move(Direction.NORTH);
-			break;
-			case 2:
-				move(Direction.NORTH_EAST);
-			break;
-			case 3:
-				move(Direction.NORTH_WEST);
-			break;
-			case 4:
-				move(Direction.SOUTH);
-			break;
-			case 5:
-				move(Direction.SOUTH_EAST);
-			break;
-			case 6:
-				move(Direction.SOUTH_WEST);
-			break;
-			case 7:
-				move(Direction.WEST);
-			break;
-		}
+		
+		move(Direction.values()[rand.nextInt(Direction.values().length)]);
+		
 	}
 	
 	public void createPheromone(PheromoneType pt){

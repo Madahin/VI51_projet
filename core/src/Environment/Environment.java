@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import Agent.Agent;
 import Agent.AntAgent;
 import Agent.PheromoneAgent;
+import Config.WorldConfig;
 import UserInterface.Simulator;
 
 public class Environment {
@@ -56,7 +57,7 @@ public class Environment {
 				
 				int test = rand.nextInt(100);
 				if(test <= percentageFood){
-					objects[i][j].add(new FoodPile(i, j, 100, 100));
+					objects[i][j].add(new FoodPile(i, j, WorldConfig.MIN_SIZE_FOOD_STACK, WorldConfig.MAX_SIZE_FOOD_STACK));
 				}
 				
 				// And we check if the case is in the base.
@@ -270,9 +271,9 @@ public class Environment {
 	
 	public void addFoodToBase(AgentBody b){
 		if(((AntBody)b).faction == Faction.BlackAnt){
-			foodInBlackBase += 100;
+			foodInBlackBase += WorldConfig.ANT_FOOD_CARYING;
 		}else{
-			foodInRedBase += 100;
+			foodInRedBase += WorldConfig.ANT_FOOD_CARYING;
 		}
 		
 		cptAgents++;

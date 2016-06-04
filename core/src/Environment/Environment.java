@@ -73,7 +73,7 @@ public class Environment {
 					v += g;
 				}
 				
-				if(v > 0.1f){
+				if(v > (1f - WorldConfig.FOOD_COVER_PERCENT)){
 					objects[i][j].add(new FoodPile(i, j, v));
 				}
 				

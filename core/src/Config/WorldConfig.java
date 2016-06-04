@@ -19,4 +19,6 @@ public class WorldConfig {
 	public static int ANT_FIELD_OF_VIEW = 5;
 	
 	public static boolean SMOOTH_FOOD_GENERATION = true;
+	
+	public static float FOOD_COVER_PERCENT = 1f;
 }

@@ -67,14 +67,14 @@ public class Environment {
 				v += (float)SimplexNoise.noise(i/d2, j/d2);
 				v += (float)SimplexNoise.noise(i/d3, j/d3);
 				
-				float g = (float)SimplexNoise.noise(i, j) * 20;
-				g = g - (int)g;
-				
-				// uncomment for less fun
-				//v += g;
+				if(!WorldConfig.SMOOTH_FOOD_GENERATION){
+					float g = (float)SimplexNoise.noise(i, j) * 20;
+					g = g - (int)g;
+					v += g;
+				}
 				
 				if(v > 0.1f){
-					objects[i][j].add(new FoodPile(i, j, WorldConfig.MIN_SIZE_FOOD_STACK, WorldConfig.MAX_SIZE_FOOD_STACK));
+					objects[i][j].add(new FoodPile(i, j, v));
 				}
 				
 				// And we check if the case is in the base.
@@ -189,13 +189,13 @@ public class Environment {
 	
 	public void notifyListeners(){
 		// build food positions
-		ArrayList<Position> foods = new ArrayList<Position>();
+		ArrayList<FoodStackPosition> foods = new ArrayList<FoodStackPosition>();
 		
 		for(int i = 0 ; i < width ; i++){
 			for(int j = 0 ; j < height ; j++){
 				for(EnvironmentObject o : objects[i][j]){
 					if( o instanceof FoodPile){
-						foods.add(new Position(o.getX(), o.getY()));
+						foods.add(new FoodStackPosition((FoodPile)o));
 					}
 				}
 			}

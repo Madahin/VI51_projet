@@ -36,4 +36,8 @@ public class FoodPile extends StaticObject{
 		return FoodAmount <= 0;
 	}
 	
+	public int GetSize(){
+		return FoodAmount;
+	}
+	
 }

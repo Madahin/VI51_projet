@@ -17,4 +17,6 @@ public class WorldConfig {
 	public static int PHEROMONE_INITIAL_LIFE = 25;
 	
 	public static int ANT_FIELD_OF_VIEW = 5;
+	
+	public static boolean SMOOTH_FOOD_GENERATION = true;
 }

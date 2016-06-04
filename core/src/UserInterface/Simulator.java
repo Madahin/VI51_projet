@@ -24,9 +24,11 @@ import Environment.AntBody;
 import Environment.Environment;
 import Environment.EnvironmentListener;
 import Environment.Faction;
+import Environment.FoodStackPosition;
 import Environment.PheromoneType;
 import Environment.PheromoneBody;
 import Environment.Position;
+import Tools.ColorUtils;
 import Tools.SimplexNoise;
 import sun.management.resources.agent;
 
@@ -45,7 +47,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private SimulationThread simu;
 
 	private int bbX, bbY, rbX, rbY;
-	private ArrayList<Position> foodPiles;
+	private ArrayList<FoodStackPosition> foodPiles;
 	private ArrayList<Agent> newAgents;
 
 	@Override
@@ -58,7 +60,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 		/* Agents relative Initialization */
 		agents = new ArrayList<Agent>();
-		foodPiles = new ArrayList<Position>();
+		foodPiles = new ArrayList<FoodStackPosition>();
 		environment = new Environment(WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT, baseRadius, percentageFood);
 		newAgents = new ArrayList<Agent>();
 
@@ -107,10 +109,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		shapeRenderer.rect(-WorldConfig.WORLD_WIDTH / 2, -WorldConfig.WORLD_HEIGHT / 2, WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT);
 
 		// Display the food
-		shapeRenderer.setColor(169.0f / 255.0f, 1, 138.0f / 255.0f, 1);
-		for (Position p : foodPiles)
+		for (FoodStackPosition p : foodPiles){
+			shapeRenderer.setColor(ColorUtils.FoodColor(p.GetSize()));
 			shapeRenderer.rect(p.getX() - WorldConfig.WORLD_WIDTH / 2, p.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
-
+		}
+		
 		// We check all agents and display only ants
 		synchronized (lockAgentList) {
 
@@ -229,7 +232,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 	@Override
 	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY,
-			ArrayList<Position> foods, ArrayList<Agent> newAgentList) {
+			ArrayList<FoodStackPosition> foods, ArrayList<Agent> newAgentList) {
 		// When the environment change we render the frame
 		bbX = blackBaseX;
 		bbY = blackBaseY;

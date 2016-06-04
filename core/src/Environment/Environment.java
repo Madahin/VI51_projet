@@ -86,9 +86,9 @@ public class Environment {
 		if(b instanceof AntBody){
 			// around the body
 			// on x
-			for(int i = b.getX() - 2 ; i < b.getX() + 2 ; i++){
+			for(int i = b.getX() - 4 ; i < b.getX() + 4 ; i++){
 				// on y
-				for(int j = b.getY() - 2 ; j < b.getY() + 2 ; j++){
+				for(int j = b.getY() - 4 ; j < b.getY() + 4 ; j++){
 					// if the case is in the world
 					if(i >= 0 && i < width && j >= 0 && j < height){
 						// we run all the object in the case
@@ -214,7 +214,7 @@ public class Environment {
 		if(needToCreatePheromone){
 			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody)ab).faction, pt, this);
 			newAgents.add(new PheromoneAgent(pb));
-			objects[ab.getX()][ab.y].add(pb);
+			objects[ab.getX()][ab.getY()].add(pb);
 		}
 	}
 	
@@ -226,7 +226,7 @@ public class Environment {
 			if(o instanceof FoodPile){
 				((FoodPile) o).FoodAmount -= 100;
 				isGettingFood = true;
-				if(((FoodPile) o).FoodAmount == 0){
+				if(((FoodPile) o).FoodAmount <= 0){
 					haveToRemove = o;
 				}
 			}

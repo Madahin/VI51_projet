@@ -12,7 +12,7 @@ public class PheromoneBody extends AgentBody {
 		this.y = y;
 		faction = f;
 		pheromoneType = pt;
-		life = 100;
+		life = 500;
 	}
 	
 	@Override

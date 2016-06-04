@@ -30,6 +30,8 @@ public class AntAgent extends Agent {
 		pheromoneTicks = 0;
 	}
 	
+	
+	
 	@Override
 	public void live(){
 		ArrayList<Perceivable> perceptions = getPerception();
@@ -90,12 +92,17 @@ public class AntAgent extends Agent {
 			if(onBase != null){ // if we are on a base tile
 				// we add the food to the base
 				addFoodToBase();
+				isCarryingFood = false;
 			}else if(!bases.isEmpty()){ // if there is base around
 				// we go to the first tile we encounter
 				goToObject(bases.get(0).getX(), bases.get(0).getY());
 			}else if(!pheromonesBase.isEmpty()){ // if there base pheromone around
 				// we go to that pheromone
-				goToObject(pheromonesBase.get(0).getX(), pheromonesBase.get(0).getX());
+				if(pheromonesBase.size() >= 2){
+					pheromonesVector(pheromonesBase.get(0), pheromonesBase.get(pheromonesBase.size()-1));
+				}else{
+					goToObject(pheromonesBase.get(0).getX(), pheromonesBase.get(0).getY());
+				}
 			}else{ // if there is none to do
 				// we wander
 				wander(((AntBody) body).direction);
@@ -112,13 +119,18 @@ public class AntAgent extends Agent {
 				// so the environment gives the same state. the ant will
 				// continue for searching food
 				isCarryingFood = pickUpFood();
+				isCarryingFood = true;
 			}else if(!foods.isEmpty()){ // there is food around
 				// If we detect food we want to go to the first
 				// item we encounter.
 				goToObject(foods.get(0).getX(), foods.get(0).getY());
 			}else if(!pheromonesFood.isEmpty()){ // there is food pheromone around
 				// We follow it
-				goToObject(pheromonesFood.get(0).getX(), pheromonesFood.get(0).getY());
+				if(pheromonesFood.size() >= 2){
+					pheromonesVector(pheromonesFood.get(0), pheromonesFood.get(pheromonesFood.size()-1));
+				}else{
+					goToObject(pheromonesFood.get(0).getX(), pheromonesFood.get(0).getY());
+				}
 			}else{ // we don't know what to do so we wander
 				wander(((AntBody) body).direction);
 			}
@@ -137,6 +149,8 @@ public class AntAgent extends Agent {
 	public boolean pickUpFood(){
 		return ((AntBody)body).pickUpFood();
 	}
+	
+	
 	
 	public void goToObject(int x, int y){
 		int bodyX = body.getX();
@@ -209,6 +223,35 @@ public class AntAgent extends Agent {
 		move(dir);
 	//	move(Direction.values()[rand.nextInt(Direction.values().length)]);
 		
+	}
+	
+	public void pheromonesVector(Perceivable first, Perceivable last){
+		int diffX = last.getX() - first.getX();
+		int diffY = last.getY() - first.getY();
+		
+		if(diffX == 0){
+			if(diffY > 0){
+				move(Direction.EAST);
+			}else if(diffY < 0){
+				move(Direction.WEST);
+			}
+		}else if(diffX > 0){
+			if(diffY == 0){
+				move(Direction.NORTH);
+			}else if(diffY > 0){
+				move(Direction.NORTH_WEST);
+			}else{
+				move(Direction.NORTH_EAST);
+			}
+		}else{
+			if(diffY == 0){
+				move(Direction.SOUTH);
+			}else if(diffY > 0){
+				move(Direction.SOUTH_WEST);
+			}else{
+				move(Direction.SOUTH_EAST);
+			}
+		}
 	}
 	
 	public void createPheromone(PheromoneType pt){

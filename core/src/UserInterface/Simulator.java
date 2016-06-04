@@ -125,14 +125,14 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			}
 
 			for (Agent agent : agents) {
-				if (agent instanceof PheromoneAgent && agent.body != null){
+				/*if (agent instanceof PheromoneAgent && agent.body != null){
 					if (((PheromoneBody)agent.body ).pheromoneType==PheromoneType.Base){
 					shapeRenderer.setColor(Color.WHITE);
 					}else{
 						shapeRenderer.setColor(Color.BLUE);	
 					}
 					shapeRenderer.rect(agent.body.getX() - worldWidth / 2, agent.body.getY() - worldHeight / 2, 1, 1);
-				} else if (agent instanceof AntAgent) {
+				} else */if (agent instanceof AntAgent) {
 					if (((AntBody) agent.body).faction == Faction.BlackAnt) {
 						shapeRenderer.setColor(Color.BLACK);
 					} else {

@@ -95,7 +95,7 @@ public class AntAgent extends Agent {
 				goToObject(bases.get(0).getX(), bases.get(0).getY());
 			}else if(!pheromonesBase.isEmpty()){ // if there base pheromone around
 				// we go to that pheromone
-				goToObject(pheromonesBase.get(0).getX(), pheromonesBase.get(0).getX());
+				goToObject(pheromonesBase.get(0).getX(), pheromonesBase.get(0).getY());
 			}else{ // if there is none to do
 				// we wander
 				wander(((AntBody) body).direction);

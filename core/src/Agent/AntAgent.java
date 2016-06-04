@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import com.badlogic.gdx.math.Vector2;
+
 import Environment.AgentBody;
 import Environment.AntBody;
 import Environment.BlackBase;
@@ -116,11 +118,11 @@ public class AntAgent extends Agent {
 			} else if (!pheromonesBase.isEmpty()) { // if there base pheromone
 													// around
 				// we go to that pheromone
-				if(pheromonesBase.size() >= 2){
-					pheromonesVector(pheromonesBase.get(0), pheromonesBase.get(pheromonesBase.size()-1));
-				}else{
-					goToObject(pheromonesBase.get(0));
-				}
+				//if(pheromonesBase.size() >= 2){
+					pheromonesVector(pheromonesBase, false);
+				//}else{
+					//goToObject(pheromonesBase.get(0));
+				//}
 
 			} else { // if there is none to do
 						// we wander
@@ -147,11 +149,11 @@ public class AntAgent extends Agent {
 			} else if (!pheromonesFood.isEmpty()) { // there is food pheromone
 													// around
 				// We follow it
-				if(pheromonesFood.size() >= 2){
-					pheromonesVector(pheromonesFood.get(0), pheromonesFood.get(pheromonesFood.size()-1));
-				}else{
-					goToObject(pheromonesFood.get(0));
-				}
+				//if(pheromonesFood.size() >= 2){
+					pheromonesVector(pheromonesFood, true);
+				//}else{
+					//goToObject(pheromonesFood.get(0));
+				//}
 			
 			} else { // we don't know what to do so we wander
 				wander(((AntBody) body).direction);
@@ -251,7 +253,51 @@ public class AntAgent extends Agent {
 
 	}
 	
-	public void pheromonesVector(Perceivable first, Perceivable last){
+	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv){
+		ArrayList<Vector2> vectors = new ArrayList<>();
+		for(Perceivable p : list){
+			Vector2 tmpVect = new Vector2(p.getX() - body.getX(), p.getY() - body.getY());
+			tmpVect.scl(p.getPheromoneLife());
+			tmpVect.nor();
+			vectors.add(tmpVect);
+		}
+		Vector2 finalVect = new Vector2(0.0f, 0.0f);
+		
+		for(Vector2 vect : vectors){
+			finalVect.add(vect);
+		}
+		
+		if(inv)
+			finalVect.scl(-1.0f);
+		
+		
+		if(finalVect.x == 0){
+			if(finalVect.y > 0){
+				move(Direction.NORTH);
+			}else if(finalVect.y < 0){
+				move(Direction.SOUTH);
+			}
+		}else if(finalVect.x > 0){
+			if(finalVect.y == 0){
+				move(Direction.EAST);
+			}else if(finalVect.y > 0){
+				move(Direction.NORTH_EAST);
+			}else{
+				move(Direction.SOUTH_EAST);
+			}
+		}else{
+			if(finalVect.y == 0){
+				move(Direction.WEST);
+			}else if(finalVect.y > 0){
+				move(Direction.NORTH_WEST);
+			}else{
+				move(Direction.SOUTH_WEST);
+			}
+		}
+		
+	}
+	
+	/*public void pheromonesVector(Perceivable first, Perceivable last){
 		int diffX = last.getX() - first.getX();
 		int diffY = last.getY() - first.getY();
 		
@@ -278,7 +324,7 @@ public class AntAgent extends Agent {
 				move(Direction.SOUTH_WEST);
 			}
 		}
-	}
+	}*/
 	
 
 	public void createPheromone(PheromoneType pt) {

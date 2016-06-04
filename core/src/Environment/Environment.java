@@ -89,9 +89,9 @@ public class Environment {
 		if(b instanceof AntBody){
 			// around the body
 			// on x
-			for(int i = b.getX() - 4 ; i < b.getX() + 4 ; i++){
+			for(int i = b.getX() - WorldConfig.ANT_FIELD_OF_VIEW ; i < b.getX() + WorldConfig.ANT_FIELD_OF_VIEW ; i++){
 				// on y
-				for(int j = b.getY() - 4 ; j < b.getY() + 4 ; j++){
+				for(int j = b.getY() - WorldConfig.ANT_FIELD_OF_VIEW ; j < b.getY() + WorldConfig.ANT_FIELD_OF_VIEW ; j++){
 					// if the case is in the world
 					if(i >= 0 && i < width && j >= 0 && j < height){
 						// we run all the object in the case

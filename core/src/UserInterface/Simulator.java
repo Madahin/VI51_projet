@@ -25,12 +25,9 @@ import Environment.Environment;
 import Environment.EnvironmentListener;
 import Environment.Faction;
 import Environment.FoodStackPosition;
-import Environment.PheromoneType;
 import Environment.PheromoneBody;
-import Environment.Position;
+import Environment.PheromoneType;
 import Tools.ColorUtils;
-import Tools.SimplexNoise;
-import sun.management.resources.agent;
 
 public class Simulator extends ApplicationAdapter implements EnvironmentListener {
 
@@ -91,6 +88,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		shapeRenderer.dispose();
+		m_font.dispose();
+		m_batch.dispose();
 	}
 
 	@Override
@@ -106,14 +107,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		shapeRenderer.begin(ShapeType.Filled);
 		// Render the Borders
 		shapeRenderer.setColor(212.0f / 255.0f, 161.0f / 255.0f, 144.0f / 255.0f, 1);
-		shapeRenderer.rect(-WorldConfig.WORLD_WIDTH / 2, -WorldConfig.WORLD_HEIGHT / 2, WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT);
+		shapeRenderer.rect(-WorldConfig.WORLD_WIDTH / 2, -WorldConfig.WORLD_HEIGHT / 2, WorldConfig.WORLD_WIDTH,
+				WorldConfig.WORLD_HEIGHT);
 
 		// Display the food
-		for (FoodStackPosition p : foodPiles){
+		for (FoodStackPosition p : foodPiles) {
 			shapeRenderer.setColor(ColorUtils.FoodColor(p.GetSize()));
 			shapeRenderer.rect(p.getX() - WorldConfig.WORLD_WIDTH / 2, p.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
 		}
-		
+
 		// We check all agents and display only ants
 		synchronized (lockAgentList) {
 
@@ -128,14 +130,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			}
 
 			for (Agent agent : agents) {
-				if (agent instanceof PheromoneAgent && agent.body != null){
-					if (((PheromoneBody)agent.body ).pheromoneType==PheromoneType.Base){
-					shapeRenderer.setColor(Color.WHITE);
-					}else{
-						shapeRenderer.setColor(Color.BLUE);	
+				if (agent instanceof PheromoneAgent && agent.body != null) {
+					if (((PheromoneBody) agent.body).pheromoneType == PheromoneType.Base) {
+						shapeRenderer.setColor(Color.WHITE);
+					} else {
+						shapeRenderer.setColor(Color.BLUE);
 					}
-					shapeRenderer.rect(agent.body.getX() - WorldConfig.WORLD_WIDTH / 2, agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
-					
+					shapeRenderer.rect(agent.body.getX() - WorldConfig.WORLD_WIDTH / 2,
+							agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
+
 				} else if (agent instanceof AntAgent) {
 
 					if (((AntBody) agent.body).faction == Faction.BlackAnt) {
@@ -143,7 +146,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 					} else {
 						shapeRenderer.setColor(Color.RED);
 					}
-					shapeRenderer.rect(agent.body.getX() - WorldConfig.WORLD_WIDTH / 2, agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
+					shapeRenderer.rect(agent.body.getX() - WorldConfig.WORLD_WIDTH / 2,
+							agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
 				}
 
 			}
@@ -162,11 +166,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 		m_batch.begin();
 		m_font.setColor(Color.YELLOW);
-		m_font.draw(m_batch, "" + Gdx.graphics.getFramesPerSecond(), 0, 480);
+		m_font.draw(m_batch, "" + Gdx.graphics.getFramesPerSecond(), 620, 480);
 		m_font.setColor(Color.RED);
-		m_font.draw(m_batch, "Food in red base : " + environment.GetFoodInRedBase(), 0, 450);
+		m_font.draw(m_batch, "Food in red base : " + environment.GetFoodInRedBase(), 0, 465);
 		m_font.setColor(Color.BLACK);
-		m_font.draw(m_batch, "Food in black base : " + environment.GetFoodInBlackBase(), 0, 465);
+		m_font.draw(m_batch, "Food in black base : " + environment.GetFoodInBlackBase(), 0, 480);
 		m_batch.end();
 
 	}

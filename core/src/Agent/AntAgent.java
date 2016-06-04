@@ -98,10 +98,10 @@ public class AntAgent extends Agent {
 				goToObject(pheromonesBase.get(0).getX(), pheromonesBase.get(0).getX());
 			}else{ // if there is none to do
 				// we wander
-				wander();
+				wander(((AntBody) body).direction);
 			}
 			// we produce a Food pheromone
-			createPheromone(PheromoneType.Base);
+			createPheromone(PheromoneType.Food);
 			
 		}else{ // If the ant looking for the food
 			// She have to perceive all the things around her
@@ -115,12 +115,12 @@ public class AntAgent extends Agent {
 			}else if(!foods.isEmpty()){ // there is food around
 				// If we detect food we want to go to the first
 				// item we encounter.
-				goToObject(foods.get(0).getX(), foods.get(0).getX());
+				goToObject(foods.get(0).getX(), foods.get(0).getY());
 			}else if(!pheromonesFood.isEmpty()){ // there is food pheromone around
 				// We follow it
 				goToObject(pheromonesFood.get(0).getX(), pheromonesFood.get(0).getY());
 			}else{ // we don't know what to do so we wander
-				wander();
+				wander(((AntBody) body).direction);
 			}
 			// We produce a Base Pheromone
 			createPheromone(PheromoneType.Base);
@@ -164,13 +164,50 @@ public class AntAgent extends Agent {
 		}
 	}
 	
-	public void wander(){
+	public void wander(Direction LastDirection){
 		Random rand = new Random();
 		// return a value between 0 and 7.
 		// each number means a direction.
 		
+		Direction dir;
+		ArrayList<Direction> possibilities = new ArrayList<Direction>();
 		
-		move(Direction.values()[rand.nextInt(Direction.values().length)]);
+		if (LastDirection == Direction.NORTH){
+			possibilities.add(Direction.NORTH_WEST);
+			possibilities.add(Direction.NORTH);
+			possibilities.add(Direction.NORTH_EAST);
+		}else if (LastDirection == Direction.NORTH_EAST){
+			possibilities.add(Direction.NORTH);
+			possibilities.add(Direction.NORTH_EAST);
+			possibilities.add(Direction.EAST);
+		}else if (LastDirection == Direction.EAST){
+			possibilities.add(Direction.NORTH_EAST);
+			possibilities.add(Direction.EAST);
+			possibilities.add(Direction.SOUTH_EAST);
+		}else if (LastDirection == Direction.SOUTH_EAST){
+			possibilities.add(Direction.EAST);
+			possibilities.add(Direction.SOUTH_EAST);
+			possibilities.add(Direction.SOUTH);
+		}else if (LastDirection == Direction.SOUTH){
+			possibilities.add(Direction.SOUTH_EAST);
+			possibilities.add(Direction.SOUTH);
+			possibilities.add(Direction.SOUTH_WEST);
+		}else if (LastDirection == Direction.SOUTH_WEST){
+			possibilities.add(Direction.SOUTH);
+			possibilities.add(Direction.SOUTH_WEST);
+			possibilities.add(Direction.WEST);
+		}else if (LastDirection == Direction.WEST){
+			possibilities.add(Direction.SOUTH_WEST);
+			possibilities.add(Direction.WEST);
+			possibilities.add(Direction.NORTH_WEST);
+		}else if (LastDirection == Direction.NORTH_WEST){
+			possibilities.add(Direction.WEST);
+			possibilities.add(Direction.NORTH_WEST);
+			possibilities.add(Direction.NORTH);
+		}
+		dir =possibilities.get(rand.nextInt(3));
+		move(dir);
+	//	move(Direction.values()[rand.nextInt(Direction.values().length)]);
 		
 	}
 	

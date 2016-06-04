@@ -170,7 +170,8 @@ public class Environment {
 		double dy = baseRadius*r*Math.sin(theta) + blackBaseY;
 		
 		int _x = (int)dx, _y = (int)dy;
-		AntBody b = new AntBody(Faction.BlackAnt, _x, _y, this);
+		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
+		AntBody b = new AntBody(Faction.BlackAnt, dir, _x, _y, this);
 		
 		objects[_x][_y].add(b);
 		return b;
@@ -188,7 +189,8 @@ public class Environment {
 		double dy = baseRadius*r*Math.sin(theta) + redBaseY;
 		
 		int _x = (int)dx, _y = (int)dy;
-		AntBody b = new AntBody(Faction.RedAnt, _x, _y, this);
+		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
+		AntBody b = new AntBody(Faction.RedAnt, dir, _x, _y, this);
 		
 		objects[_x][_y].add(b);
 		return b;

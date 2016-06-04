@@ -2,9 +2,11 @@ package Environment;
 
 public class AntBody extends AgentBody{
 	public Faction faction;
+	public Direction direction;
 	
-	public AntBody(Faction f, int initX, int initY, Environment env){
+	public AntBody(Faction f,Direction d, int initX, int initY, Environment env){
 		faction = f;
+		direction = d;
 		x = initX;
 		y = initY;
 		environmentReference = env;

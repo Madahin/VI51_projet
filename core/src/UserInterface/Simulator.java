@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import Agent.Agent;
 import Agent.AntAgent;
 import Agent.PheromoneAgent;
+import Config.WorldConfig;
 import Environment.AntBody;
 import Environment.Environment;
 import Environment.EnvironmentListener;
@@ -35,8 +36,6 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private SpriteBatch m_batch;
 	private OrthographicCamera camera;
 
-	private int worldWidth = 500;
-	private int worldHeight = 500;
 	private int baseRadius = 30;
 	private int percentageFood = 5;
 	private Environment environment;
@@ -59,11 +58,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		/* Agents relative Initialization */
 		agents = new ArrayList<Agent>();
 		foodPiles = new ArrayList<Position>();
-		environment = new Environment(worldWidth, worldHeight, baseRadius, percentageFood);
+		environment = new Environment(WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT, baseRadius, percentageFood);
 		newAgents = new ArrayList<Agent>();
 
 		// Each race have 3000 ants at the beginning
-		for (int i = 0; i < 2500; i++) {
+		for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
 			agents.add(new AntAgent(environment.createBlackAntBody()));
 			agents.add(new AntAgent(environment.createRedAntBody()));
 		}
@@ -104,12 +103,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		shapeRenderer.begin(ShapeType.Filled);
 		// Render the Borders
 		shapeRenderer.setColor(212.0f / 255.0f, 161.0f / 255.0f, 144.0f / 255.0f, 1);
-		shapeRenderer.rect(-worldWidth / 2, -worldHeight / 2, worldWidth, worldHeight);
+		shapeRenderer.rect(-WorldConfig.WORLD_WIDTH / 2, -WorldConfig.WORLD_HEIGHT / 2, WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT);
 
 		// Display the food
 		shapeRenderer.setColor(169.0f / 255.0f, 1, 138.0f / 255.0f, 1);
 		for (Position p : foodPiles)
-			shapeRenderer.rect(p.getX() - worldWidth / 2, p.getY() - worldHeight / 2, 1, 1);
+			shapeRenderer.rect(p.getX() - WorldConfig.WORLD_WIDTH / 2, p.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
 
 		// We check all agents and display only ants
 		synchronized (lockAgentList) {
@@ -131,14 +130,16 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 					}else{
 						shapeRenderer.setColor(Color.BLUE);	
 					}
-					shapeRenderer.rect(agent.body.getX() - worldWidth / 2, agent.body.getY() - worldHeight / 2, 1, 1);
+					shapeRenderer.rect(agent.body.getX() - WorldConfig.WORLD_WIDTH / 2, agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
+					
 				} else if (agent instanceof AntAgent) {
+
 					if (((AntBody) agent.body).faction == Faction.BlackAnt) {
 						shapeRenderer.setColor(Color.BLACK);
 					} else {
 						shapeRenderer.setColor(Color.RED);
 					}
-					shapeRenderer.rect(agent.body.getX() - worldWidth / 2, agent.body.getY() - worldHeight / 2, 1, 1);
+					shapeRenderer.rect(agent.body.getX() - WorldConfig.WORLD_WIDTH / 2, agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
 				}
 
 			}
@@ -146,11 +147,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 		// Render the blackBase
 		shapeRenderer.setColor(104.0f / 255.0f, 114.0f / 255.0f, 117.0f / 255.0f, 128 / 255.0f);
-		shapeRenderer.circle(bbX - worldWidth / 2, bbY - worldHeight / 2, baseRadius);
+		shapeRenderer.circle(bbX - WorldConfig.WORLD_WIDTH / 2, bbY - WorldConfig.WORLD_HEIGHT / 2, baseRadius);
 
 		// Render the Red Base
 		shapeRenderer.setColor(1, 105.0f / 255.0f, 105.0f / 255.0f, 128 / 255.0f);
-		shapeRenderer.circle(rbX - worldWidth / 2, rbY - worldHeight / 2, baseRadius);
+		shapeRenderer.circle(rbX - WorldConfig.WORLD_WIDTH / 2, rbY - WorldConfig.WORLD_HEIGHT / 2, baseRadius);
 
 		shapeRenderer.end();
 		Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -158,6 +159,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		m_batch.begin();
 		m_font.setColor(Color.YELLOW);
 		m_font.draw(m_batch, "" + Gdx.graphics.getFramesPerSecond(), 0, 480);
+		m_font.setColor(Color.RED);
+		m_font.draw(m_batch, "Food in red base : " + environment.GetFoodInRedBase(), 0, 450);
+		m_font.setColor(Color.BLACK);
+		m_font.draw(m_batch, "Food in black base : " + environment.GetFoodInBlackBase(), 0, 465);
 		m_batch.end();
 
 	}

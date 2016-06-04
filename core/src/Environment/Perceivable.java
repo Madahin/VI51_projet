@@ -22,6 +22,8 @@ public class Perceivable {
 			pType = ((PheromoneBody) b).pheromoneType;
 			pheromoneLife = ((PheromoneBody) b).life;
 		}
+		
+		
 
 	}
 

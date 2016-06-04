@@ -10,6 +10,8 @@ import Agent.AntAgent;
 import Agent.PheromoneAgent;
 import UserInterface.Simulator;
 
+import Config.WorldConfig;
+
 public class Environment {
 	private int width;
 	private int height;
@@ -62,12 +64,12 @@ public class Environment {
 				// And we check if the case is in the base.
 				// Black
 				if( (i - blackBaseX) * (i - blackBaseX) + (j - blackBaseY) * (i - blackBaseY) <= baseRadius * baseRadius ){
-					objects[i][j].add(new BlackBase());
+					objects[i][j].add(new BlackBase(i, j));
 				}
 				
 				// Red
 				if( (i - redBaseX) * (i - redBaseX) + (j - redBaseY) * (i - redBaseY) <= baseRadius * baseRadius ){
-					objects[i][j].add(new RedBase());
+					objects[i][j].add(new RedBase(i, j));
 				}
 			}
 		}
@@ -193,7 +195,7 @@ public class Environment {
 			if(eo instanceof PheromoneBody){
 				if(((PheromoneBody) eo).faction == ((AntBody) ab).faction && ((PheromoneBody) eo).pheromoneType == pt){
 
-					((PheromoneBody) eo).life += 100;
+					((PheromoneBody) eo).life += WorldConfig.PHEROMONE_INITIAL_LIFE;
 					needToCreatePheromone = false;
 
 				}

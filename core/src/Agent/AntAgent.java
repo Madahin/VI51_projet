@@ -21,7 +21,10 @@ public class AntAgent extends Agent {
 	private boolean isCarryingFood;
 	private int pheromoneTicks;
 
+	private Perceivable currentObjective;
+	
 	public AntAgent(AgentBody b) {
+		currentObjective = null;
 		body = b;
 		isCarryingFood = false;
 		pheromoneTicks = 0;
@@ -29,6 +32,21 @@ public class AntAgent extends Agent {
 
 	@Override
 	public void live() {
+		if(currentObjective != null){
+			if(currentObjective.getX() == body.getX() && currentObjective.getY() == body.getY()){
+				currentObjective = null;
+			}else{
+				goToObject(currentObjective);
+				if(isCarryingFood){
+					createPheromone(PheromoneType.Food);
+				}else {
+					createPheromone(PheromoneType.Base);
+				}
+				
+				return;
+			}
+		}
+		
 		ArrayList<Perceivable> perceptions = getPerception();
 
 		ArrayList<Perceivable> pheromonesFood = new ArrayList<Perceivable>();
@@ -44,12 +62,13 @@ public class AntAgent extends Agent {
 			if (p.getX() == body.getX() && p.getY() == body.getY()) {
 
 				if (p.getType().equals(FoodPile.class)) { // food
+					
 					onFood = p;
-				} else if (p.getType().equals(BlackBase.class) && ((AntBody) body).faction == Faction.BlackAnt) { // Black
-																													// base
+				} else if (p.getType().equals(BlackBase.class) && ((AntBody) body).faction.equals(Faction.BlackAnt) ) { // Black base
+					
 					onBase = p;
-				} else if (p.getType().equals(RedBase.class) && ((AntBody) body).faction == Faction.RedAnt) { // Red
-																												// Base
+				} else if (p.getType().equals(RedBase.class) && ((AntBody) body).faction.equals(Faction.RedAnt) ) { // Red base
+					
 					onBase = p;
 				}
 
@@ -58,8 +77,6 @@ public class AntAgent extends Agent {
 					foods.add(p);
 				} else if (p.getType().equals(PheromoneBody.class) && p.getFaction() == ((AntBody) body).faction) { // Pheromone
 																													// of
-																													// the
-																													// same
 																													// faction
 					if (p.getPheromoneType() == PheromoneType.Base) { // Base
 																		// type
@@ -82,7 +99,7 @@ public class AntAgent extends Agent {
 		PheromoneComparator comparator = new PheromoneComparator();
 		Collections.sort(pheromonesFood, comparator);
 		Collections.sort(pheromonesBase, comparator);
-
+		
 		// Here are the decision algorithm
 		// In the first place we want to know in wich state
 		// is the ant
@@ -95,7 +112,7 @@ public class AntAgent extends Agent {
 
 			} else if (!bases.isEmpty()) { // if there is base around
 				// we go to the first tile we encounter
-				goToObject(bases.get(0).getX(), bases.get(0).getY());
+				goToObject(bases.get(0));
 			} else if (!pheromonesBase.isEmpty()) { // if there base pheromone
 													// around
 				// we go to that pheromone
@@ -103,7 +120,7 @@ public class AntAgent extends Agent {
 				if(pheromonesBase.size() >= 2){
 					pheromonesVector(pheromonesBase.get(0), pheromonesBase.get(pheromonesBase.size()-1));
 				}else{
-					goToObject(pheromonesBase.get(0).getX(), pheromonesBase.get(0).getY());
+					goToObject(pheromonesBase.get(0));
 				}
 
 			} else { // if there is none to do
@@ -126,14 +143,14 @@ public class AntAgent extends Agent {
 			} else if (!foods.isEmpty()) { // there is food around
 				// If we detect food we want to go to the first
 				// item we encounter.
-				goToObject(foods.get(0).getX(), foods.get(0).getY());
+				goToObject(foods.get(0));
 			} else if (!pheromonesFood.isEmpty()) { // there is food pheromone
 													// around
 				// We follow it
 				if(pheromonesFood.size() >= 2){
 					pheromonesVector(pheromonesFood.get(0), pheromonesFood.get(pheromonesFood.size()-1));
 				}else{
-					goToObject(pheromonesFood.get(0).getX(), pheromonesFood.get(0).getY());
+					goToObject(pheromonesFood.get(0));
 				}
 			
 			} else { // we don't know what to do so we wander
@@ -156,10 +173,16 @@ public class AntAgent extends Agent {
 	}
 	
 
-	public void goToObject(int x, int y) {
-
+	public void goToObject(Perceivable obj) {
+		
+		int x = obj.getX();
+		int y = obj.getY();
 		int bodyX = body.getX();
 		int bodyY = body.getY();
+		
+		if(currentObjective == null)
+			currentObjective = obj;
+		
 		if (x < bodyX && y < bodyY) {
 			move(Direction.SOUTH_WEST);
 		} else if (x < bodyX && y > bodyY) {
@@ -234,25 +257,25 @@ public class AntAgent extends Agent {
 		
 		if(diffX == 0){
 			if(diffY > 0){
-				move(Direction.EAST);
+				move(Direction.NORTH);
 			}else if(diffY < 0){
-				move(Direction.WEST);
+				move(Direction.SOUTH);
 			}
 		}else if(diffX > 0){
 			if(diffY == 0){
-				move(Direction.NORTH);
+				move(Direction.EAST);
 			}else if(diffY > 0){
-				move(Direction.NORTH_WEST);
-			}else{
 				move(Direction.NORTH_EAST);
+			}else{
+				move(Direction.SOUTH_EAST);
 			}
 		}else{
 			if(diffY == 0){
-				move(Direction.SOUTH);
+				move(Direction.WEST);
 			}else if(diffY > 0){
-				move(Direction.SOUTH_WEST);
+				move(Direction.NORTH_WEST);
 			}else{
-				move(Direction.SOUTH_EAST);
+				move(Direction.SOUTH_WEST);
 			}
 		}
 	}

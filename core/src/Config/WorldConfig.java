@@ -14,4 +14,5 @@ public class WorldConfig {
 	
 	public static int MIN_SIZE_FOOD_STACK = 100;
 
+	public static int PHEROMONE_INITIAL_LIFE = 100;
 }

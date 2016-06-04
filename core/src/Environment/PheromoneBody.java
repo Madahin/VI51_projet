@@ -1,5 +1,7 @@
 package Environment;
 
+import Config.WorldConfig;
+
 public class PheromoneBody extends AgentBody {
 	public Faction faction;
 	public PheromoneType pheromoneType;
@@ -12,7 +14,7 @@ public class PheromoneBody extends AgentBody {
 		this.y = y;
 		faction = f;
 		pheromoneType = pt;
-		life = 500;
+		life = WorldConfig.PHEROMONE_INITIAL_LIFE;
 	}
 	
 	@Override

@@ -158,7 +158,7 @@ public class Environment {
 		newAgents.clear();
 	}
 	
-	public AgentBody createBlackAntBody(){
+	private AgentBody createAntBody(Faction faction, int basePosX, int basePosY){
 		nbAgents ++;
 		// Black Ants are created on the down left of the map
 		
@@ -166,34 +166,23 @@ public class Environment {
 		double r = Math.sqrt(rand.nextDouble());
 		double theta = rand.nextDouble() * 2 * Math.PI;
 		
-		double dx = baseRadius*r*Math.cos(theta) + blackBaseX;
-		double dy = baseRadius*r*Math.sin(theta) + blackBaseY;
+		double dx = baseRadius*r*Math.cos(theta) + basePosX;
+		double dy = baseRadius*r*Math.sin(theta) + basePosY;
 		
 		int _x = (int)dx, _y = (int)dy;
 		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
-		AntBody b = new AntBody(Faction.BlackAnt, dir, _x, _y, this);
+		AntBody b = new AntBody(faction, dir, _x, _y, this);
 		
 		objects[_x][_y].add(b);
 		return b;
 	}
 	
+	public AgentBody createBlackAntBody(){
+		return createAntBody(Faction.BlackAnt, blackBaseX, blackBaseY);
+	}
+	
 	public AgentBody createRedAntBody(){
-		nbAgents ++;
-		// Red Ants are created on the down right on the map
-
-		Random rand = new Random();
-		double r = Math.sqrt(rand.nextDouble());
-		double theta = rand.nextDouble() * 2 * Math.PI;
-		
-		double dx = baseRadius*r*Math.cos(theta) + redBaseX;
-		double dy = baseRadius*r*Math.sin(theta) + redBaseY;
-		
-		int _x = (int)dx, _y = (int)dy;
-		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
-		AntBody b = new AntBody(Faction.RedAnt, dir, _x, _y, this);
-		
-		objects[_x][_y].add(b);
-		return b;
+		return createAntBody(Faction.RedAnt, redBaseX, redBaseY);
 	}
 	
 	public void createPheromone(PheromoneType pt, AgentBody ab){
@@ -224,9 +213,11 @@ public class Environment {
 		
 		for(EnvironmentObject o : objects[b.getX()][b.getY()]){
 			if(o instanceof FoodPile){
-				((FoodPile) o).FoodAmount -= 100;
+				((FoodPile) o).TakeFood();
 				isGettingFood = true;
-				if(((FoodPile) o).FoodAmount <= 0){
+
+				if(((FoodPile) o).IsEmpty()){
+
 					haveToRemove = o;
 				}
 			}
@@ -260,6 +251,14 @@ public class Environment {
 			notifyListeners();
 		}
 
+	}
+	
+	public int GetFoodInRedBase(){
+		return foodInRedBase;
+	}
+	
+	public int GetFoodInBlackBase(){
+		return foodInBlackBase;
 	}
 	
 }

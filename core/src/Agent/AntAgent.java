@@ -116,7 +116,6 @@ public class AntAgent extends Agent {
 			} else if (!pheromonesBase.isEmpty()) { // if there base pheromone
 													// around
 				// we go to that pheromone
-
 				if(pheromonesBase.size() >= 2){
 					pheromonesVector(pheromonesBase.get(0), pheromonesBase.get(pheromonesBase.size()-1));
 				}else{
@@ -125,6 +124,7 @@ public class AntAgent extends Agent {
 
 			} else { // if there is none to do
 						// we wander
+
 				wander(((AntBody) body).direction);
 			}
 			// we produce a Food pheromone

@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import Agent.Agent;
 import Agent.AntAgent;
 import Agent.PheromoneAgent;
+import Config.WorldConfig;
 import UserInterface.Simulator;
 
 import Config.WorldConfig;
@@ -58,7 +59,7 @@ public class Environment {
 				
 				int test = rand.nextInt(100);
 				if(test <= percentageFood){
-					objects[i][j].add(new FoodPile(i, j, 100, 100));
+					objects[i][j].add(new FoodPile(i, j, WorldConfig.MIN_SIZE_FOOD_STACK, WorldConfig.MAX_SIZE_FOOD_STACK));
 				}
 				
 				// And we check if the case is in the base.
@@ -124,6 +125,37 @@ public class Environment {
 			objects[b.getX()][b.getY()].remove(b);
 			b.setPosition(b.getX() + vectX, b.getY() + vectY);
 			objects[b.getX()][b.getY()].add(b);
+		}else{
+			
+			// Alternative 1
+			
+			if ((b.getX() + vectX < 0 && (d == Direction.WEST) || d == Direction.NORTH_WEST || d == Direction.SOUTH_WEST))
+				((AntBody) b).direction = Direction.EAST;
+			else if (b.getX() + vectX >= width && (d == Direction.EAST || d == Direction.NORTH_EAST || d == Direction.SOUTH_EAST))
+				((AntBody) b).direction = Direction.WEST;
+			else if (b.getY() + vectY < 0 && (d == Direction.SOUTH || d == Direction.SOUTH_EAST || d == Direction.SOUTH_WEST))	
+				((AntBody) b).direction = Direction.NORTH;
+			else if (b.getY() + vectY >= height && (d == Direction.NORTH || d == Direction.NORTH_EAST || d == Direction.NORTH_WEST))
+				((AntBody) b).direction = Direction.SOUTH;
+			
+			// Alternative 2
+			
+//			if (b.getX() + vectX < 0 && b.getY() + vectY < 0)
+//				((AntBody) b).direction = Direction.NORTH_EAST;
+//			else if (b.getX() + vectX < 0 && b.getY() + vectY >= height)
+//				((AntBody) b).direction = Direction.SOUTH_EAST;
+//			else if (b.getX() + vectX >= width && b.getY() + vectY < 0)
+//				((AntBody) b).direction = Direction.NORTH_WEST;
+//			else if (b.getX() + vectX >= width && b.getY() + vectY >= height)
+//				((AntBody) b).direction = Direction.SOUTH_WEST;
+//			else if ((b.getX() + vectX < 0 && d == Direction.WEST) || (b.getY() + vectY < 0 && d == Direction.SOUTH_EAST) || (b.getY() + vectY >= height && d == Direction.NORTH_EAST))
+//				((AntBody) b).direction = Direction.EAST;
+//			else if ((b.getX() + vectX >= width && d == Direction.EAST) || (b.getY() + vectY < 0 && d == Direction.SOUTH_WEST) || (b.getY() + vectY >= height && d == Direction.NORTH_WEST))
+//				((AntBody) b).direction = Direction.WEST;
+//			else if ((b.getY() + vectY < 0 && d == Direction.SOUTH) || (b.getX() + vectX < 0 && d == Direction.NORTH_WEST) || (b.getX() + vectX >= width && d == Direction.NORTH_EAST))	
+//				((AntBody) b).direction = Direction.NORTH;
+//			else if ((b.getY() + vectY >= height && d == Direction.NORTH) || (b.getX() + vectX < 0 && d == Direction.SOUTH_WEST) || (b.getX() + vectX >= width && d == Direction.SOUTH_EAST))
+//				((AntBody) b).direction = Direction.SOUTH;
 		}
 		
 
@@ -241,9 +273,9 @@ public class Environment {
 	
 	public void addFoodToBase(AgentBody b){
 		if(((AntBody)b).faction == Faction.BlackAnt){
-			foodInBlackBase += 100;
+			foodInBlackBase += WorldConfig.ANT_FOOD_CARYING;
 		}else{
-			foodInRedBase += 100;
+			foodInRedBase += WorldConfig.ANT_FOOD_CARYING;
 		}
 		
 		cptAgents++;

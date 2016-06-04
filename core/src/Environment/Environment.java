@@ -9,6 +9,7 @@ import Agent.Agent;
 import Agent.AntAgent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
+import Tools.SimplexNoise;
 import UserInterface.Simulator;
 
 import Config.WorldConfig;
@@ -53,12 +54,26 @@ public class Environment {
 		redBaseY = rand.nextInt(height/4) + (3*width/4) - baseRadius;
 		
 		objects = new ArrayList[width][height];
+		
+		final float d1 = 50;
+		final float d2 = 75;
+		final float d3 = 150;
+		
 		for(int i = 0 ; i < width ; i++){
 			for(int j = 0 ; j < height ; j++){
 				objects[i][j] = new ArrayList<EnvironmentObject>();
 				
-				int test = rand.nextInt(100);
-				if(test <= percentageFood){
+				float v = (float)SimplexNoise.noise(i/d1, j/d1);
+				v += (float)SimplexNoise.noise(i/d2, j/d2);
+				v += (float)SimplexNoise.noise(i/d3, j/d3);
+				
+				float g = (float)SimplexNoise.noise(i, j) * 20;
+				g = g - (int)g;
+				
+				// uncomment for less fun
+				//v += g;
+				
+				if(v > 0.1f){
 					objects[i][j].add(new FoodPile(i, j, WorldConfig.MIN_SIZE_FOOD_STACK, WorldConfig.MAX_SIZE_FOOD_STACK));
 				}
 				

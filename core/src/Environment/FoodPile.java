@@ -7,11 +7,21 @@ import Config.WorldConfig;
 public class FoodPile extends StaticObject{
 	private int FoodAmount;
 	
-	public FoodPile(int x, int y, int min, int max){
-		Random rand = new Random();
-		FoodAmount = rand.nextInt(max - min) + min;
+	public FoodPile(int x, int y){
 		this.x = x;
 		this.y = y;
+	}
+	
+	public FoodPile(int x, int y, int min, int max){
+		this(x, y);
+		Random rand = new Random();
+		FoodAmount = rand.nextInt(max - min) + min;
+		
+	}
+	
+	public FoodPile(int x, int y, float percent){
+		this(x, y);
+		FoodAmount = (int)(WorldConfig.MAX_SIZE_FOOD_STACK * percent);
 	}
 	
 	public void TakeFood(){

@@ -27,6 +27,7 @@ import Environment.Faction;
 import Environment.PheromoneType;
 import Environment.PheromoneBody;
 import Environment.Position;
+import Tools.SimplexNoise;
 import sun.management.resources.agent;
 
 public class Simulator extends ApplicationAdapter implements EnvironmentListener {

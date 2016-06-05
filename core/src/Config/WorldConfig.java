@@ -59,8 +59,8 @@ public class WorldConfig {
 	/** smoothing the food generation. */
 	public static boolean SMOOTH_FOOD_GENERATION = true;
 
-	/** The food cover percent. */
-	public static float FOOD_COVER_PERCENT = 0.75f;
+	/** The food cover intensity. */
+	public static float FOOD_COVER_INTENSITY = 0.75f;
 	
 	/** The default food in an ant base. */
 	public static int DEFAULT_FOOD_IN_BASE = 1000;

@@ -277,6 +277,14 @@ public class Environment {
 		objects[b.getX()][b.getY()].remove(b);
 	}
 
+	public void clear() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				objects[i][j].clear();
+			}
+		}
+	}
+	
 	/**
 	 * Notify the listeners that a tick as ended.
 	 */

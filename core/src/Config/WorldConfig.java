@@ -62,6 +62,8 @@ public class WorldConfig {
 	/** The food cover intensity. */
 	public static float FOOD_COVER_INTENSITY = 0.75f;
 	
+	public static float FOOD_COVER_PERCENT = 0.75f; // PLEASE CORRECT THIS SHIT
+	
 	/** The default food in an ant base. */
 	public static int DEFAULT_FOOD_IN_BASE = 1000;
 	

@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -37,79 +38,38 @@ import Environment.PheromoneBody;
 import Environment.PheromoneType;
 import Tools.ColorUtils;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Simulator.
- */
 public class Simulator extends ApplicationAdapter implements EnvironmentListener {
 
-	/** The shape renderer. */
 	private ShapeRenderer shapeRenderer;
-	
-	/** The font drawer. */
 	private BitmapFont m_font;
-	
-	/** The batch renderer. */
 	private SpriteBatch m_batch;
-	
-	/** The camera. */
 	private OrthographicCamera camera;
 
-	/** The stage. */
 	private Stage stage;
-	
-	/** The skin. */
 	private Skin skin;
-	
-	/** The start button. */
 	private TextButton b_START;
-	
-	/** The pause button. */
 	private TextButton b_PAUSE;
-	
-	/** The reset button. */
 	private TextButton b_RESET;
-	
-	/** True if the simultion must be paused. */
 	private boolean SimulatorPaused = false;
+	private boolean EnvironmentInitialised = false;
 	
-	/** The Agents are initialised. */
-	private boolean AgentsInitialised = false;
 
-	/** The base radius. */
 	private int baseRadius = WorldConfig.BASE_RADIUS;
-	
-	/** The bases. */
 	private BasePosition bases[];
-	
-	/** The environment. */
+	private int percentageFood = 5;
 	private Environment environment;
-	
-	/** The agents. */
 	private ArrayList<Agent> agents;
-	
-	/** The lock used to synchronized the life of the agents and the renderer. */
 	private Object lockAgentList = new Object();
-	
-	/** The simulation thread. */
 	private SimulationThread simu;
 
-	/** The food piles. */
+	private int bbX, bbY, rbX, rbY;
 	private ArrayList<FoodStackPosition> foodPiles;
-	
-	/** The new agents. */
 	private ArrayList<Agent> newAgents;
 
-	/** The elapsed time. */
 	private long elapsedTime;
-	
-	/** The fps. */
 	private int fps;
-	
-	/** The number of frame this second. */
 	private int frameThisSec;
 
-	/** {@inheritDoc} */
 	@Override
 	public void create() {
 		/* Gdx Initializations */
@@ -117,9 +77,9 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		shapeRenderer = new ShapeRenderer();
 		m_font = new BitmapFont();
 		m_batch = new SpriteBatch();
-
-		// Agents Init
-		initializeAgents();
+		
+		//Environment Init
+		initializeEnvironment();	
 
 		/* Thread Init */
 		simu = new SimulationThread();
@@ -131,124 +91,150 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// Gdx.graphics.requestRendering();
 
 		// Buttons Init
-		Gdx.input.setInputProcessor(stage);
-		stage = new Stage(new ScreenViewport());
-		Gdx.input.setInputProcessor(stage);
+	     Gdx.input.setInputProcessor(stage);
+	     stage = new Stage(new ScreenViewport());
+	     Gdx.input.setInputProcessor(stage);
+	      
+	     skin = new Skin( Gdx.files.internal( "ui/defaultskin.json" ));
+	     b_START = new TextButton("Start", skin);
+	     b_PAUSE = new TextButton("Pause", skin);
+	     b_RESET = new TextButton("Reset", skin);
+		 stage.addActor(b_START);
+		 stage.addActor(b_PAUSE);
+		 stage.addActor(b_RESET);
+		 
+		 b_START.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            startSimulator();
+		        }
+		    });
+		 
+		 b_PAUSE.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            pauseSimulator();
+		        }
+		    });
+		 
+		 b_RESET.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            resetSimulator();
+		        }
+		    });
+		 
+//		 TextField text=new TextField("",skin);
+//		 stage.addActor(text);
 
-		skin = new Skin(Gdx.files.internal("ui/defaultskin.json"));
-		b_START = new TextButton("Start", skin);
-		b_PAUSE = new TextButton("Pause", skin);
-		b_RESET = new TextButton("Reset", skin);
-		stage.addActor(b_START);
-		stage.addActor(b_PAUSE);
-		stage.addActor(b_RESET);
-
-		b_START.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				start();
-			}
-		});
-
-		b_PAUSE.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				pauseSimulator();
-			}
-		});
-
-		b_RESET.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				reset();
-			}
-		});
-
-		// TextField text=new TextField("",skin);
-		// stage.addActor(text);
-
-		// CheckBox box=new CheckBox("done",skin);
-		// stage.addActor(box);
-
-		// FPS initialisation
-		elapsedTime = TimeUtils.millis();
-		fps = 0;
-		frameThisSec = 0;
-
+//		 CheckBox box=new CheckBox("done",skin);
+//		 stage.addActor(box);
+		 
+		 // FPS initialisation
+		 elapsedTime = TimeUtils.millis();
+		 fps = 0;
+		 frameThisSec = 0;
+			
 	}
-
-	/**
-	 * Initialize agents.
-	 */
-	public void initializeAgents() {
-
+	
+	public void initializeEnvironment(){
+		
 		/* Agents relative Initialization */
 		agents = new ArrayList<Agent>();
 		foodPiles = new ArrayList<FoodStackPosition>();
 		environment = new Environment(WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT, baseRadius);
 		newAgents = new ArrayList<Agent>();
-
+		
 		bases = environment.getBasePosition();
 
 		// Each race have some ants at the beginning
-		for (int n = 0; n < bases.length; ++n) {
+		for(int n=0; n < bases.length; ++n){
 			for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
-				agents.add(new AntAgent(
-						environment.createAntBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY())));
+				agents.add(new AntAgent(environment.createAntBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY())));
 			}
 		}
 
 		environment.addListener(this);
-
-		AgentsInitialised = true;
+		
+		EnvironmentInitialised = true;
 	}
-
-	/**
-	 * Delete agents.
-	 */
-	public void deleteAgents() {
-
-		Iterator<Agent> iter = agents.iterator();
-		while (iter.hasNext()) {
-			Agent a = iter.next();
-			a.body = null;
-			iter.remove();
+	
+	public void clearEnvironment(){
+		synchronized (lockAgentList) {
+			Iterator<Agent> iter = agents.iterator();
+			while (iter.hasNext()) {
+				Agent a = iter.next();
+				a.body = null; 
+			}
+			agents.clear();
+			
+			iter = newAgents.iterator();
+			while (iter.hasNext()) {
+				Agent a = iter.next();
+				a.body = null; 
+			}
+			newAgents.clear();
 		}
+		
 		foodPiles.clear();
-		// environment.
+		environment.clear();
+		
+		for (int i=0; i < bases.length; i++){
+			bases[i] = null;
+		}
+		
+		System.gc();
+		EnvironmentInitialised = false;
+	}
+	
+	public void resize (int width, int height) {
+		b_START.setPosition(width-170, 10);
+		b_PAUSE.setPosition(width-120, 10);
+		b_RESET.setPosition(width-60, 10);
+	    stage.getViewport().update(width, height, true);
 	}
 
-	/** {@inheritDoc} */
-	public void resize(int width, int height) {
-		b_START.setPosition(width - 170, 10);
-		b_PAUSE.setPosition(width - 120, 10);
-		b_RESET.setPosition(width - 60, 10);
-		stage.getViewport().update(width, height, true);
+	public void startSimulator(){
+		if (EnvironmentInitialised && SimulatorPaused){
+			SimulatorPaused = false;
+			environment.notifyListeners();
+		}else if (!EnvironmentInitialised){
+			initializeEnvironment();
+			simu.notify();
+//			simu = new SimulationThread();
+//			simu.start();
+		}	
 	}
-
-	/**
-	 * Start the simulation.
-	 */
-	public void start() {
-		SimulatorPaused = false;
-		environment.notifyListeners();
+	
+	public void pauseSimulator(){
+		 SimulatorPaused = true;
 	}
-
-	/**
-	 * Pause the simulation.
-	 */
-	public void pauseSimulator() {
-		SimulatorPaused = true;
+	
+	public void resetSimulator(){
+		if (EnvironmentInitialised){
+			System.out.println("1");
+//			simu.isRunning=false;
+//			System.out.println("2");
+//			try {
+//				simu.join();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+			try {
+				simu.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("3");
+			clearEnvironment();
+			System.out.println("4");
+			SimulatorPaused = false;
+			
+			System.out.println("5");
+		}
 	}
-
-	/**
-	 * Reset the simulation.
-	 */
-	public void reset() {
-		SimulatorPaused = true;
-	}
-
-	/** {@inheritDoc} */
+	
 	@Override
 	public void dispose() {
 		simu.isRunning = false;
@@ -265,7 +251,6 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		m_batch.dispose();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -341,11 +326,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		m_font.setColor(Color.YELLOW);
 		m_font.draw(m_batch, "" + fps, WorldConfig.WINDOW_WIDTH - 20, WorldConfig.WINDOW_HEIGHT);
 		// ant info
-		for (int k = 0; k < bases.length; ++k) {
+		for(int k=0; k < bases.length; ++k){
 			Color baseColor = bases[k].getColor();
 			m_font.setColor(baseColor.r, baseColor.g, baseColor.b, 1);
-			m_font.draw(m_batch, "Food : " + environment.GetFoodInBase(k) + "; Ants : " + environment.getNbAgent(k), 0,
-					WorldConfig.WINDOW_HEIGHT - k * 15);
+			m_font.draw(m_batch, "Food : " + environment.GetFoodInBase(k) + "; Ants : " + environment.getNbAgent(k), 0, WorldConfig.WINDOW_HEIGHT - k * 15);
 		}
 		m_batch.end();
 
@@ -353,19 +337,13 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 	}
 
-	/**
-	 * The SimulationThread.
-	 */
 	public class SimulationThread extends Thread {
-		
-		/** True if the simulation is running. */
 		public boolean isRunning = true;
 
-		/** {@inheritDoc} */
 		public void run() {
 			while (isRunning) {
-
-				if (SimulatorPaused) {
+				
+				if(SimulatorPaused){
 					try {
 						sleep(500);
 					} catch (InterruptedException e) {
@@ -399,9 +377,6 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			}
 		}
 
-		/**
-		 * Translate camera.
-		 */
 		public void translateCamera() {
 			Vector2 dirVect = new Vector2(0, 0);
 			if (Gdx.input.isKeyPressed(Keys.Z) || Gdx.input.isKeyPressed(Keys.UP)) {
@@ -419,7 +394,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			if (Gdx.input.isKeyPressed(Keys.P)) {
 				camera.zoom *= 0.99f;
 			}
-			if (Gdx.input.isKeyPressed(Keys.O)) {
+			if (Gdx.input.isKeyPressed(Keys.O)) { // TODO : Why the fuck "minus"
+													// doesn't work ?!
 				camera.zoom *= 1.01f;
 			}
 			if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
@@ -433,19 +409,17 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void environmentChanged(BasePosition basePos[], ArrayList<FoodStackPosition> foods,
 			ArrayList<Agent> newAgentList) {
 		// When the environment change we render the frame
-
+		
 		if (SimulatorPaused)
 			return;
 
 		foodPiles = foods;
 		newAgents = new ArrayList<Agent>(newAgentList);
 
-		// we count the number of update we can make in one second
 		frameThisSec += 1;
 		long elapsed = TimeUtils.timeSinceMillis(elapsedTime);
 		if (elapsed >= 1000) {

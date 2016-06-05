@@ -18,6 +18,7 @@ public class Environment {
 	private int cptAgents;
 
 	private int foodInBase[];
+	private int nbAgentPerBases[];
 
 	// Designing Bases;
 	private Circle bases[];
@@ -67,6 +68,8 @@ public class Environment {
 				n += 1;
 			}
 		}
+		
+		nbAgentPerBases = new int[WorldConfig.BASE_NUMBER];
 
 		objects = new ArrayList[width][height];
 
@@ -233,7 +236,7 @@ public class Environment {
 
 	public AgentBody createAntBody(Faction faction, int factionID, int basePosX, int basePosY) {
 		nbAgents++;
-		// Black Ants are created on the down left of the map
+		nbAgentPerBases[factionID] += 1;
 
 		Random rand = new Random();
 		double r = Math.sqrt(rand.nextDouble());
@@ -364,6 +367,10 @@ public class Environment {
 
 	public int GetFoodInBase(int n) {
 		return foodInBase[n];
+	}
+	
+	public int getNbAgent(int n){
+		return nbAgentPerBases[n];
 	}
 
 }

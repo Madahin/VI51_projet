@@ -285,7 +285,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		for(int k=0; k < bases.length; ++k){
 			Color baseColor = bases[k].getColor();
 			m_font.setColor(baseColor.r, baseColor.g, baseColor.b, 1);
-			m_font.draw(m_batch, "Food : " + environment.GetFoodInBase(k), 0, WorldConfig.WINDOW_HEIGHT - k * 15);
+			m_font.draw(m_batch, "Food : " + environment.GetFoodInBase(k) + "; Ants : " + environment.getNbAgent(k), 0, WorldConfig.WINDOW_HEIGHT - k * 15);
 		}
 		m_batch.end();
 
@@ -298,6 +298,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 		public void run() {
 			while (isRunning) {
+				
+				if(SimulatorPaused){
+					try {
+						sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					continue;
+				}
 
 				translateCamera();
 

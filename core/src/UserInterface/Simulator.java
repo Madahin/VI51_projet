@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import Agent.Agent;
@@ -56,6 +57,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private int bbX, bbY, rbX, rbY;
 	private ArrayList<FoodStackPosition> foodPiles;
 	private ArrayList<Agent> newAgents;
+	
+	private long elapsedTime;
+	private int  fps;
+	private int frameThisSec;
 
 	@Override
 	public void create() {
@@ -101,6 +106,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		 stage.addActor(b_START);
 		 stage.addActor(b_PAUSE);
 		 stage.addActor(b_RESET);
+		 
+		 // FPS initialisation
+		 elapsedTime = TimeUtils.millis();
+		 fps = 0;
+		 frameThisSec = 0;
 			
 	}
 	
@@ -197,11 +207,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		shapeRenderer.end();
 		Gdx.gl.glDisable(GL30.GL_BLEND);
 
+		// Render some text
 		m_batch.begin();
+		// FPS
 		m_font.setColor(Color.YELLOW);
-		m_font.draw(m_batch, "" + Gdx.graphics.getFramesPerSecond(), WorldConfig.WINDOW_WIDTH - 20, WorldConfig.WINDOW_HEIGHT);
+		m_font.draw(m_batch, "" + fps, WorldConfig.WINDOW_WIDTH - 20, WorldConfig.WINDOW_HEIGHT);
+		// Red ants info
 		m_font.setColor(Color.RED);
 		m_font.draw(m_batch, "Food in red base : " + environment.GetFoodInRedBase(), 0, WorldConfig.WINDOW_HEIGHT - 15);
+		// Black ants info
 		m_font.setColor(Color.BLACK);
 		m_font.draw(m_batch, "Food in black base : " + environment.GetFoodInBlackBase(), 0, WorldConfig.WINDOW_HEIGHT);
 		m_batch.end();
@@ -283,7 +297,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		rbY = redBaseY;
 		foodPiles = foods;
 		newAgents = new ArrayList<Agent>(newAgentList);
-
+		
+		frameThisSec += 1;
+		long elapsed = TimeUtils.timeSinceMillis(elapsedTime);
+		if(elapsed >= 1000){
+			fps = frameThisSec;
+			frameThisSec = 0;
+			elapsedTime = TimeUtils.millis();
+		}
+		
 		Gdx.graphics.requestRendering();
 	}
 }

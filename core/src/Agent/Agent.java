@@ -8,19 +8,21 @@ import Environment.Perceivable;
 
 public abstract class Agent {
 	public AgentBody body;
-	
+
 	public abstract void live();
-	
-	protected ArrayList<Perceivable> getPerception(){
+
+	protected ArrayList<Perceivable> getPerception() {
 		return body.getPerception();
 	}
-	
-	protected void move(Direction d){
+
+	protected void move(Direction d) {
 		body.move(d);
 	}
-	
-	protected void destroy(){
-		body.destroy();
-		body = null;
+
+	protected void destroy() {
+		if (body != null) {
+			body.destroy();
+			body = null;
+		}
 	}
 }

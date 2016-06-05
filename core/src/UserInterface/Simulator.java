@@ -26,6 +26,7 @@ import Agent.AntAgent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
 import Environment.AntBody;
+import Environment.BasePosition;
 import Environment.Environment;
 import Environment.EnvironmentListener;
 import Environment.Faction;
@@ -40,14 +41,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private BitmapFont m_font;
 	private SpriteBatch m_batch;
 	private OrthographicCamera camera;
-	
+
 	private Stage stage;
 	Skin skin;
 	TextButton b_START;
 	TextButton b_PAUSE;
 	TextButton b_RESET;
 
-	private int baseRadius = 30;
+	private int baseRadius = WorldConfig.BASE_RADIUS;
+	private BasePosition bases[];
 	private int percentageFood = 5;
 	private Environment environment;
 	private ArrayList<Agent> agents;
@@ -57,9 +59,9 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private int bbX, bbY, rbX, rbY;
 	private ArrayList<FoodStackPosition> foodPiles;
 	private ArrayList<Agent> newAgents;
-	
+
 	private long elapsedTime;
-	private int  fps;
+	private int fps;
 	private int frameThisSec;
 
 	@Override
@@ -75,11 +77,14 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		foodPiles = new ArrayList<FoodStackPosition>();
 		environment = new Environment(WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT, baseRadius, percentageFood);
 		newAgents = new ArrayList<Agent>();
+		
+		bases = environment.getBasePosition();
 
-		// Each race have 3000 ants at the beginning
-		for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
-			agents.add(new AntAgent(environment.createBlackAntBody()));
-			agents.add(new AntAgent(environment.createRedAntBody()));
+		// Each race have some ants at the beginning
+		for(int n=0; n < bases.length; ++n){
+			for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
+				agents.add(new AntAgent(environment.createAntBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY())));
+			}
 		}
 
 		environment.addListener(this);
@@ -92,33 +97,32 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// want to call the render as we wish
 		Gdx.graphics.setContinuousRendering(false);
 		// Gdx.graphics.requestRendering();
-		
 
 		// Buttons Init
-	     Gdx.input.setInputProcessor(stage);
-	     stage = new Stage(new ScreenViewport());
-	     Gdx.input.setInputProcessor(stage);
-	      
-	     skin = new Skin( Gdx.files.internal( "ui/defaultskin.json" ));
-	     b_START = new TextButton("Start", skin);
-	     b_PAUSE = new TextButton("Pause", skin);
-	     b_RESET = new TextButton("Reset", skin);
-		 stage.addActor(b_START);
-		 stage.addActor(b_PAUSE);
-		 stage.addActor(b_RESET);
-		 
-		 // FPS initialisation
-		 elapsedTime = TimeUtils.millis();
-		 fps = 0;
-		 frameThisSec = 0;
-			
+		Gdx.input.setInputProcessor(stage);
+		stage = new Stage(new ScreenViewport());
+		Gdx.input.setInputProcessor(stage);
+
+		skin = new Skin(Gdx.files.internal("ui/defaultskin.json"));
+		b_START = new TextButton("Start", skin);
+		b_PAUSE = new TextButton("Pause", skin);
+		b_RESET = new TextButton("Reset", skin);
+		stage.addActor(b_START);
+		stage.addActor(b_PAUSE);
+		stage.addActor(b_RESET);
+
+		// FPS initialisation
+		elapsedTime = TimeUtils.millis();
+		fps = 0;
+		frameThisSec = 0;
+
 	}
-	
-	public void resize (int width, int height) {
-		b_START.setPosition(width-170, 10);
-		b_PAUSE.setPosition(width-120, 10);
-		b_RESET.setPosition(width-60, 10);
-	    stage.getViewport().update(width, height, true);
+
+	public void resize(int width, int height) {
+		b_START.setPosition(width - 170, 10);
+		b_PAUSE.setPosition(width - 120, 10);
+		b_RESET.setPosition(width - 60, 10);
+		stage.getViewport().update(width, height, true);
 	}
 
 	@Override
@@ -184,7 +188,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 				} else if (agent instanceof AntAgent) {
 
-					if (((AntBody) agent.body).faction == Faction.BlackAnt) {
+					if (((AntBody) agent.body).getFaction() == Faction.BlackAnt) {
 						shapeRenderer.setColor(Color.BLACK);
 					} else {
 						shapeRenderer.setColor(Color.RED);
@@ -196,13 +200,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			}
 		}
 
-		// Render the blackBase
-		shapeRenderer.setColor(104.0f / 255.0f, 114.0f / 255.0f, 117.0f / 255.0f, 128 / 255.0f);
-		shapeRenderer.circle(bbX - WorldConfig.WORLD_WIDTH / 2, bbY - WorldConfig.WORLD_HEIGHT / 2, baseRadius);
-
-		// Render the Red Base
-		shapeRenderer.setColor(1, 105.0f / 255.0f, 105.0f / 255.0f, 128 / 255.0f);
-		shapeRenderer.circle(rbX - WorldConfig.WORLD_WIDTH / 2, rbY - WorldConfig.WORLD_HEIGHT / 2, baseRadius);
+		// Render the bases
+		for (int i = 0; i < bases.length; ++i) {
+			shapeRenderer.setColor(bases[i].getColor());
+			shapeRenderer.circle(bases[i].getX() - WorldConfig.WORLD_WIDTH / 2,
+					bases[i].getY() - WorldConfig.WORLD_HEIGHT / 2, baseRadius);
+		}
 
 		shapeRenderer.end();
 		Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -212,14 +215,14 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// FPS
 		m_font.setColor(Color.YELLOW);
 		m_font.draw(m_batch, "" + fps, WorldConfig.WINDOW_WIDTH - 20, WorldConfig.WINDOW_HEIGHT);
-		// Red ants info
-		m_font.setColor(Color.RED);
-		m_font.draw(m_batch, "Food in red base : " + environment.GetFoodInRedBase(), 0, WorldConfig.WINDOW_HEIGHT - 15);
-		// Black ants info
-		m_font.setColor(Color.BLACK);
-		m_font.draw(m_batch, "Food in black base : " + environment.GetFoodInBlackBase(), 0, WorldConfig.WINDOW_HEIGHT);
+		// ant info
+		for(int k=0; k < bases.length; ++k){
+			Color baseColor = bases[k].getColor();
+			m_font.setColor(baseColor.r, baseColor.g, baseColor.b, 1);
+			m_font.draw(m_batch, "Food : " + environment.GetFoodInBase(k), 0, WorldConfig.WINDOW_HEIGHT - k * 15);
+		}
 		m_batch.end();
-		
+
 		stage.draw();
 
 	}
@@ -276,10 +279,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 													// doesn't work ?!
 				camera.zoom *= 1.01f;
 			}
-			if(Gdx.input.isKeyPressed(Keys.ESCAPE)){
+			if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
 				Gdx.app.exit();
 			}
-			
+
 			dirVect.nor();
 			dirVect.scl(5.0f);
 			camera.translate(dirVect);
@@ -288,24 +291,20 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	}
 
 	@Override
-	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY,
-			ArrayList<FoodStackPosition> foods, ArrayList<Agent> newAgentList) {
+	public void environmentChanged(BasePosition basePos[], ArrayList<FoodStackPosition> foods,
+			ArrayList<Agent> newAgentList) {
 		// When the environment change we render the frame
-		bbX = blackBaseX;
-		bbY = blackBaseY;
-		rbX = redBaseX;
-		rbY = redBaseY;
 		foodPiles = foods;
 		newAgents = new ArrayList<Agent>(newAgentList);
-		
+
 		frameThisSec += 1;
 		long elapsed = TimeUtils.timeSinceMillis(elapsedTime);
-		if(elapsed >= 1000){
+		if (elapsed >= 1000) {
 			fps = frameThisSec;
 			frameThisSec = 0;
 			elapsedTime = TimeUtils.millis();
 		}
-		
+
 		Gdx.graphics.requestRendering();
 	}
 }

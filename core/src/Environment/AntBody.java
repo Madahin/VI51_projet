@@ -1,15 +1,20 @@
 package Environment;
 
 public class AntBody extends AgentBody{
-	public Faction faction;
-	public Direction direction;
+	private final Faction faction;
+	private final int factionID;
+	private Direction direction;
 	
-	public AntBody(Faction f,Direction d, int initX, int initY, Environment env){
+	private int foodCaried;
+	
+	public AntBody(Faction f, int fID, Direction d, int initX, int initY, Environment env){
 		faction = f;
+		factionID = fID;
 		direction = d;
 		x = initX;
 		y = initY;
 		environmentReference = env;
+		foodCaried = 0;
 	}
 
 	public void createPheromone(PheromoneType pt){
@@ -29,5 +34,35 @@ public class AntBody extends AgentBody{
 		// TODO Auto-generated method stub
 		this.x = x;
 		this.y = y;
+	}
+	
+	public int getFoodCaried(){
+		return foodCaried;
+	}
+	
+	public int popFoodCaried(){
+		int tmp = foodCaried;
+		foodCaried = 0;
+		return tmp;
+	}
+	
+	public void setFoodCarried(int n){
+		foodCaried = n;
+	}
+	
+	public Faction getFaction(){
+		return faction;
+	}
+	
+	public int getFactionID(){
+		return factionID;
+	}
+	
+	public Direction getDirection(){
+		return direction;
+	}
+	
+	public void setDirection(Direction dir){
+		direction = dir;
 	}
 }

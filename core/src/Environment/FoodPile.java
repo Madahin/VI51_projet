@@ -24,12 +24,17 @@ public class FoodPile extends StaticObject{
 		FoodAmount = (int)(WorldConfig.MAX_SIZE_FOOD_STACK * percent);
 	}
 	
-	public void TakeFood(){
+	public int TakeFood(){
+		int foodTaken = 0;
 		if(FoodAmount > WorldConfig.ANT_FOOD_CARYING){
 			FoodAmount -= WorldConfig.ANT_FOOD_CARYING;
+			foodTaken = WorldConfig.ANT_FOOD_CARYING;
 		}else{
+			foodTaken = FoodAmount;
 			FoodAmount = 0;
 		}
+		
+		return foodTaken;
 	}
 	
 	public boolean IsEmpty(){

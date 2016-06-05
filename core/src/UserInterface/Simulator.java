@@ -15,9 +15,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -42,10 +45,13 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private OrthographicCamera camera;
 	
 	private Stage stage;
-	Skin skin;
-	TextButton b_START;
-	TextButton b_PAUSE;
-	TextButton b_RESET;
+	private Skin skin;
+	private TextButton b_START;
+	private TextButton b_PAUSE;
+	private TextButton b_RESET;
+	private boolean SimulatorPaused = false;
+	private boolean AgentsInitialised = false;
+	
 
 	private int baseRadius = 30;
 	private int percentageFood = 5;
@@ -70,19 +76,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		m_font = new BitmapFont();
 		m_batch = new SpriteBatch();
 
-		/* Agents relative Initialization */
-		agents = new ArrayList<Agent>();
-		foodPiles = new ArrayList<FoodStackPosition>();
-		environment = new Environment(WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT, baseRadius, percentageFood);
-		newAgents = new ArrayList<Agent>();
-
-		// Each race have 3000 ants at the beginning
-		for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
-			agents.add(new AntAgent(environment.createBlackAntBody()));
-			agents.add(new AntAgent(environment.createRedAntBody()));
-		}
-
-		environment.addListener(this);
+		initializeAgents();
+		
 
 		/* Thread Init */
 		simu = new SimulationThread();
@@ -107,11 +102,61 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		 stage.addActor(b_PAUSE);
 		 stage.addActor(b_RESET);
 		 
+		 b_START.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            start();
+		        }
+		    });
+		 
+		 b_PAUSE.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            pause();
+		        }
+		    });
+		 
+		 b_RESET.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            reset();
+		        }
+		    });
+		 
+//		 TextField text=new TextField("",skin);
+//		 stage.addActor(text);
+
+//		 CheckBox box=new CheckBox("done",skin);
+//		 stage.addActor(box);
+		 
 		 // FPS initialisation
 		 elapsedTime = TimeUtils.millis();
 		 fps = 0;
 		 frameThisSec = 0;
 			
+	}
+	
+	public void initializeAgents(){
+		
+		/* Agents relative Initialization */
+		agents = new ArrayList<Agent>();
+		foodPiles = new ArrayList<FoodStackPosition>();
+		environment = new Environment(WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT, baseRadius, percentageFood);
+		newAgents = new ArrayList<Agent>();
+
+		// Each race have 3000 ants at the beginning
+		for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
+			agents.add(new AntAgent(environment.createBlackAntBody()));
+			agents.add(new AntAgent(environment.createRedAntBody()));
+		}
+
+		environment.addListener(this);
+		
+		AgentsInitialised = true;
+	}
+	
+	public void deleteAgents(){
+		
 	}
 	
 	public void resize (int width, int height) {
@@ -121,6 +166,19 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	    stage.getViewport().update(width, height, true);
 	}
 
+	public void start(){
+		SimulatorPaused = false;
+		environment.notifyListeners();
+	}
+	
+	public void pause(){
+		 SimulatorPaused = true;
+	}
+	
+	public void reset(){
+		 SimulatorPaused = true;
+	}
+	
 	@Override
 	public void dispose() {
 		simu.isRunning = false;
@@ -291,6 +349,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY,
 			ArrayList<FoodStackPosition> foods, ArrayList<Agent> newAgentList) {
 		// When the environment change we render the frame
+		
+		if (SimulatorPaused)
+			return;
+		
 		bbX = blackBaseX;
 		bbY = blackBaseY;
 		rbX = redBaseX;

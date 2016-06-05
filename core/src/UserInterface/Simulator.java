@@ -160,7 +160,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	}
 	
 	public void deleteAgents(){
-		
+
+		Iterator<Agent> iter = agents.iterator();
+		while (iter.hasNext()) {
+			Agent a = iter.next();
+			a.body = null; 
+			iter.remove();
+		}
+		foodPiles.clear();
+		//environment.
 	}
 	
 	public void resize (int width, int height) {

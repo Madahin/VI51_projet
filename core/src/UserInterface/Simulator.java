@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
-
 import Agent.Agent;
 import Agent.AntAgent;
 import Agent.PheromoneAgent;
@@ -166,11 +165,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 		m_batch.begin();
 		m_font.setColor(Color.YELLOW);
-		m_font.draw(m_batch, "" + Gdx.graphics.getFramesPerSecond(), 620, 480);
+		m_font.draw(m_batch, "" + Gdx.graphics.getFramesPerSecond(), WorldConfig.WINDOW_WIDTH - 20, WorldConfig.WINDOW_HEIGHT);
 		m_font.setColor(Color.RED);
-		m_font.draw(m_batch, "Food in red base : " + environment.GetFoodInRedBase(), 0, 465);
+		m_font.draw(m_batch, "Food in red base : " + environment.GetFoodInRedBase(), 0, WorldConfig.WINDOW_HEIGHT - 15);
 		m_font.setColor(Color.BLACK);
-		m_font.draw(m_batch, "Food in black base : " + environment.GetFoodInBlackBase(), 0, 480);
+		m_font.draw(m_batch, "Food in black base : " + environment.GetFoodInBlackBase(), 0, WorldConfig.WINDOW_HEIGHT);
 		m_batch.end();
 
 	}
@@ -227,6 +226,10 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 													// doesn't work ?!
 				camera.zoom *= 1.01f;
 			}
+			if(Gdx.input.isKeyPressed(Keys.ESCAPE)){
+				Gdx.app.exit();
+			}
+			
 			dirVect.nor();
 			dirVect.scl(5.0f);
 			camera.translate(dirVect);

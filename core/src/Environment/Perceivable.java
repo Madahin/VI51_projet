@@ -14,6 +14,10 @@ public class Perceivable {
 		x = b.getX();
 		y = b.getY();
 		type = b.getClass();
+		
+		if(b instanceof BaseBody){
+			factionID = ((BaseBody) b).getFactionID();
+		}
 
 		if (b instanceof AntBody) {
 			faction = ((AntBody) b).getFaction();

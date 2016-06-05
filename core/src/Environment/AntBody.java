@@ -1,8 +1,8 @@
 package Environment;
 
 public class AntBody extends AgentBody{
-	public Faction faction;
-	public Direction direction;
+	private final Faction faction;
+	private Direction direction;
 	
 	public AntBody(Faction f,Direction d, int initX, int initY, Environment env){
 		faction = f;
@@ -29,5 +29,17 @@ public class AntBody extends AgentBody{
 		// TODO Auto-generated method stub
 		this.x = x;
 		this.y = y;
+	}
+	
+	public Faction getFaction(){
+		return faction;
+	}
+	
+	public Direction getDirection(){
+		return direction;
+	}
+	
+	public void setDirection(Direction dir){
+		direction = dir;
 	}
 }

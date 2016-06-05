@@ -46,6 +46,10 @@ public class WorldConfig {
 	public static float FOOD_COVER_PERCENT = 0.5f;
 	
 	public static int DEFAULT_FOOD_IN_BASE = 1000;
+	
+	public static int BASE_NUMBER = 5;
+	
+	public static int BASE_RADIUS = 30;
 
 	public static void Load(String filename) {
 		

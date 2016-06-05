@@ -26,6 +26,7 @@ import Agent.AntAgent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
 import Environment.AntBody;
+import Environment.BasePosition;
 import Environment.Environment;
 import Environment.EnvironmentListener;
 import Environment.Faction;
@@ -47,7 +48,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	TextButton b_PAUSE;
 	TextButton b_RESET;
 
-	private int baseRadius = 30;
+	private int baseRadius = WorldConfig.BASE_RADIUS;
+	private BasePosition bases[];
 	private int percentageFood = 5;
 	private Environment environment;
 	private ArrayList<Agent> agents;
@@ -184,7 +186,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 				} else if (agent instanceof AntAgent) {
 
-					if (((AntBody) agent.body).faction == Faction.BlackAnt) {
+					if (((AntBody) agent.body).getFaction() == Faction.BlackAnt) {
 						shapeRenderer.setColor(Color.BLACK);
 					} else {
 						shapeRenderer.setColor(Color.RED);
@@ -203,6 +205,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// Render the Red Base
 		shapeRenderer.setColor(1, 105.0f / 255.0f, 105.0f / 255.0f, 128 / 255.0f);
 		shapeRenderer.circle(rbX - WorldConfig.WORLD_WIDTH / 2, rbY - WorldConfig.WORLD_HEIGHT / 2, baseRadius);
+		
+		// Render the bases
+		for(int i=0; bases != null && i < bases.length; ++i){
+			shapeRenderer.setColor(bases[i].getColor());
+			shapeRenderer.circle(bases[i].getX() - WorldConfig.WORLD_WIDTH / 2, bases[i].getY() - WorldConfig.WORLD_HEIGHT / 2, baseRadius);
+		}
 
 		shapeRenderer.end();
 		Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -288,7 +296,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	}
 
 	@Override
-	public void environmentChanged(int blackBaseX, int blackBaseY, int redBaseX, int redBaseY,
+	public void environmentChanged(BasePosition basePos[], int blackBaseX, int blackBaseY, int redBaseX, int redBaseY,
 			ArrayList<FoodStackPosition> foods, ArrayList<Agent> newAgentList) {
 		// When the environment change we render the frame
 		bbX = blackBaseX;
@@ -297,6 +305,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		rbY = redBaseY;
 		foodPiles = foods;
 		newAgents = new ArrayList<Agent>(newAgentList);
+		bases = basePos;
 		
 		frameThisSec += 1;
 		long elapsed = TimeUtils.timeSinceMillis(elapsedTime);

@@ -3,6 +3,9 @@ package Environment;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+
 import Agent.Agent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
@@ -18,9 +21,11 @@ public class Environment {
 	private int foodInRedBase = 1000;
 
 	// Designing Bases;
+	private Circle bases[];
 	private int blackBaseX, blackBaseY;
 	private int redBaseX, redBaseY;
 	private int baseRadius;
+	private BasePosition basePositions[];
 
 	private ArrayList<EnvironmentListener> listeners;
 	private ArrayList<EnvironmentObject>[][] objects;
@@ -39,14 +44,40 @@ public class Environment {
 
 		// Create Bases
 		Random rand = new Random();
+		
+		bases = new Circle[WorldConfig.BASE_NUMBER];
+		basePositions = new BasePosition[WorldConfig.BASE_NUMBER];
+		
 		blackBaseX = rand.nextInt(width / 4) + baseRadius;
 		blackBaseY = rand.nextInt(height / 4) + baseRadius;
 
 		redBaseX = rand.nextInt(width / 4) + (3 * width / 4) - baseRadius;
 		redBaseY = rand.nextInt(height / 4) + (3 * width / 4) - baseRadius;
+		
+		int n=0;
+		while(n < bases.length){
+			Circle c = new Circle();
+			c.radius = baseRadius;
+			c.x = rand.nextInt(width - 2*radius) + radius;
+			c.y = rand.nextInt(height - 2*radius) + radius;
+			
+			boolean overlap = false;
+			for(int j=0; !overlap && j < n; ++j){
+				if(j != n){
+					overlap = Intersector.overlaps(c, bases[j]);
+				}
+			}
+			
+			if(!overlap){
+				bases[n] = c; 
+				basePositions[n] = new BasePosition(c);
+				n += 1;
+			}
+		}		
 
 		objects = new ArrayList[width][height];
 
+		// Simplex noise factor
 		final float d1 = 50;
 		final float d2 = 75;
 		final float d3 = 150;
@@ -141,16 +172,16 @@ public class Environment {
 
 			if ((b.getX() + vectX < 0 && (d == Direction.WEST) || d == Direction.NORTH_WEST
 					|| d == Direction.SOUTH_WEST))
-				((AntBody) b).direction = Direction.EAST;
+				((AntBody) b).setDirection(Direction.EAST);
 			else if (b.getX() + vectX >= width
 					&& (d == Direction.EAST || d == Direction.NORTH_EAST || d == Direction.SOUTH_EAST))
-				((AntBody) b).direction = Direction.WEST;
+				((AntBody) b).setDirection(Direction.WEST);
 			else if (b.getY() + vectY < 0
 					&& (d == Direction.SOUTH || d == Direction.SOUTH_EAST || d == Direction.SOUTH_WEST))
-				((AntBody) b).direction = Direction.NORTH;
+				((AntBody) b).setDirection(Direction.NORTH);
 			else if (b.getY() + vectY >= height
 					&& (d == Direction.NORTH || d == Direction.NORTH_EAST || d == Direction.NORTH_WEST))
-				((AntBody) b).direction = Direction.SOUTH;
+				((AntBody) b).setDirection(Direction.SOUTH);
 
 			// Alternative 2
 
@@ -207,7 +238,7 @@ public class Environment {
 		}
 
 		for (EnvironmentListener el : listeners)
-			el.environmentChanged(blackBaseX, blackBaseY, redBaseX, redBaseY, foods, newAgents);
+			el.environmentChanged(basePositions, blackBaseX, blackBaseY, redBaseX, redBaseY, foods, newAgents);
 
 		newAgents.clear();
 	}
@@ -246,7 +277,7 @@ public class Environment {
 		boolean needToCreatePheromone = true;
 		for (EnvironmentObject eo : objects[ab.getX()][ab.getY()]) {
 			if (eo instanceof PheromoneBody) {
-				if (((PheromoneBody) eo).faction == ((AntBody) ab).faction
+				if (((PheromoneBody) eo).faction == ((AntBody) ab).getFaction()
 						&& ((PheromoneBody) eo).pheromoneType == pt) {
 
 					((PheromoneBody) eo).life += WorldConfig.PHEROMONE_INITIAL_LIFE;
@@ -257,7 +288,7 @@ public class Environment {
 		}
 
 		if (needToCreatePheromone) {
-			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).faction, pt, this);
+			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).getFaction(), pt, this);
 			newAgents.add(new PheromoneAgent(pb));
 			objects[ab.getX()][ab.getY()].add(pb);
 		}
@@ -294,7 +325,7 @@ public class Environment {
 	}
 
 	public void addFoodToBase(AgentBody b) {
-		if (((AntBody) b).faction == Faction.BlackAnt) {
+		if (((AntBody) b).getFaction() == Faction.BlackAnt) {
 			foodInBlackBase += WorldConfig.ANT_FOOD_CARYING;
 		} else {
 			foodInRedBase += WorldConfig.ANT_FOOD_CARYING;

@@ -15,7 +15,7 @@ public class Perceivable {
 		type = b.getClass();
 
 		if (b instanceof AntBody) {
-			faction = ((AntBody) b).faction;
+			faction = ((AntBody) b).getFaction();
 		}
 		if (b instanceof PheromoneBody) {
 			faction = ((PheromoneBody) b).faction;

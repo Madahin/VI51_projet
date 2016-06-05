@@ -66,10 +66,10 @@ public class AntAgent extends Agent {
 				if (p.getType().equals(FoodPile.class)) { // food
 					
 					onFood = p;
-				} else if (p.getType().equals(BlackBase.class) && ((AntBody) body).faction.equals(Faction.BlackAnt) ) { // Black base
+				} else if (p.getType().equals(BlackBase.class) && ((AntBody) body).getFaction().equals(Faction.BlackAnt) ) { // Black base
 					
 					onBase = p;
-				} else if (p.getType().equals(RedBase.class) && ((AntBody) body).faction.equals(Faction.RedAnt) ) { // Red base
+				} else if (p.getType().equals(RedBase.class) && ((AntBody) body).getFaction().equals(Faction.RedAnt) ) { // Red base
 					
 					onBase = p;
 				}
@@ -77,7 +77,7 @@ public class AntAgent extends Agent {
 			} else { // means other cases so we put those element in the lists
 				if (p.getType().equals(FoodPile.class)) { // Food
 					foods.add(p);
-				} else if (p.getType().equals(PheromoneBody.class) && p.getFaction() == ((AntBody) body).faction) { // Pheromone
+				} else if (p.getType().equals(PheromoneBody.class) && p.getFaction() == ((AntBody) body).getFaction()) { // Pheromone
 																													// of
 																													// faction
 					if (p.getPheromoneType() == PheromoneType.Base) { // Base
@@ -86,10 +86,10 @@ public class AntAgent extends Agent {
 					} else { // pheromone type == Food
 						pheromonesFood.add(p);
 					}
-				} else if (p.getType().equals(BlackBase.class) && ((AntBody) body).faction == Faction.BlackAnt) { // Black
+				} else if (p.getType().equals(BlackBase.class) && ((AntBody) body).getFaction() == Faction.BlackAnt) { // Black
 																													// Base
 					bases.add(p);
-				} else if (p.getType().equals(RedBase.class) && ((AntBody) body).faction == Faction.RedAnt) { // Red
+				} else if (p.getType().equals(RedBase.class) && ((AntBody) body).getFaction() == Faction.RedAnt) { // Red
 																												// Base
 					bases.add(p);
 				}
@@ -127,7 +127,7 @@ public class AntAgent extends Agent {
 			} else { // if there is none to do
 						// we wander
 
-				wander(((AntBody) body).direction);
+				wander(((AntBody) body).getDirection());
 			}
 			// we produce a Food pheromone
 			createPheromone(PheromoneType.Food);
@@ -156,7 +156,7 @@ public class AntAgent extends Agent {
 				//}
 			
 			} else { // we don't know what to do so we wander
-				wander(((AntBody) body).direction);
+				wander(((AntBody) body).getDirection());
 			}
 			// We produce a Base Pheromone
 			createPheromone(PheromoneType.Base);

@@ -254,6 +254,47 @@ public class Environment {
 		// We want to know if there is a pheromone of the same faction and type
 		// on this
 		// place
+		
+		// Spread of the pheromone
+		int halfValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 2;
+		int spreadValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 16;
+		
+		for(int i = ab.getX() - 1 ; i < ab.getX() + 1 ; i ++){
+			for(int j = ab.getY() - 1 ; j < ab.getY() + 1 ; j ++){
+				
+				if (i >= 0 && i < width && j >= 0 && j < height){
+					boolean needToCreatePheromone = true;
+					for (EnvironmentObject eo : objects[i][j]) {
+						if (eo instanceof PheromoneBody) {
+							if (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID()
+									&& ((PheromoneBody) eo).pheromoneType == pt) {
+								if(i == ab.getX() && j == ab.getY()){
+									((PheromoneBody) eo).life += halfValue;
+								}else{
+									((PheromoneBody) eo).life += spreadValue;
+								}
+								
+								needToCreatePheromone = false;
+	
+							}
+						}
+					}
+	
+					if (needToCreatePheromone) {
+						PheromoneBody pb;
+						if(i == ab.getX() && j == ab.getY()){
+							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, halfValue);
+						}else{
+							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, spreadValue);
+						}
+						
+						newAgents.add(new PheromoneAgent(pb));
+						objects[i][j].add(pb);
+					}
+				}
+				
+			}
+		}
 		boolean needToCreatePheromone = true;
 		for (EnvironmentObject eo : objects[ab.getX()][ab.getY()]) {
 			if (eo instanceof PheromoneBody) {
@@ -269,7 +310,7 @@ public class Environment {
 
 		if (needToCreatePheromone) {
 			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).getFaction(),
-					((AntBody) ab).getFactionID(), pt, this);
+					((AntBody) ab).getFactionID(), pt, this, halfValue);
 			newAgents.add(new PheromoneAgent(pb));
 			objects[ab.getX()][ab.getY()].add(pb);
 		}

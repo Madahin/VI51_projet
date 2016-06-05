@@ -8,7 +8,7 @@ public class PheromoneBody extends AgentBody {
 	public PheromoneType pheromoneType;
 	public int life; 
 	
-	public PheromoneBody(int x, int y, Faction f, int fID, PheromoneType pt, Environment env) {
+	public PheromoneBody(int x, int y, Faction f, int fID, PheromoneType pt, Environment env, int _life) {
 		// TODO Auto-generated constructor stub
 		environmentReference = env;
 		this.x = x;
@@ -16,7 +16,7 @@ public class PheromoneBody extends AgentBody {
 		faction = f;
 		factionID = fID;
 		pheromoneType = pt;
-		life = WorldConfig.PHEROMONE_INITIAL_LIFE;
+		life = _life;
 	}
 	
 	@Override

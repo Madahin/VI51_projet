@@ -15,6 +15,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import Agent.Agent;
 import Agent.AntAgent;
@@ -25,12 +29,9 @@ import Environment.Environment;
 import Environment.EnvironmentListener;
 import Environment.Faction;
 import Environment.FoodStackPosition;
-import Environment.PheromoneType;
 import Environment.PheromoneBody;
-import Environment.Position;
+import Environment.PheromoneType;
 import Tools.ColorUtils;
-import Tools.SimplexNoise;
-import sun.management.resources.agent;
 
 public class Simulator extends ApplicationAdapter implements EnvironmentListener {
 
@@ -38,6 +39,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private BitmapFont m_font;
 	private SpriteBatch m_batch;
 	private OrthographicCamera camera;
+	
+	private Stage stage;
+	Skin skin;
+	TextButton b_START;
+	TextButton b_PAUSE;
+	TextButton b_RESET;
 
 	private int baseRadius = 30;
 	private int percentageFood = 5;
@@ -80,11 +87,34 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// want to call the render as we wish
 		Gdx.graphics.setContinuousRendering(false);
 		// Gdx.graphics.requestRendering();
+		
+
+		// Buttons Init
+	     Gdx.input.setInputProcessor(stage);
+	     stage = new Stage(new ScreenViewport());
+	     Gdx.input.setInputProcessor(stage);
+	      
+	     skin = new Skin( Gdx.files.internal( "ui/defaultskin.json" ));
+	     b_START = new TextButton("Start", skin);
+	     b_PAUSE = new TextButton("Pause", skin);
+	     b_RESET = new TextButton("Reset", skin);
+		 stage.addActor(b_START);
+		 stage.addActor(b_PAUSE);
+		 stage.addActor(b_RESET);
+			
+	}
+	
+	public void resize (int width, int height) {
+		b_START.setPosition(width-170, 10);
+		b_PAUSE.setPosition(width-120, 10);
+		b_RESET.setPosition(width-60, 10);
+	    stage.getViewport().update(width, height, true);
 	}
 
 	@Override
 	public void dispose() {
 		simu.isRunning = false;
+		stage.dispose();
 
 		try {
 			simu.join();
@@ -168,6 +198,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		m_font.setColor(Color.BLACK);
 		m_font.draw(m_batch, "Food in black base : " + environment.GetFoodInBlackBase(), 0, 465);
 		m_batch.end();
+		
+		stage.draw();
 
 	}
 

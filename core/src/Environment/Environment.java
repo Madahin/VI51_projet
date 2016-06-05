@@ -11,26 +11,57 @@ import Agent.PheromoneAgent;
 import Config.WorldConfig;
 import Tools.SimplexNoise;
 
+/**
+ * The Class Environment.
+ */
 public class Environment {
+	
+	/** The width of the world. */
 	private int width;
+	
+	/** The height of the world. */
 	private int height;
+	
+	/** The nb agents in the environment. */
 	private int nbAgents;
+	
+	/** the counter of agent who lived this tick. */
 	private int cptAgents;
 
+	/** The stock of food in each base. */
 	private int foodInBase[];
+	
+	/** The number of agent per bases. */
 	private int nbAgentPerBases[];
 
-	// Designing Bases;
+	/** The graphical representation of each bases. */
 	private Circle bases[];
+	
+	/** The bases radius. */
 	private int baseRadius;
+	
+	/** The bases positions. */
 	private BasePosition basePositions[];
 
+	/** The listeners. */
 	private ArrayList<EnvironmentListener> listeners;
+	
+	/** The objects in each cell of the world. */
 	private ArrayList<EnvironmentObject>[][] objects;
+	
+	// TODO : a vérifier je suis pas sur de ce que je raconte
+	/** The list of newly created agents. */
 	private ArrayList<Agent> newAgents;
 
+	/**
+	 * Instantiates a new environment.
+	 *
+	 * @param w the width of the world
+	 * @param h the height of the world
+	 * @param radius the radius of an ant base
+	 */
 	@SuppressWarnings("unchecked")
-	public Environment(int w, int h, int radius, int _percentageFood) {
+	public Environment(int w, int h, int radius) {
 		width = w;
 		height = h;
 		nbAgents = 0;
@@ -49,11 +80,13 @@ public class Environment {
 
 		int n = 0;
 		while (n < bases.length) {
+			// We place a circle in a random place
 			Circle c = new Circle();
 			c.radius = baseRadius;
 			c.x = rand.nextInt(width - 2 * radius) + radius;
 			c.y = rand.nextInt(height - 2 * radius) + radius;
 
+			// We check if the circle overlap with another circle
 			boolean overlap = false;
 			for (int j = 0; !overlap && j < n; ++j) {
 				if (j != n) {
@@ -61,6 +94,7 @@ public class Environment {
 				}
 			}
 
+			// If the circle didn't overlap, it's a new base
 			if (!overlap) {
 				bases[n] = c;
 				basePositions[n] = new BasePosition(c);
@@ -74,6 +108,7 @@ public class Environment {
 		objects = new ArrayList[width][height];
 
 		// Simplex noise factor
+		// Magically  chosen to look good
 		final float d1 = 50;
 		final float d2 = 75;
 		final float d3 = 150;
@@ -82,21 +117,27 @@ public class Environment {
 			for (int j = 0; j < height; j++) {
 				objects[i][j] = new ArrayList<EnvironmentObject>();
 
-				float v = (float) SimplexNoise.noise(i / d1, j / d1);
-				v += (float) SimplexNoise.noise(i / d2, j / d2);
-				v += (float) SimplexNoise.noise(i / d3, j / d3);
+				// Applying the factor is like zooming on the noise
+				// by adding different level of zoom, we can achieve
+				// a good looking environment
+				float noise = (float) SimplexNoise.noise(i / d1, j / d1);
+				noise += (float) SimplexNoise.noise(i / d2, j / d2);
+				noise += (float) SimplexNoise.noise(i / d3, j / d3);
 
+				// This little trick is used to add grain to the noise
+				// it create something a lot more messy so it's deactivated by default
 				if (!WorldConfig.SMOOTH_FOOD_GENERATION) {
 					float g = (float) SimplexNoise.noise(i, j) * 20;
 					g = g - (int) g;
-					v += g;
+					noise += g;
 				}
 
-				if (v > (1f - WorldConfig.FOOD_COVER_PERCENT)) {
-					objects[i][j].add(new FoodPile(i, j, v));
+				// by varying FOOD_COVER_INTENSITY we set the quantity of food present on the map
+				if (noise > (1f - WorldConfig.FOOD_COVER_INTENSITY)) {
+					objects[i][j].add(new FoodPile(i, j, noise));
 				}
 
-				// And we check if the case is in the base.
+				// We check if the case is in the base.
 				for (int k = 0; k < bases.length; ++k) {
 					if (bases[k].contains(i, j)) {
 						objects[i][j].add(new BaseBody(k, i, j));
@@ -106,10 +147,21 @@ public class Environment {
 		}
 	}
 
+	/**
+	 * Adds an environment listener, can technicaly feed multiple GUI.
+	 *
+	 * @param el the environment listenener
+	 */
 	public void addListener(EnvironmentListener el) {
 		listeners.add(el);
 	}
 
+	/**
+	 * Gets the list of perceived object in the POV of a body.
+	 *
+	 * @param b the body who own the POV
+	 * @return the list of perceived object
+	 */
 	public ArrayList<Perceivable> getPerception(AgentBody b) {
 		ArrayList<Perceivable> perceptions = new ArrayList<Perceivable>();
 		// if there is an ant we just want the other agent
@@ -140,6 +192,12 @@ public class Environment {
 		return perceptions;
 	}
 
+	/**
+	 * Move a body in a direction.
+	 *
+	 * @param d the direction in which the body should move
+	 * @param b the body who will move
+	 */
 	public void move(Direction d, AgentBody b) {
 		cptAgents++;
 		int vectX = 0, vectY = 0;
@@ -160,7 +218,7 @@ public class Environment {
 		} else {
 
 			// Alternative 1
-
+			// If a body meet a wall of the world, he goes to the opposite direction
 			if ((b.getX() + vectX < 0 && (d == Direction.WEST) || d == Direction.NORTH_WEST
 					|| d == Direction.SOUTH_WEST))
 				((AntBody) b).setDirection(Direction.EAST);
@@ -210,10 +268,18 @@ public class Environment {
 		}
 	}
 
+	/**
+	 * Destroy a body.
+	 *
+	 * @param b the body to be destroyed
+	 */
 	public void destroy(AgentBody b) {
 		objects[b.getX()][b.getY()].remove(b);
 	}
 
+	/**
+	 * Notify the listeners that a tick as ended.
+	 */
 	public void notifyListeners() {
 		// build food positions
 		ArrayList<FoodStackPosition> foods = new ArrayList<FoodStackPosition>();
@@ -228,16 +294,27 @@ public class Environment {
 			}
 		}
 
+		// notify each listener
 		for (EnvironmentListener el : listeners)
 			el.environmentChanged(basePositions, foods, newAgents);
 
 		newAgents.clear();
 	}
 
+	/**
+	 * Creates an ant body.
+	 *
+	 * @param faction the faction of the ant
+	 * @param factionID the faction id of the ant
+	 * @param basePosX the position of the base in which the ant will span in x
+	 * @param basePosY the position of the base in which the ant will span in  y
+	 * @return the ant body
+	 */
 	public AgentBody createAntBody(Faction faction, int factionID, int basePosX, int basePosY) {
 		nbAgents++;
 		nbAgentPerBases[factionID] += 1;
 
+		// Spawn the body in a random position inside the base
 		Random rand = new Random();
 		double r = Math.sqrt(rand.nextDouble());
 		double theta = rand.nextDouble() * 2 * Math.PI;
@@ -246,6 +323,7 @@ public class Environment {
 		double dy = baseRadius * r * Math.sin(theta) + basePosY;
 
 		int _x = (int) dx, _y = (int) dy;
+		
 		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
 		AntBody b = new AntBody(faction, factionID, dir, _x, _y, this);
 
@@ -253,6 +331,12 @@ public class Environment {
 		return b;
 	}
 
+	/**
+	 * Creates a pheromone.
+	 *
+	 * @param pt the type of pheromone that will be created
+	 * @param ab the body that will create the pheromone
+	 */
 	public void createPheromone(PheromoneType pt, AgentBody ab) {
 		// We want to know if there is a pheromone of the same faction and type
 		// on this
@@ -319,6 +403,12 @@ public class Environment {
 		}
 	}
 
+	/**
+	 * Pick up food.
+	 *
+	 * @param b the body that will pick up the food
+	 * @return true, if successful
+	 */
 	public boolean pickUpFood(AgentBody b) {
 		boolean isGettingFood = false;
 		EnvironmentObject haveToRemove = null;
@@ -349,6 +439,11 @@ public class Environment {
 		return isGettingFood;
 	}
 
+	/**
+	 * Adds the food to a base.
+	 *
+	 * @param b the body that will add the food to it's faction base
+	 */
 	public void addFoodToBase(AgentBody b) {
 		foodInBase[((AntBody) b).getFactionID()] += ((AntBody) b).popFoodCaried();
 
@@ -361,14 +456,31 @@ public class Environment {
 
 	}
 
+	/**
+	 * Gets the bases position.
+	 *
+	 * @return the bases position
+	 */
 	public BasePosition[] getBasePosition() {
 		return basePositions;
 	}
 
+	/**
+	 * Gets the amount of food in a base.
+	 *
+	 * @param n the id of the base we sek the amount from
+	 * @return the current amount of food in the base
+	 */
 	public int GetFoodInBase(int n) {
 		return foodInBase[n];
 	}
 	
+	/**
+	 * Gets the number of agent in a faction.
+	 *
+	 * @param n the id of a faction
+	 * @return the number agent in the faction
+	 */
 	public int getNbAgent(int n){
 		return nbAgentPerBases[n];
 	}

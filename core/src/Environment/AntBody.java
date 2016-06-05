@@ -5,6 +5,8 @@ public class AntBody extends AgentBody{
 	private final int factionID;
 	private Direction direction;
 	
+	private int foodCaried;
+	
 	public AntBody(Faction f, int fID, Direction d, int initX, int initY, Environment env){
 		faction = f;
 		factionID = fID;
@@ -12,6 +14,7 @@ public class AntBody extends AgentBody{
 		x = initX;
 		y = initY;
 		environmentReference = env;
+		foodCaried = 0;
 	}
 
 	public void createPheromone(PheromoneType pt){
@@ -31,6 +34,20 @@ public class AntBody extends AgentBody{
 		// TODO Auto-generated method stub
 		this.x = x;
 		this.y = y;
+	}
+	
+	public int getFoodCaried(){
+		return foodCaried;
+	}
+	
+	public int popFoodCaried(){
+		int tmp = foodCaried;
+		foodCaried = 0;
+		return tmp;
+	}
+	
+	public void setFoodCarried(int n){
+		foodCaried = n;
 	}
 	
 	public Faction getFaction(){

@@ -281,7 +281,7 @@ public class Environment {
 
 		for (EnvironmentObject o : objects[b.getX()][b.getY()]) {
 			if (o instanceof FoodPile) {
-				((FoodPile) o).TakeFood();
+				((AntBody)b).setFoodCarried(((FoodPile) o).TakeFood());
 				isGettingFood = true;
 
 				if (((FoodPile) o).IsEmpty()) {
@@ -306,7 +306,7 @@ public class Environment {
 	}
 
 	public void addFoodToBase(AgentBody b) {
-		foodInBase[((AntBody) b).getFactionID()] += WorldConfig.ANT_FOOD_CARYING;
+		foodInBase[((AntBody) b).getFactionID()] += ((AntBody) b).popFoodCaried();
 
 		cptAgents++;
 		if (nbAgents == cptAgents) {

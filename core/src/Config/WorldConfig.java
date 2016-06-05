@@ -2,11 +2,15 @@ package Config;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,6 +46,15 @@ public class WorldConfig {
 	public static float FOOD_COVER_PERCENT = 1f;
 
 	public static void Load(String filename) {
+		
+		Field[] declaredFields = WorldConfig.class.getDeclaredFields();
+		List<Field> staticFields = new ArrayList<Field>();
+		for (Field field : declaredFields) {
+		    if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+		        staticFields.add(field);
+		    }
+		}
+		
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
 		try {
@@ -57,57 +70,26 @@ public class WorldConfig {
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					final Element elem = (Element) node;
 					final String name = elem.getAttribute("name");
-
-					if (name.equals("WINDOW_WIDTH")) {
-						WINDOW_WIDTH = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("WINDOW_HEIGHT")) {
-						WINDOW_HEIGHT = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("WINDOW_FULLSCREEN")) {
-						WINDOW_FULLSCREEN = Boolean.parseBoolean(elem.getTextContent());
-					}
-
-					if (name.equals("WORLD_HEIGHT")) {
-						WORLD_HEIGHT = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("WORLD_WIDTH")) {
-						WORLD_WIDTH = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("ANT_NUMBER")) {
-						ANT_NUMBER = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("ANT_FOOD_CARYING")) {
-						ANT_FOOD_CARYING = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("MAX_SIZE_FOOD_STACK")) {
-						MAX_SIZE_FOOD_STACK = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("MIN_SIZE_FOOD_STACK")) {
-						MIN_SIZE_FOOD_STACK = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("PHEROMONE_INITIAL_LIFE")) {
-						PHEROMONE_INITIAL_LIFE = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("ANT_FIELD_OF_VIEW")) {
-						ANT_FIELD_OF_VIEW = Integer.parseInt(elem.getTextContent());
-					}
-
-					if (name.equals("SMOOTH_FOOD_GENERATION")) {
-						SMOOTH_FOOD_GENERATION = Boolean.parseBoolean(elem.getTextContent());
-					}
-
-					if (name.equals("FOOD_COVER_PERCENT")) {
-						FOOD_COVER_PERCENT = Float.parseFloat(elem.getTextContent());
+					
+					Field field = FindField(name, staticFields);
+					
+					if(field != null){
+						try {
+							if(field.getType().equals(int.class)){
+								field.setInt(null, Integer.parseInt(elem.getTextContent()));
+							}else if(field.getType().equals(float.class)){
+								field.setFloat(null, Float.parseFloat(elem.getTextContent()));
+							}else if(field.getType().equals(boolean.class)){
+								field.setBoolean(null, Boolean.parseBoolean(elem.getTextContent()));
+							}
+							
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						} catch (DOMException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -125,5 +107,16 @@ public class WorldConfig {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private static Field FindField(String name, List<Field> fields){
+		Field res = null;
+		for(Field field : fields){
+			if(field.getName().equals(name)){
+				res = field;
+				break;
+			}
+		}
+		return res;
 	}
 }

@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <settings>
 	<setting name="WINDOW_WIDTH">640</setting>
+	<setting name="WINDOW_HEIGHT">480</setting>
+	<setting name="WINDOW_FULLSCREEN">false</setting>
+	<setting name="WORLD_HEIGHT">500</setting>
+	<setting name="WORLD_WIDTH">500</setting>
+	<setting name="ANT_NUMBER">2500</setting>
+	<setting name="ANT_FOOD_CARYING">1</setting>
+	<setting name="MAX_SIZE_FOOD_STACK">20</setting>
+	<setting name="MIN_SIZE_FOOD_STACK">3</setting>
+	<setting name="PHEROMONE_INITIAL_LIFE">25</setting>
+	<setting name="ANT_FIELD_OF_VIEW">5</setting>
+	<setting name="SMOOTH_FOOD_GENERATION">true</setting>
+	<setting name="FOOD_COVER_PERCENT">1</setting>
 </settings>

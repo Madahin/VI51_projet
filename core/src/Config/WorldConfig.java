@@ -44,6 +44,8 @@ public class WorldConfig {
 	public static boolean SMOOTH_FOOD_GENERATION = true;
 
 	public static float FOOD_COVER_PERCENT = 0.5f;
+	
+	public static int DEFAULT_FOOD_IN_BASE = 1000;
 
 	public static void Load(String filename) {
 		

@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import Environment.AgentBody;
 import Environment.AntBody;
+import Environment.BaseBody;
 import Environment.Direction;
 import Environment.FoodPile;
 import Environment.Perceivable;
@@ -15,13 +16,26 @@ import Environment.PheromoneBody;
 import Environment.PheromoneComparator;
 import Environment.PheromoneType;
 
+/**
+ * Representation of a worker ant.
+ */
 public class AntAgent extends Agent {
 
+	/** True if the ant carry food. */
 	private boolean isCarryingFood;
+
+	/** Delay the pheromone creation tick. */
 	private int pheromoneTicks;
 
+	/** The current objective of the ant. */
 	private Perceivable currentObjective;
-	
+
+	/**
+	 * Instantiates a new ant agent.
+	 *
+	 * @param b
+	 *            the "physical" representation of the ant in the environment
+	 */
 	public AntAgent(AgentBody b) {
 		currentObjective = null;
 		body = b;
@@ -29,23 +43,25 @@ public class AntAgent extends Agent {
 		pheromoneTicks = 0;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void live() {
-		if(currentObjective != null){
-			if(currentObjective.getX() == body.getX() && currentObjective.getY() == body.getY()){
+		// Filling the goal is a priority
+		if (currentObjective != null) {
+			if (currentObjective.getX() == body.getX() && currentObjective.getY() == body.getY()) {
 				currentObjective = null;
-			}else{
+			} else {
 				goToObject(currentObjective);
-				if(isCarryingFood){
+				if (isCarryingFood) {
 					createPheromone(PheromoneType.Food);
-				}else {
+				} else {
 					createPheromone(PheromoneType.Base);
 				}
-				
+
 				return;
 			}
 		}
-		
+
 		ArrayList<Perceivable> perceptions = getPerception();
 
 		ArrayList<Perceivable> pheromonesFood = new ArrayList<Perceivable>();
@@ -61,27 +77,26 @@ public class AntAgent extends Agent {
 			if (p.getX() == body.getX() && p.getY() == body.getY()) {
 
 				if (p.getType().equals(FoodPile.class)) { // food
-					
+
 					onFood = p;
-				} else if (p.getFactionID() == ((AntBody)body).getFactionID()) { // base
-					
+				} else if (p.getFactionID() == ((AntBody) body).getFactionID() && p.getType().equals(BaseBody.class)) { // base
 					onBase = p;
-				} 
+				}
 
 			} else { // means other cases so we put those element in the lists
 				if (p.getType().equals(FoodPile.class)) { // Food
 					foods.add(p);
-				} else if (p.getType().equals(PheromoneBody.class) && p.getFactionID() == ((AntBody) body).getFactionID()) { // Pheromone
-																													// of
-																													// faction
+				} else if (p.getType().equals(PheromoneBody.class)
+						&& p.getFactionID() == ((AntBody) body).getFactionID()) { // Pheromone
+																					// of
+																					// faction
 					if (p.getPheromoneType() == PheromoneType.Base) { // Base
 																		// type
 						pheromonesBase.add(p);
 					} else { // pheromone type == Food
 						pheromonesFood.add(p);
 					}
-				} else if (p.getFactionID() == ((AntBody) body).getFactionID()) { // Black
-																													// Base
+				} else if (p.getFactionID() == ((AntBody) body).getFactionID()) { // Base
 					bases.add(p);
 				}
 			}
@@ -92,7 +107,7 @@ public class AntAgent extends Agent {
 		PheromoneComparator comparator = new PheromoneComparator();
 		Collections.sort(pheromonesFood, comparator);
 		Collections.sort(pheromonesBase, comparator);
-		
+
 		// Here are the decision algorithm
 		// In the first place we want to know in wich state
 		// is the ant
@@ -109,11 +124,11 @@ public class AntAgent extends Agent {
 			} else if (!pheromonesBase.isEmpty()) { // if there base pheromone
 													// around
 				// we go to that pheromone
-				//if(pheromonesBase.size() >= 2){
-					pheromonesVector(pheromonesBase, false);
-				//}else{
-					//goToObject(pheromonesBase.get(0));
-				//}
+				// if(pheromonesBase.size() >= 2){
+				pheromonesVector(pheromonesBase, false);
+				// }else{
+				// goToObject(pheromonesBase.get(0));
+				// }
 
 			} else { // if there is none to do
 						// we wander
@@ -140,12 +155,12 @@ public class AntAgent extends Agent {
 			} else if (!pheromonesFood.isEmpty()) { // there is food pheromone
 													// around
 				// We follow it
-				//if(pheromonesFood.size() >= 2){
-					pheromonesVector(pheromonesFood, true);
-				//}else{
-					//goToObject(pheromonesFood.get(0));
-				//}
-			
+				// if(pheromonesFood.size() >= 2){
+				pheromonesVector(pheromonesFood, true);
+				// }else{
+				// goToObject(pheromonesFood.get(0));
+				// }
+
 			} else { // we don't know what to do so we wander
 				wander(((AntBody) body).getDirection());
 			}
@@ -156,26 +171,39 @@ public class AntAgent extends Agent {
 
 	}
 
+	/**
+	 * Adds the food to the base.
+	 */
 	public void addFoodToBase() {
 		((AntBody) body).addFoodToBase();
 		isCarryingFood = false;
 	}
 
+	/**
+	 * Pick up food.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean pickUpFood() {
 		return ((AntBody) body).pickUpFood();
 	}
-	
 
+	/**
+	 * Go to a perceivable object.
+	 *
+	 * @param obj
+	 *            the perceived object
+	 */
 	public void goToObject(Perceivable obj) {
-		
+
 		int x = obj.getX();
 		int y = obj.getY();
 		int bodyX = body.getX();
 		int bodyY = body.getY();
-		
-		if(currentObjective == null)
+
+		if (currentObjective == null)
 			currentObjective = obj;
-		
+
 		if (x < bodyX && y < bodyY) {
 			move(Direction.SOUTH_WEST);
 		} else if (x < bodyX && y > bodyY) {
@@ -199,10 +227,14 @@ public class AntAgent extends Agent {
 		}
 	}
 
+	/**
+	 * Wander in a random direction, but never to far from the last direction.
+	 *
+	 * @param LastDirection
+	 *            the last direction
+	 */
 	public void wander(Direction LastDirection) {
 		Random rand = new Random();
-		// return a value between 0 and 7.
-		// each number means a direction.
 
 		ArrayList<Direction> possibilities = new ArrayList<Direction>();
 
@@ -243,81 +275,78 @@ public class AntAgent extends Agent {
 		move(possibilities.get(rand.nextInt(possibilities.size())));
 
 	}
-	
-	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv){
+
+	// TODO : faire le commentaire, ça sert a quoi ?
+	/**
+	 * Pheromones vector.
+	 *
+	 * @param list
+	 *            the list
+	 * @param inv
+	 *            the inv
+	 */
+	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv) {
 		ArrayList<Vector2> vectors = new ArrayList<Vector2>();
-		for(Perceivable p : list){
+		for (Perceivable p : list) {
 			Vector2 tmpVect = new Vector2(p.getX() - body.getX(), p.getY() - body.getY());
 			tmpVect.scl(p.getPheromoneLife());
 			tmpVect.nor();
 			vectors.add(tmpVect);
 		}
 		Vector2 finalVect = new Vector2(0.0f, 0.0f);
-		
-		for(Vector2 vect : vectors){
+
+		for (Vector2 vect : vectors) {
 			finalVect.add(vect);
 		}
-		
-		if(inv)
-			finalVect.scl(-1.0f);
-		
-		
-		if(finalVect.x == 0){
-			if(finalVect.y > 0){
-				move(Direction.NORTH);
-			}else if(finalVect.y < 0){
-				move(Direction.SOUTH);
-			}
-		}else if(finalVect.x > 0){
-			if(finalVect.y == 0){
-				move(Direction.EAST);
-			}else if(finalVect.y > 0){
-				move(Direction.NORTH_EAST);
-			}else{
-				move(Direction.SOUTH_EAST);
-			}
-		}else{
-			if(finalVect.y == 0){
-				move(Direction.WEST);
-			}else if(finalVect.y > 0){
-				move(Direction.NORTH_WEST);
-			}else{
-				move(Direction.SOUTH_WEST);
-			}
-		}
-		
-	}
-	
-	/*public void pheromonesVector(Perceivable first, Perceivable last){
-		int diffX = last.getX() - first.getX();
-		int diffY = last.getY() - first.getY();
-		
-		if(diffX == 0){
-			if(diffY > 0){
-				move(Direction.NORTH);
-			}else if(diffY < 0){
-				move(Direction.SOUTH);
-			}
-		}else if(diffX > 0){
-			if(diffY == 0){
-				move(Direction.EAST);
-			}else if(diffY > 0){
-				move(Direction.NORTH_EAST);
-			}else{
-				move(Direction.SOUTH_EAST);
-			}
-		}else{
-			if(diffY == 0){
-				move(Direction.WEST);
-			}else if(diffY > 0){
-				move(Direction.NORTH_WEST);
-			}else{
-				move(Direction.SOUTH_WEST);
-			}
-		}
-	}*/
-	
 
+		if (inv)
+			finalVect.scl(-1.0f);
+
+		if (finalVect.x == 0) {
+			if (finalVect.y > 0) {
+				move(Direction.NORTH);
+			} else if (finalVect.y < 0) {
+				move(Direction.SOUTH);
+			}
+		} else if (finalVect.x > 0) {
+			if (finalVect.y == 0) {
+				move(Direction.EAST);
+			} else if (finalVect.y > 0) {
+				move(Direction.NORTH_EAST);
+			} else {
+				move(Direction.SOUTH_EAST);
+			}
+		} else {
+			if (finalVect.y == 0) {
+				move(Direction.WEST);
+			} else if (finalVect.y > 0) {
+				move(Direction.NORTH_WEST);
+			} else {
+				move(Direction.SOUTH_WEST);
+			}
+		}
+
+	}
+
+	/*
+	 * public void pheromonesVector(Perceivable first, Perceivable last){ int
+	 * diffX = last.getX() - first.getX(); int diffY = last.getY() -
+	 * first.getY();
+	 * 
+	 * if(diffX == 0){ if(diffY > 0){ move(Direction.NORTH); }else if(diffY <
+	 * 0){ move(Direction.SOUTH); } }else if(diffX > 0){ if(diffY == 0){
+	 * move(Direction.EAST); }else if(diffY > 0){ move(Direction.NORTH_EAST);
+	 * }else{ move(Direction.SOUTH_EAST); } }else{ if(diffY == 0){
+	 * move(Direction.WEST); }else if(diffY > 0){ move(Direction.NORTH_WEST);
+	 * }else{ move(Direction.SOUTH_WEST); } } }
+	 */
+
+	/**
+	 * Creates a pheromone.
+	 *
+	 * @param pt
+	 *            the type of pheromone to be created
+	 */
 	public void createPheromone(PheromoneType pt) {
 
 		pheromoneTicks += 1;

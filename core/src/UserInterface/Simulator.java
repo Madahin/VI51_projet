@@ -51,7 +51,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private TextButton b_PAUSE;
 	private TextButton b_RESET;
 	private boolean SimulatorPaused = false;
-	private boolean AgentsInitialised = false;
+	private boolean EnvironmentInitialised = false;
 	
 
 	private int baseRadius = WorldConfig.BASE_RADIUS;
@@ -78,8 +78,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		m_font = new BitmapFont();
 		m_batch = new SpriteBatch();
 		
-		//Agents Init
-		initializeAgents();	
+		//Environment Init
+		initializeEnvironment();	
 
 		/* Thread Init */
 		simu = new SimulationThread();
@@ -106,21 +106,21 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		 b_START.addListener(new ChangeListener() {
 		        @Override
 		        public void changed (ChangeEvent event, Actor actor) {
-		            start();
+		            startSimulator();
 		        }
 		    });
 		 
 		 b_PAUSE.addListener(new ChangeListener() {
 		        @Override
 		        public void changed (ChangeEvent event, Actor actor) {
-		            pause();
+		            pauseSimulator();
 		        }
 		    });
 		 
 		 b_RESET.addListener(new ChangeListener() {
 		        @Override
 		        public void changed (ChangeEvent event, Actor actor) {
-		            reset();
+		            resetSimulator();
 		        }
 		    });
 		 
@@ -137,7 +137,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			
 	}
 	
-	public void initializeAgents(){
+	public void initializeEnvironment(){
 		
 		/* Agents relative Initialization */
 		agents = new ArrayList<Agent>();
@@ -156,19 +156,35 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 		environment.addListener(this);
 		
-		AgentsInitialised = true;
+		EnvironmentInitialised = true;
 	}
 	
-	public void deleteAgents(){
-
-		Iterator<Agent> iter = agents.iterator();
-		while (iter.hasNext()) {
-			Agent a = iter.next();
-			a.body = null; 
-			iter.remove();
+	public void clearEnvironment(){
+		synchronized (lockAgentList) {
+			Iterator<Agent> iter = agents.iterator();
+			while (iter.hasNext()) {
+				Agent a = iter.next();
+				a.body = null; 
+			}
+			agents.clear();
+			
+			iter = newAgents.iterator();
+			while (iter.hasNext()) {
+				Agent a = iter.next();
+				a.body = null; 
+			}
+			newAgents.clear();
 		}
+		
 		foodPiles.clear();
-		//environment.
+		environment.clear();
+		
+		for (int i=0; i < bases.length; i++){
+			bases[i] = null;
+		}
+		
+		System.gc();
+		EnvironmentInitialised = false;
 	}
 	
 	public void resize (int width, int height) {
@@ -178,17 +194,45 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	    stage.getViewport().update(width, height, true);
 	}
 
-	public void start(){
-		SimulatorPaused = false;
-		environment.notifyListeners();
+	public void startSimulator(){
+		if (EnvironmentInitialised && SimulatorPaused){
+			SimulatorPaused = false;
+			environment.notifyListeners();
+		}else if (!EnvironmentInitialised){
+			initializeEnvironment();
+			simu.notify();
+//			simu = new SimulationThread();
+//			simu.start();
+		}	
 	}
 	
-	public void pause(){
+	public void pauseSimulator(){
 		 SimulatorPaused = true;
 	}
 	
-	public void reset(){
-		 SimulatorPaused = true;
+	public void resetSimulator(){
+		if (EnvironmentInitialised){
+			System.out.println("1");
+//			simu.isRunning=false;
+//			System.out.println("2");
+//			try {
+//				simu.join();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+			try {
+				simu.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("3");
+			clearEnvironment();
+			System.out.println("4");
+			SimulatorPaused = false;
+			
+			System.out.println("5");
+		}
 	}
 	
 	@Override

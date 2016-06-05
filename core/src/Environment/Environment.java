@@ -214,6 +214,14 @@ public class Environment {
 		objects[b.getX()][b.getY()].remove(b);
 	}
 
+	public void clear() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				objects[i][j].clear();
+			}
+		}
+	}
+	
 	public void notifyListeners() {
 		// build food positions
 		ArrayList<FoodStackPosition> foods = new ArrayList<FoodStackPosition>();

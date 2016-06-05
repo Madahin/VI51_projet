@@ -142,7 +142,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		/* Agents relative Initialization */
 		agents = new ArrayList<Agent>();
 		foodPiles = new ArrayList<FoodStackPosition>();
-		environment = new Environment(WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT, baseRadius);
+		environment = new Environment(WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT, baseRadius, percentageFood);
 		newAgents = new ArrayList<Agent>();
 		
 		bases = environment.getBasePosition();

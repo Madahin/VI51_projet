@@ -6,8 +6,8 @@ import Config.WorldConfig;
 
 public class ColorUtils {
 	
-	final static Color baseFoodColor = new Color(169.0f / 255.0f, 1, 138.0f / 255.0f, 1);
-	final static Color maxFoodColor = new Color(105.0f / 178.0f, 1, 79.0f / 255.0f, 1);
+	final static Color baseFoodColor = new Color(169.0f / 255.0f, 255.0f/255.0f, 138.0f / 255.0f, 1);
+	final static Color maxFoodColor = new Color(105.0f / 255.0f, 178.0f/255.0f, 79.0f / 255.0f, 1);
 
 	public static Color BlendColor(Color... colors) {
 		Color res = new Color(0, 0, 0, 1);
@@ -23,8 +23,8 @@ public class ColorUtils {
 	
 	public static Color FoodColor(int value){
 		float t = (float)value / WorldConfig.MAX_SIZE_FOOD_STACK;
-		Color c = new Color(maxFoodColor);
-		return c.lerp(baseFoodColor, t);
+		Color c = new Color(baseFoodColor);
+		return c.lerp(maxFoodColor, t);
 	}
 
 }

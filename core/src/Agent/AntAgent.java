@@ -254,7 +254,7 @@ public class AntAgent extends Agent {
 	}
 	
 	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv){
-		ArrayList<Vector2> vectors = new ArrayList<>();
+		ArrayList<Vector2> vectors = new ArrayList<Vector2>();
 		for(Perceivable p : list){
 			Vector2 tmpVect = new Vector2(p.getX() - body.getX(), p.getY() - body.getY());
 			tmpVect.scl(p.getPheromoneLife());

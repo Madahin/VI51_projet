@@ -8,15 +8,12 @@ import com.badlogic.gdx.math.Vector2;
 
 import Environment.AgentBody;
 import Environment.AntBody;
-import Environment.BlackBase;
 import Environment.Direction;
-import Environment.Faction;
 import Environment.FoodPile;
 import Environment.Perceivable;
 import Environment.PheromoneBody;
 import Environment.PheromoneComparator;
 import Environment.PheromoneType;
-import Environment.RedBase;
 
 public class AntAgent extends Agent {
 
@@ -66,18 +63,15 @@ public class AntAgent extends Agent {
 				if (p.getType().equals(FoodPile.class)) { // food
 					
 					onFood = p;
-				} else if (p.getType().equals(BlackBase.class) && ((AntBody) body).getFaction().equals(Faction.BlackAnt) ) { // Black base
+				} else if (p.getFactionID() == ((AntBody)body).getFactionID()) { // base
 					
 					onBase = p;
-				} else if (p.getType().equals(RedBase.class) && ((AntBody) body).getFaction().equals(Faction.RedAnt) ) { // Red base
-					
-					onBase = p;
-				}
+				} 
 
 			} else { // means other cases so we put those element in the lists
 				if (p.getType().equals(FoodPile.class)) { // Food
 					foods.add(p);
-				} else if (p.getType().equals(PheromoneBody.class) && p.getFaction() == ((AntBody) body).getFaction()) { // Pheromone
+				} else if (p.getType().equals(PheromoneBody.class) && p.getFactionID() == ((AntBody) body).getFactionID()) { // Pheromone
 																													// of
 																													// faction
 					if (p.getPheromoneType() == PheromoneType.Base) { // Base
@@ -86,11 +80,8 @@ public class AntAgent extends Agent {
 					} else { // pheromone type == Food
 						pheromonesFood.add(p);
 					}
-				} else if (p.getType().equals(BlackBase.class) && ((AntBody) body).getFaction() == Faction.BlackAnt) { // Black
+				} else if (p.getFactionID() == ((AntBody) body).getFactionID()) { // Black
 																													// Base
-					bases.add(p);
-				} else if (p.getType().equals(RedBase.class) && ((AntBody) body).getFaction() == Faction.RedAnt) { // Red
-																												// Base
 					bases.add(p);
 				}
 			}

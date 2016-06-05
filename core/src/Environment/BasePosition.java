@@ -9,6 +9,7 @@ public class BasePosition extends Position {
 
 	private int radius;
 	private Color baseColor;
+	private Faction race;
 
 	public BasePosition(Circle c) {
 		this((int) c.x, (int) c.y);
@@ -17,6 +18,7 @@ public class BasePosition extends Position {
 		
 		radius = (int) c.radius;
 		baseColor = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 128 / 255.0f);
+		race = Faction.values()[rand.nextInt(Faction.values().length)];
 	}
 
 	public BasePosition(int _x, int _y) {
@@ -29,6 +31,10 @@ public class BasePosition extends Position {
 	
 	public Color getColor(){
 		return baseColor;
+	}
+	
+	public Faction getRace(){
+		return race;
 	}
 
 }

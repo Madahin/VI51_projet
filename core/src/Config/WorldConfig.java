@@ -29,7 +29,7 @@ public class WorldConfig {
 
 	public static int WORLD_WIDTH = 500;
 
-	public static int ANT_NUMBER = 2500;
+	public static int ANT_NUMBER = 500;
 
 	public static int ANT_FOOD_CARYING = 1;
 

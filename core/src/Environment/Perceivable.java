@@ -6,6 +6,7 @@ public class Perceivable {
 	// private Direction direction;
 	private final Class<? extends EnvironmentObject> type;
 	private Faction faction;
+	private int factionID;
 	private PheromoneType pType;
 	private int pheromoneLife;
 
@@ -16,9 +17,11 @@ public class Perceivable {
 
 		if (b instanceof AntBody) {
 			faction = ((AntBody) b).getFaction();
+			factionID = ((AntBody) b).getFactionID();
 		}
 		if (b instanceof PheromoneBody) {
 			faction = ((PheromoneBody) b).faction;
+			factionID = ((PheromoneBody) b).factionID;
 			pType = ((PheromoneBody) b).pheromoneType;
 			pheromoneLife = ((PheromoneBody) b).life;
 		}
@@ -41,6 +44,10 @@ public class Perceivable {
 
 	public Faction getFaction() {
 		return faction;
+	}
+	
+	public int getFactionID(){
+		return factionID;
 	}
 
 	public PheromoneType getPheromoneType() {

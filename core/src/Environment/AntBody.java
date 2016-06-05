@@ -2,10 +2,12 @@ package Environment;
 
 public class AntBody extends AgentBody{
 	private final Faction faction;
+	private final int factionID;
 	private Direction direction;
 	
-	public AntBody(Faction f,Direction d, int initX, int initY, Environment env){
+	public AntBody(Faction f, int fID, Direction d, int initX, int initY, Environment env){
 		faction = f;
+		factionID = fID;
 		direction = d;
 		x = initX;
 		y = initY;
@@ -33,6 +35,10 @@ public class AntBody extends AgentBody{
 	
 	public Faction getFaction(){
 		return faction;
+	}
+	
+	public int getFactionID(){
+		return factionID;
 	}
 	
 	public Direction getDirection(){

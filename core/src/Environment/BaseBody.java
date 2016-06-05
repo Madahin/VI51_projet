@@ -1,10 +1,14 @@
 package Environment;
 
-public class BaseBody extends AgentBody {
+public class BaseBody extends StaticObject {
 
-	@Override
-	public void setPosition(int x, int y) {
-		
+	private final int faction;
+
+	public BaseBody(int factionID) {
+		faction = factionID;
 	}
-
+	
+	public int getFactionID(){
+		return faction;
+	}
 }

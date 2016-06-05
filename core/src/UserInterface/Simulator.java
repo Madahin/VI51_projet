@@ -113,7 +113,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		 b_PAUSE.addListener(new ChangeListener() {
 		        @Override
 		        public void changed (ChangeEvent event, Actor actor) {
-		            pause();
+		            pauseSimulator();
 		        }
 		    });
 		 
@@ -183,7 +183,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		environment.notifyListeners();
 	}
 	
-	public void pause(){
+	public void pauseSimulator(){
 		 SimulatorPaused = true;
 	}
 	

@@ -3,6 +3,9 @@ package Environment;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+
 import Agent.Agent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
@@ -14,13 +17,12 @@ public class Environment {
 	private int nbAgents;
 	private int cptAgents;
 
-	private int foodInBlackBase = 1000;
-	private int foodInRedBase = 1000;
+	private int foodInBase[];
 
 	// Designing Bases;
-	private int blackBaseX, blackBaseY;
-	private int redBaseX, redBaseY;
+	private Circle bases[];
 	private int baseRadius;
+	private BasePosition basePositions[];
 
 	private ArrayList<EnvironmentListener> listeners;
 	private ArrayList<EnvironmentObject>[][] objects;
@@ -39,14 +41,36 @@ public class Environment {
 
 		// Create Bases
 		Random rand = new Random();
-		blackBaseX = rand.nextInt(width / 4) + baseRadius;
-		blackBaseY = rand.nextInt(height / 4) + baseRadius;
 
-		redBaseX = rand.nextInt(width / 4) + (3 * width / 4) - baseRadius;
-		redBaseY = rand.nextInt(height / 4) + (3 * width / 4) - baseRadius;
+		bases = new Circle[WorldConfig.BASE_NUMBER];
+		basePositions = new BasePosition[WorldConfig.BASE_NUMBER];
+		foodInBase = new int[WorldConfig.BASE_NUMBER];
+
+		int n = 0;
+		while (n < bases.length) {
+			Circle c = new Circle();
+			c.radius = baseRadius;
+			c.x = rand.nextInt(width - 2 * radius) + radius;
+			c.y = rand.nextInt(height - 2 * radius) + radius;
+
+			boolean overlap = false;
+			for (int j = 0; !overlap && j < n; ++j) {
+				if (j != n) {
+					overlap = Intersector.overlaps(c, bases[j]);
+				}
+			}
+
+			if (!overlap) {
+				bases[n] = c;
+				basePositions[n] = new BasePosition(c);
+				foodInBase[n] = WorldConfig.DEFAULT_FOOD_IN_BASE;
+				n += 1;
+			}
+		}
 
 		objects = new ArrayList[width][height];
 
+		// Simplex noise factor
 		final float d1 = 50;
 		final float d2 = 75;
 		final float d3 = 150;
@@ -70,15 +94,10 @@ public class Environment {
 				}
 
 				// And we check if the case is in the base.
-				// Black
-				if ((i - blackBaseX) * (i - blackBaseX) + (j - blackBaseY) * (i - blackBaseY) <= baseRadius
-						* baseRadius) {
-					objects[i][j].add(new BlackBase(i, j));
-				}
-
-				// Red
-				if ((i - redBaseX) * (i - redBaseX) + (j - redBaseY) * (i - redBaseY) <= baseRadius * baseRadius) {
-					objects[i][j].add(new RedBase(i, j));
+				for (int k = 0; k < bases.length; ++k) {
+					if (bases[k].contains(i, j)) {
+						objects[i][j].add(new BaseBody(k));
+					}
 				}
 			}
 		}
@@ -141,16 +160,16 @@ public class Environment {
 
 			if ((b.getX() + vectX < 0 && (d == Direction.WEST) || d == Direction.NORTH_WEST
 					|| d == Direction.SOUTH_WEST))
-				((AntBody) b).direction = Direction.EAST;
+				((AntBody) b).setDirection(Direction.EAST);
 			else if (b.getX() + vectX >= width
 					&& (d == Direction.EAST || d == Direction.NORTH_EAST || d == Direction.SOUTH_EAST))
-				((AntBody) b).direction = Direction.WEST;
+				((AntBody) b).setDirection(Direction.WEST);
 			else if (b.getY() + vectY < 0
 					&& (d == Direction.SOUTH || d == Direction.SOUTH_EAST || d == Direction.SOUTH_WEST))
-				((AntBody) b).direction = Direction.NORTH;
+				((AntBody) b).setDirection(Direction.NORTH);
 			else if (b.getY() + vectY >= height
 					&& (d == Direction.NORTH || d == Direction.NORTH_EAST || d == Direction.NORTH_WEST))
-				((AntBody) b).direction = Direction.SOUTH;
+				((AntBody) b).setDirection(Direction.SOUTH);
 
 			// Alternative 2
 
@@ -207,12 +226,12 @@ public class Environment {
 		}
 
 		for (EnvironmentListener el : listeners)
-			el.environmentChanged(blackBaseX, blackBaseY, redBaseX, redBaseY, foods, newAgents);
+			el.environmentChanged(basePositions, foods, newAgents);
 
 		newAgents.clear();
 	}
 
-	private AgentBody createAntBody(Faction faction, int basePosX, int basePosY) {
+	public AgentBody createAntBody(Faction faction, int factionID, int basePosX, int basePosY) {
 		nbAgents++;
 		// Black Ants are created on the down left of the map
 
@@ -225,18 +244,10 @@ public class Environment {
 
 		int _x = (int) dx, _y = (int) dy;
 		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
-		AntBody b = new AntBody(faction, dir, _x, _y, this);
+		AntBody b = new AntBody(faction, factionID, dir, _x, _y, this);
 
 		objects[_x][_y].add(b);
 		return b;
-	}
-
-	public AgentBody createBlackAntBody() {
-		return createAntBody(Faction.BlackAnt, blackBaseX, blackBaseY);
-	}
-
-	public AgentBody createRedAntBody() {
-		return createAntBody(Faction.RedAnt, redBaseX, redBaseY);
 	}
 
 	public void createPheromone(PheromoneType pt, AgentBody ab) {
@@ -255,7 +266,7 @@ public class Environment {
 					boolean needToCreatePheromone = true;
 					for (EnvironmentObject eo : objects[i][j]) {
 						if (eo instanceof PheromoneBody) {
-							if (((PheromoneBody) eo).faction == ((AntBody) ab).faction
+							if (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID()
 									&& ((PheromoneBody) eo).pheromoneType == pt) {
 								if(i == ab.getX() && j == ab.getY()){
 									((PheromoneBody) eo).life += halfValue;
@@ -272,9 +283,9 @@ public class Environment {
 					if (needToCreatePheromone) {
 						PheromoneBody pb;
 						if(i == ab.getX() && j == ab.getY()){
-							pb = new PheromoneBody(i, j, ((AntBody) ab).faction, pt, this, halfValue);
+							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, halfValue);
 						}else{
-							pb = new PheromoneBody(i, j, ((AntBody) ab).faction, pt, this, spreadValue);
+							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, spreadValue);
 						}
 						
 						newAgents.add(new PheromoneAgent(pb));
@@ -287,7 +298,7 @@ public class Environment {
 		boolean needToCreatePheromone = true;
 		for (EnvironmentObject eo : objects[ab.getX()][ab.getY()]) {
 			if (eo instanceof PheromoneBody) {
-				if (((PheromoneBody) eo).faction == ((AntBody) ab).faction
+				if (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID()
 						&& ((PheromoneBody) eo).pheromoneType == pt) {
 
 					((PheromoneBody) eo).life += WorldConfig.PHEROMONE_INITIAL_LIFE;
@@ -298,7 +309,8 @@ public class Environment {
 		}
 
 		if (needToCreatePheromone) {
-			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).faction, pt, this, halfValue);
+			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).getFaction(),
+					((AntBody) ab).getFactionID(), pt, this, halfValue);
 			newAgents.add(new PheromoneAgent(pb));
 			objects[ab.getX()][ab.getY()].add(pb);
 		}
@@ -310,7 +322,7 @@ public class Environment {
 
 		for (EnvironmentObject o : objects[b.getX()][b.getY()]) {
 			if (o instanceof FoodPile) {
-				((FoodPile) o).TakeFood();
+				((AntBody)b).setFoodCarried(((FoodPile) o).TakeFood());
 				isGettingFood = true;
 
 				if (((FoodPile) o).IsEmpty()) {
@@ -335,11 +347,7 @@ public class Environment {
 	}
 
 	public void addFoodToBase(AgentBody b) {
-		if (((AntBody) b).faction == Faction.BlackAnt) {
-			foodInBlackBase += WorldConfig.ANT_FOOD_CARYING;
-		} else {
-			foodInRedBase += WorldConfig.ANT_FOOD_CARYING;
-		}
+		foodInBase[((AntBody) b).getFactionID()] += ((AntBody) b).popFoodCaried();
 
 		cptAgents++;
 		if (nbAgents == cptAgents) {
@@ -350,12 +358,12 @@ public class Environment {
 
 	}
 
-	public int GetFoodInRedBase() {
-		return foodInRedBase;
+	public BasePosition[] getBasePosition() {
+		return basePositions;
 	}
 
-	public int GetFoodInBlackBase() {
-		return foodInBlackBase;
+	public int GetFoodInBase(int n) {
+		return foodInBase[n];
 	}
 
 }

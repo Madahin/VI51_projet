@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import Environment.AgentBody;
 import Environment.AntBody;
+import Environment.BaseBody;
 import Environment.Direction;
 import Environment.FoodPile;
 import Environment.Perceivable;
@@ -63,7 +64,7 @@ public class AntAgent extends Agent {
 				if (p.getType().equals(FoodPile.class)) { // food
 					
 					onFood = p;
-				} else if (p.getFactionID() == ((AntBody)body).getFactionID()) { // base
+				} else if (p.getFactionID() == ((AntBody)body).getFactionID() && p.getType().equals(BaseBody.class) ) { // base
 					
 					onBase = p;
 				} 

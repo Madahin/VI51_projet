@@ -99,7 +99,7 @@ public class Environment {
 				// And we check if the case is in the base.
 				for (int k = 0; k < bases.length; ++k) {
 					if (bases[k].contains(i, j)) {
-						objects[i][j].add(new BaseBody(k));
+						objects[i][j].add(new BaseBody(k, i, j));
 					}
 				}
 			}

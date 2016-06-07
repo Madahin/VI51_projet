@@ -49,6 +49,9 @@ public class WorldConfig {
 
 	/** Minimum size of a food stack. */
 	public static int MIN_SIZE_FOOD_STACK = 3;
+	
+	/** Maximum size of a pheromone used only to clamp it's color gradient. */
+	public static float MAX_PHEROMONE_LIFE = 5000;
 
 	/** The pheromone initial life. */
 	public static int PHEROMONE_INITIAL_LIFE = 200;
@@ -71,7 +74,7 @@ public class WorldConfig {
 	public static int BASE_NUMBER = 2;
 	
 	/** The radius of an ant base. */
-	public static int BASE_RADIUS = 30;
+	public static int BASE_RADIUS = 100;
 
 	/**
 	 * Load an XML configuration file.

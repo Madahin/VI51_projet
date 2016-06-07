@@ -211,20 +211,15 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	
 	public void resetSimulator(){
 		if (EnvironmentInitialised){
-			System.out.println("1");
 			simu.isRunning=false;
-			System.out.println("2");
 			try {
 				simu.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.println("3");
 			clearEnvironment();
-			System.out.println("4");
 			SimulatorPaused = false;
-			
-			System.out.println("5");
+
 		}
 	}
 	
@@ -290,9 +285,9 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			for (Agent agent : agents) {
 				if (agent instanceof PheromoneAgent && agent.body != null) {
 					if (((PheromoneBody) agent.body).pheromoneType == PheromoneType.Base) {
-						shapeRenderer.setColor(Color.WHITE);
+						shapeRenderer.setColor(ColorUtils.BasePheromoneColor(((PheromoneBody) agent.body).life));
 					} else {
-						shapeRenderer.setColor(Color.BLUE);
+						shapeRenderer.setColor(ColorUtils.FoodPheromoneColor(((PheromoneBody) agent.body).life));
 					}
 					shapeRenderer.rect(agent.body.getX() - WorldConfig.WORLD_WIDTH / 2,
 							agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);

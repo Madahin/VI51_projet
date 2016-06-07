@@ -371,9 +371,9 @@ public class Environment {
 								}else{
 									((PheromoneBody) eo).life += spread2Value;
 								}
-								
+								((PheromoneBody) eo).life = Math.max(((PheromoneBody) eo).life, WorldConfig.PHEROMONE_INITIAL_LIFE);
 								needToCreatePheromone = false;
-	
+								break;
 							}
 						}
 					}
@@ -395,25 +395,26 @@ public class Environment {
 				
 			}
 		}
-		boolean needToCreatePheromone = true;
+		
+		/*boolean needToCreatePheromone = true;
 		for (EnvironmentObject eo : objects[ab.getX()][ab.getY()]) {
 			if (eo instanceof PheromoneBody) {
 				if (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID()
 						&& ((PheromoneBody) eo).pheromoneType == pt) {
 
-					((PheromoneBody) eo).life += WorldConfig.PHEROMONE_INITIAL_LIFE;
+					((PheromoneBody) eo).life = WorldConfig.PHEROMONE_INITIAL_LIFE;
 					needToCreatePheromone = false;
-
+					break;
 				}
 			}
 		}
 
 		if (needToCreatePheromone) {
 			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).getFaction(),
-					((AntBody) ab).getFactionID(), pt, this, halfValue);
+					((AntBody) ab).getFactionID(), pt, this, WorldConfig.PHEROMONE_INITIAL_LIFE);
 			newAgents.add(new PheromoneAgent(pb));
 			objects[ab.getX()][ab.getY()].add(pb);
-		}
+		}*/
 	}
 
 	/**

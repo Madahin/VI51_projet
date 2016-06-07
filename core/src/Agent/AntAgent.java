@@ -111,7 +111,7 @@ public class AntAgent extends Agent {
 													// around
 				// we go to that pheromone
 				//if(pheromonesBase.size() >= 2){
-					pheromonesVector(pheromonesBase, false);
+					pheromonesVector(pheromonesBase, true);
 				//}else{
 					//goToObject(pheromonesBase.get(0));
 				//}
@@ -142,7 +142,7 @@ public class AntAgent extends Agent {
 													// around
 				// We follow it
 				//if(pheromonesFood.size() >= 2){
-					pheromonesVector(pheromonesFood, true);
+					pheromonesVector(pheromonesFood, false);
 				//}else{
 					//goToObject(pheromonesFood.get(0));
 				//}
@@ -246,7 +246,7 @@ public class AntAgent extends Agent {
 	}
 	
 	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv){
-		ArrayList<Vector2> vectors = new ArrayList<Vector2>();
+		/*ArrayList<Vector2> vectors = new ArrayList<Vector2>();
 		for(Perceivable p : list){
 			Vector2 tmpVect = new Vector2(p.getX() - body.getX(), p.getY() - body.getY());
 			tmpVect.scl(p.getPheromoneLife());
@@ -260,8 +260,22 @@ public class AntAgent extends Agent {
 		}
 		
 		if(inv)
-			finalVect.scl(-1.0f);
+			finalVect.scl(-1.0f);*/
 		
+		Vector2 finalVect = new Vector2(0.0f , 0.0f);
+		Perceivable first = list.get(0);
+		Perceivable last = list.get(list.size()-1);
+		int diffX;
+		int diffY;
+		if(!inv){
+			diffX = last.getX() - first.getX();
+			diffY = last.getY() - first.getY();
+		}else{
+			diffX = first.getX() - last.getX();
+			diffY = first.getY() - last.getY();
+		}
+		finalVect.x = diffX;
+		finalVect.y = diffY;
 		
 		if(finalVect.x == 0){
 			if(finalVect.y > 0){

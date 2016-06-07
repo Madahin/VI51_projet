@@ -259,11 +259,12 @@ public class Environment {
 		// place
 		
 		// Spread of the pheromone
-		int halfValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 2;
-		int spreadValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 16;
+		int halfValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 3;
+		int spread1Value = WorldConfig.PHEROMONE_INITIAL_LIFE / 21;
+		int spread2Value = WorldConfig.PHEROMONE_INITIAL_LIFE / 48;
 		
-		for(int i = ab.getX() - 1 ; i < ab.getX() + 1 ; i ++){
-			for(int j = ab.getY() - 1 ; j < ab.getY() + 1 ; j ++){
+		for(int i = ab.getX() - 2 ; i < ab.getX() + 2 ; i ++){
+			for(int j = ab.getY() - 2 ; j < ab.getY() + 2 ; j ++){
 				
 				if (i >= 0 && i < width && j >= 0 && j < height){
 					boolean needToCreatePheromone = true;
@@ -273,8 +274,10 @@ public class Environment {
 									&& ((PheromoneBody) eo).pheromoneType == pt) {
 								if(i == ab.getX() && j == ab.getY()){
 									((PheromoneBody) eo).life += halfValue;
+								}else if(Math.abs(ab.getX() - i) == 1 || Math.abs(ab.getY() - j) == 1){
+									((PheromoneBody) eo).life += spread1Value;
 								}else{
-									((PheromoneBody) eo).life += spreadValue;
+									((PheromoneBody) eo).life += spread2Value;
 								}
 								
 								needToCreatePheromone = false;
@@ -287,8 +290,10 @@ public class Environment {
 						PheromoneBody pb;
 						if(i == ab.getX() && j == ab.getY()){
 							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, halfValue);
+						}else if(Math.abs(ab.getX() - i) == 1 || Math.abs(ab.getY() - j) == 1){
+							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, spread1Value);
 						}else{
-							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, spreadValue);
+							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, spread2Value);
 						}
 						
 						newAgents.add(new PheromoneAgent(pb));

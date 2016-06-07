@@ -26,5 +26,10 @@ public class ColorUtils {
 		Color c = new Color(baseFoodColor);
 		return c.lerp(maxFoodColor, t);
 	}
+	
+	public static Color PheromoneColor(int value){
+		
+		return new Color(Color.BLACK);
+	}
 
 }

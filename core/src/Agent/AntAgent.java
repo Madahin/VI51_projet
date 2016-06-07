@@ -300,8 +300,8 @@ public class AntAgent extends Agent {
 		for(Perceivable p : list){
 
 			Vector2 tmpVect = new Vector2(p.getX() - body.getX(), p.getY() - body.getY());
-			tmpVect.scl(p.getPheromoneLife());
 			tmpVect.nor();
+			tmpVect.scl(p.getPheromoneLife());	
 			vectors.add(tmpVect);
 		}
 		Vector2 finalVect = new Vector2(0.0f, 0.0f);
@@ -329,7 +329,8 @@ public class AntAgent extends Agent {
 		finalVect.x = diffX;
 		finalVect.y = diffY;*/
 		
-		double angle = Math.atan2(finalVect.x, finalVect.y);
+		double angle = Math.atan2(finalVect.y, finalVect.x);
+		
 		
 		if(angle > -Math.PI/8.0d && angle <= Math.PI/8.0d){
 			move(Direction.EAST);
@@ -339,14 +340,14 @@ public class AntAgent extends Agent {
 			move(Direction.NORTH);
 		}else if(angle > 5*Math.PI/8.0d && angle <= 7*Math.PI/8.0d){
 			move(Direction.NORTH_WEST);
-		}else if(angle > 7*Math.PI/8.0d && angle <= -7*Math.PI/8.0d){
-			move(Direction.WEST);
 		}else if(angle > -3*Math.PI/8.0d && angle <= -Math.PI/8.0d){
 			move(Direction.SOUTH_EAST);
 		}else if(angle > -5*Math.PI/8.0d && angle <= -3*Math.PI/8.0d){
 			move(Direction.SOUTH);
 		}else if(angle > -7*Math.PI/8.0d && angle <= -5*Math.PI/8.0d){
 			move(Direction.SOUTH_WEST);
+		}else if(angle > 7*Math.PI/8.0d || angle <= -7*Math.PI/8.0d){
+			move(Direction.WEST);
 		}
 		
 		

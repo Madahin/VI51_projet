@@ -371,7 +371,7 @@ public class Environment {
 								}else{
 									((PheromoneBody) eo).life += spread2Value;
 								}
-								((PheromoneBody) eo).life = Math.max(((PheromoneBody) eo).life, WorldConfig.PHEROMONE_INITIAL_LIFE);
+								//((PheromoneBody) eo).life = Math.max(((PheromoneBody) eo).life, WorldConfig.PHEROMONE_INITIAL_LIFE);
 								needToCreatePheromone = false;
 								break;
 							}

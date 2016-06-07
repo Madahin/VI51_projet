@@ -50,12 +50,12 @@ public class WorldConfig {
 	/** Minimum size of a food stack. */
 	public static int MIN_SIZE_FOOD_STACK = 3;
 	
-	/** Maximum size of a pheromone used only to clamp it's color gradient. */
-	public static float MAX_PHEROMONE_LIFE = 5000;
-
 	/** The pheromone initial life. */
 	public static int PHEROMONE_INITIAL_LIFE = 20;
 
+	/** Maximum size of a pheromone used only to clamp it's color gradient. */
+	public static float MAX_PHEROMONE_LIFE = 10;
+	
 	/** The ant field of view. */
 	public static int ANT_FIELD_OF_VIEW = 5;
 

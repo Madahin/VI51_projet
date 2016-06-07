@@ -200,9 +200,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			environment.notifyListeners();
 		}else if (!EnvironmentInitialised){
 			initializeEnvironment();
-			simu.notify();
-//			simu = new SimulationThread();
-//			simu.start();
+			simu = new SimulationThread();
+			simu.start();
 		}	
 	}
 	
@@ -213,17 +212,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	public void resetSimulator(){
 		if (EnvironmentInitialised){
 			System.out.println("1");
-//			simu.isRunning=false;
-//			System.out.println("2");
-//			try {
-//				simu.join();
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
+			simu.isRunning=false;
+			System.out.println("2");
 			try {
-				simu.wait();
+				simu.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			System.out.println("3");
@@ -253,9 +246,17 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 	@Override
 	public void render() {
+		
+	
+		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		if (!EnvironmentInitialised){
+			stage.draw();
+			return;
+		}
+		
 		camera.update();
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
@@ -343,7 +344,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		public void run() {
 			while (isRunning) {
 				
-				if(SimulatorPaused){
+				if(SimulatorPaused || !EnvironmentInitialised){
 					try {
 						sleep(500);
 					} catch (InterruptedException e) {

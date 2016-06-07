@@ -54,7 +54,7 @@ public class WorldConfig {
 	public static float MAX_PHEROMONE_LIFE = 5000;
 
 	/** The pheromone initial life. */
-	public static int PHEROMONE_INITIAL_LIFE = 200;
+	public static int PHEROMONE_INITIAL_LIFE = 20;
 
 	/** The ant field of view. */
 	public static int ANT_FIELD_OF_VIEW = 5;
@@ -63,9 +63,9 @@ public class WorldConfig {
 	public static boolean SMOOTH_FOOD_GENERATION = true;
 
 	/** The food cover intensity. */
-	public static float FOOD_COVER_INTENSITY = 0.75f;
+	public static float FOOD_COVER_INTENSITY = 0.30f;
 	
-	public static float FOOD_COVER_PERCENT = 0.75f; // PLEASE CORRECT THIS SHIT
+	public static float FOOD_COVER_PERCENT = 0.30f; // PLEASE CORRECT THIS SHIT
 	
 	/** The default food in an ant base. */
 	public static int DEFAULT_FOOD_IN_BASE = 1000;
@@ -74,7 +74,7 @@ public class WorldConfig {
 	public static int BASE_NUMBER = 2;
 	
 	/** The radius of an ant base. */
-	public static int BASE_RADIUS = 100;
+	public static int BASE_RADIUS = 30;
 
 	/**
 	 * Load an XML configuration file.

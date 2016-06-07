@@ -124,11 +124,8 @@ public class AntAgent extends Agent {
 			} else if (!pheromonesBase.isEmpty()) { // if there base pheromone
 													// around
 				// we go to that pheromone
-				// if(pheromonesBase.size() >= 2){
 				pheromonesVector(pheromonesBase, false);
-				// }else{
-				// goToObject(pheromonesBase.get(0));
-				// }
+
 
 			} else { // if there is none to do
 						// we wander
@@ -155,12 +152,9 @@ public class AntAgent extends Agent {
 			} else if (!pheromonesFood.isEmpty()) { // there is food pheromone
 													// around
 				// We follow it
-				// if(pheromonesFood.size() >= 2){
-				pheromonesVector(pheromonesFood, true);
-				// }else{
-				// goToObject(pheromonesFood.get(0));
-				// }
 
+				pheromonesVector(pheromonesFood, true);
+			
 			} else { // we don't know what to do so we wander
 				wander(((AntBody) body).getDirection());
 			}
@@ -242,52 +236,69 @@ public class AntAgent extends Agent {
 			possibilities.add(Direction.NORTH_WEST);
 			possibilities.add(Direction.NORTH);
 			possibilities.add(Direction.NORTH_EAST);
+			possibilities.add(Direction.EAST);
+			possibilities.add(Direction.WEST);
 		} else if (LastDirection == Direction.NORTH_EAST) {
 			possibilities.add(Direction.NORTH);
 			possibilities.add(Direction.NORTH_EAST);
 			possibilities.add(Direction.EAST);
+			possibilities.add(Direction.NORTH_WEST);
+			possibilities.add(Direction.SOUTH_EAST);
 		} else if (LastDirection == Direction.EAST) {
 			possibilities.add(Direction.NORTH_EAST);
 			possibilities.add(Direction.EAST);
 			possibilities.add(Direction.SOUTH_EAST);
+			possibilities.add(Direction.NORTH);
+			possibilities.add(Direction.SOUTH);
 		} else if (LastDirection == Direction.SOUTH_EAST) {
 			possibilities.add(Direction.EAST);
 			possibilities.add(Direction.SOUTH_EAST);
 			possibilities.add(Direction.SOUTH);
+			possibilities.add(Direction.NORTH_EAST);
+			possibilities.add(Direction.SOUTH_WEST);
 		} else if (LastDirection == Direction.SOUTH) {
 			possibilities.add(Direction.SOUTH_EAST);
 			possibilities.add(Direction.SOUTH);
 			possibilities.add(Direction.SOUTH_WEST);
+			possibilities.add(Direction.EAST);
+			possibilities.add(Direction.WEST);
 		} else if (LastDirection == Direction.SOUTH_WEST) {
 			possibilities.add(Direction.SOUTH);
 			possibilities.add(Direction.SOUTH_WEST);
 			possibilities.add(Direction.WEST);
+			possibilities.add(Direction.SOUTH_EAST);
+			possibilities.add(Direction.NORTH_WEST);
 		} else if (LastDirection == Direction.WEST) {
 			possibilities.add(Direction.SOUTH_WEST);
 			possibilities.add(Direction.WEST);
 			possibilities.add(Direction.NORTH_WEST);
+			possibilities.add(Direction.NORTH);
+			possibilities.add(Direction.SOUTH);
 		} else if (LastDirection == Direction.NORTH_WEST) {
 			possibilities.add(Direction.WEST);
 			possibilities.add(Direction.NORTH_WEST);
 			possibilities.add(Direction.NORTH);
+			possibilities.add(Direction.NORTH_EAST);
+			possibilities.add(Direction.SOUTH_WEST);
 		}
 
 		move(possibilities.get(rand.nextInt(possibilities.size())));
 
 	}
 
-	// TODO : faire le commentaire, ça sert a quoi ?
 	/**
 	 * Pheromones vector.
-	 *
+	 * this methods define with all pheromones perceived the right vector to follow for each ants
 	 * @param list
-	 *            the list
+	 *            the list of pheromones perceived
 	 * @param inv
-	 *            the inv
+	 *            the inv if we want to go toward the pheromonesor not
+	 *         
 	 */
-	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv) {
+	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv){
 		ArrayList<Vector2> vectors = new ArrayList<Vector2>();
-		for (Perceivable p : list) {
+		for(Perceivable p : list){
+
 			Vector2 tmpVect = new Vector2(p.getX() - body.getX(), p.getY() - body.getY());
 			tmpVect.scl(p.getPheromoneLife());
 			tmpVect.nor();
@@ -299,11 +310,49 @@ public class AntAgent extends Agent {
 			finalVect.add(vect);
 		}
 
-		if (inv)
+		
+		if(inv)
 			finalVect.scl(-1.0f);
+		
+		/*Vector2 finalVect = new Vector2(0.0f , 0.0f);
+		Perceivable first = list.get(0);
+		Perceivable last = list.get(list.size()-1);
+		int diffX;
+		int diffY;
+		if(!inv){
+			diffX = last.getX() - first.getX();
+			diffY = last.getY() - first.getY();
+		}else{
+			diffX = first.getX() - last.getX();
+			diffY = first.getY() - last.getY();
+		}
+		finalVect.x = diffX;
+		finalVect.y = diffY;*/
+		
+		double angle = Math.atan2(finalVect.x, finalVect.y);
+		
+		if(angle > -Math.PI/8.0d && angle <= Math.PI/8.0d){
+			move(Direction.EAST);
+		}else if(angle > Math.PI/8.0d && angle <= 3*Math.PI/8.0d ){
+			move(Direction.NORTH_EAST);
+		}else if(angle > 3*Math.PI/8.0d && angle <= 5*Math.PI/8.0d){
+			move(Direction.NORTH);
+		}else if(angle > 5*Math.PI/8.0d && angle <= 7*Math.PI/8.0d){
+			move(Direction.NORTH_WEST);
+		}else if(angle > 7*Math.PI/8.0d && angle <= -7*Math.PI/8.0d){
+			move(Direction.WEST);
+		}else if(angle > -3*Math.PI/8.0d && angle <= -Math.PI/8.0d){
+			move(Direction.SOUTH_EAST);
+		}else if(angle > -5*Math.PI/8.0d && angle <= -3*Math.PI/8.0d){
+			move(Direction.SOUTH);
+		}else if(angle > -7*Math.PI/8.0d && angle <= -5*Math.PI/8.0d){
+			move(Direction.SOUTH_WEST);
+		}
+		
+		
+		/*if(finalVect.x == 0){
+			if(finalVect.y > 0){
 
-		if (finalVect.x == 0) {
-			if (finalVect.y > 0) {
 				move(Direction.NORTH);
 			} else if (finalVect.y < 0) {
 				move(Direction.SOUTH);
@@ -324,7 +373,7 @@ public class AntAgent extends Agent {
 			} else {
 				move(Direction.SOUTH_WEST);
 			}
-		}
+		}*/
 
 	}
 

@@ -44,7 +44,7 @@ public class ColorUtils {
 		Color c = new Color(baseFoodColor);
 		return c.lerp(maxFoodColor, t);
 	}
-	
+
 	
 	/** The color of the minimaly sized base pheromone life. */
 	final static Color BasePheromoneColor = Color.WHITE;
@@ -71,6 +71,7 @@ public class ColorUtils {
 		float t = Math.max(0, Math.min(WorldConfig.MAX_PHEROMONE_LIFE, (float)value)) / WorldConfig.MAX_PHEROMONE_LIFE;
 		Color c = new Color(FoodPheromoneColor);
 		return c.lerp(maxFoodPheromoneColor, t);
+
 	}
 
 }

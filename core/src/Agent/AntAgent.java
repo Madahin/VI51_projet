@@ -46,6 +46,14 @@ public class AntAgent extends Agent {
 	/** {@inheritDoc} */
 	@Override
 	public void live() {
+		
+		// Life expectancy is decreasing
+		//((AntBody) body).life--;
+		if (((AntBody) body).life <= 0){
+			this.destroy();
+			return;
+		}
+		
 		// Filling the goal is a priority
 		if (currentObjective != null) {
 			if (currentObjective.getX() == body.getX() && currentObjective.getY() == body.getY()) {

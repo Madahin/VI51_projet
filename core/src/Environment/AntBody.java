@@ -17,6 +17,9 @@ public class AntBody extends AgentBody{
 	/** The quantity of food carried. */
 	private int foodCarried;
 	
+	/** The life expectancy of the ant. */
+	public int life; 
+	
 	/**
 	 * Instantiates a new ant body.
 	 *
@@ -27,12 +30,13 @@ public class AntBody extends AgentBody{
 	 * @param initY the initial position in y
 	 * @param env the environment
 	 */
-	public AntBody(Faction f, int fID, Direction d, int initX, int initY, Environment env){
+	public AntBody(Faction f, int fID, Direction d, int initX, int initY,int _Life, Environment env){
 		faction = f;
 		factionID = fID;
 		direction = d;
 		x = initX;
 		y = initY;
+		life = _Life;
 		environmentReference = env;
 		foodCarried = 0;
 	}

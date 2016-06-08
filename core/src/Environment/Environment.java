@@ -10,7 +10,7 @@ import Agent.Agent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
 import Tools.SimplexNoise;
-
+import Environment.FoodPile;
 /**
  * The Class Environment.
  */
@@ -274,6 +274,32 @@ public class Environment {
 	 * @param b the body to be destroyed
 	 */
 	public void destroy(AgentBody b) {
+		
+		//if the agent is an ant he will become food
+		if (b.getClass() == AntBody.class){
+			boolean foodPileExists = false;
+			int foodDropped = Math.max(WorldConfig.MIN_SIZE_FOOD_STACK, Math.min( WorldConfig.MAX_SIZE_FOOD_STACK, 
+					WorldConfig.DEAD_ANT_FOOD_VALUE + ((AntBody)b).getFoodCaried()));
+			for (EnvironmentObject o : objects[b.getX()][b.getY()]) {
+				if (o instanceof FoodPile) {
+					((FoodPile) o).DropFood(foodDropped);
+					foodPileExists = true;
+				}
+			}
+			if(!foodPileExists){
+				float percent = (float) (foodDropped / WorldConfig.MAX_SIZE_FOOD_STACK);
+				objects[b.getX()][b.getY()].add(new FoodPile(b.getX(),b.getY(),percent));
+			}
+			nbAgents--;
+			
+			if (nbAgents == cptAgents) {
+				cptAgents = 0;
+				// And we notify all listeners.
+				notifyListeners();
+			}
+		}
+		
+		
 		objects[b.getX()][b.getY()].remove(b);
 	}
 
@@ -333,7 +359,7 @@ public class Environment {
 		int _x = (int) dx, _y = (int) dy;
 		
 		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
-		AntBody b = new AntBody(faction, factionID, dir, _x, _y, this);
+		AntBody b = new AntBody(faction, factionID, dir, _x, _y, WorldConfig.LIFE_EXPECTANCY, this);
 
 		objects[_x][_y].add(b);
 		return b;

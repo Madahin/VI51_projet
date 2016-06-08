@@ -51,7 +51,7 @@ public class WorldConfig {
 	public static int MIN_SIZE_FOOD_STACK = 3;
 	
 	/** Maximum size of a pheromone used only to clamp it's color gradient. */
-	public static float MAX_PHEROMONE_LIFE = 5000;
+	public static float MAX_PHEROMONE_LIFE = 200;
 
 	/** The pheromone initial life. */
 	public static int PHEROMONE_INITIAL_LIFE = 20;
@@ -75,6 +75,15 @@ public class WorldConfig {
 	
 	/** The radius of an ant base. */
 	public static int BASE_RADIUS = 30;
+	
+	/** The ant's life expectancy. */
+	public static  int LIFE_EXPECTANCY = 50;
+	
+	/** Maximum number of ants that can be spawned at the time. */
+	public static  int MAX_ANT_POP = 100;
+	
+	/** Amount of food a dead ant's body becomes. */
+	public static  int DEAD_ANT_FOOD_VALUE = 100;
 
 	/**
 	 * Load an XML configuration file.

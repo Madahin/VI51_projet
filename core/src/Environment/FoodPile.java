@@ -69,6 +69,15 @@ public class FoodPile extends StaticObject{
 	}
 	
 	/**
+	 * Drops food in the pile.
+	 *
+	 * 
+	 */
+	public void DropFood(int Quantity){
+			FoodAmount += Quantity;
+	}
+	
+	/**
 	 * Checks if the foodPile is empty.
 	 *
 	 * @return true, if successful

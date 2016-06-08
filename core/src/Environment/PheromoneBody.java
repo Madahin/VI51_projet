@@ -17,6 +17,9 @@ public class PheromoneBody extends AgentBody {
 	/** The life of the pheromone. */
 	public int life; 
 	
+	/** the direction of the pheromone */
+	public Direction pheromoneDirection;
+	
 	/**
 	 * Instantiates a new pheromone body.
 	 *
@@ -28,7 +31,7 @@ public class PheromoneBody extends AgentBody {
 	 * @param env the environment
 	 * @param _life the life of the pheromone
 	 */
-	public PheromoneBody(int x, int y, Faction f, int fID, PheromoneType pt, Environment env, int _life) {
+	public PheromoneBody(int x, int y, Faction f, int fID, PheromoneType pt, Environment env, int _life, Direction d) {
 		environmentReference = env;
 		this.x = x;
 		this.y = y;
@@ -36,6 +39,7 @@ public class PheromoneBody extends AgentBody {
 		factionID = fID;
 		pheromoneType = pt;
 		life = _life;
+		pheromoneDirection = d;
 	}
 	
 	/** {@inheritDoc} */

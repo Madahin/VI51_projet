@@ -26,6 +26,9 @@ public class Perceivable {
 	/** The pheromone life if it is one. */
 	private int pheromoneLife;
 
+	/** The Direction of the pheromone or the Ant */
+	private Direction direction;
+	
 	/**
 	 * Instantiates a new perceivable.
 	 *
@@ -43,12 +46,14 @@ public class Perceivable {
 		if (b instanceof AntBody) {
 			faction = ((AntBody) b).getFaction();
 			factionID = ((AntBody) b).getFactionID();
+			direction = ((AntBody) b).getDirection();
 		}
 		if (b instanceof PheromoneBody) {
 			faction = ((PheromoneBody) b).faction;
 			factionID = ((PheromoneBody) b).factionID;
 			pType = ((PheromoneBody) b).pheromoneType;
 			pheromoneLife = ((PheromoneBody) b).life;
+			direction = ((PheromoneBody) b).pheromoneDirection;
 		}
 		
 		
@@ -116,6 +121,10 @@ public class Perceivable {
 	 */
 	public Class<? extends EnvironmentObject> getType() {
 		return type;
+	}
+	
+	public Direction getDirection(){
+		return direction;
 	}
 
 }

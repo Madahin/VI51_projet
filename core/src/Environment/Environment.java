@@ -215,6 +215,7 @@ public class Environment {
 			objects[b.getX()][b.getY()].remove(b);
 			b.setPosition(b.getX() + vectX, b.getY() + vectY);
 			objects[b.getX()][b.getY()].add(b);
+			((AntBody) b).setDirection(d);
 		} else {
 
 			// Alternative 1
@@ -371,13 +372,13 @@ public class Environment {
 	 * @param pt the type of pheromone that will be created
 	 * @param ab the body that will create the pheromone
 	 */
-	public void createPheromone(PheromoneType pt, AgentBody ab) {
+	public void createPheromone(PheromoneType pt, AgentBody ab, Direction d) {
 		// We want to know if there is a pheromone of the same faction and type
 		// on this
 		// place
 		
 		// Spread of the pheromone
-		int halfValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 3;
+		/*int halfValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 3;
 		int spread1Value = WorldConfig.PHEROMONE_INITIAL_LIFE / 21;
 		int spread2Value = WorldConfig.PHEROMONE_INITIAL_LIFE / 48;
 		
@@ -420,15 +421,17 @@ public class Environment {
 				}
 				
 			}
-		}
+		}*/
 		
-		/*boolean needToCreatePheromone = true;
+		boolean needToCreatePheromone = true;
 		for (EnvironmentObject eo : objects[ab.getX()][ab.getY()]) {
 			if (eo instanceof PheromoneBody) {
 				if (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID()
 						&& ((PheromoneBody) eo).pheromoneType == pt) {
 
 					((PheromoneBody) eo).life = WorldConfig.PHEROMONE_INITIAL_LIFE;
+					((PheromoneBody) eo).pheromoneDirection = d;
+					
 					needToCreatePheromone = false;
 					break;
 				}
@@ -437,10 +440,10 @@ public class Environment {
 
 		if (needToCreatePheromone) {
 			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).getFaction(),
-					((AntBody) ab).getFactionID(), pt, this, WorldConfig.PHEROMONE_INITIAL_LIFE);
+												((AntBody) ab).getFactionID(), pt, this, WorldConfig.PHEROMONE_INITIAL_LIFE, d);
 			newAgents.add(new PheromoneAgent(pb));
 			objects[ab.getX()][ab.getY()].add(pb);
-		}*/
+		}
 	}
 
 	/**

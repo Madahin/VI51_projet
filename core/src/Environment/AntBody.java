@@ -43,7 +43,7 @@ public class AntBody extends AgentBody{
 	 * @param pt the pheromone type
 	 */
 	public void createPheromone(PheromoneType pt){
-		environmentReference.createPheromone(pt, this);
+		environmentReference.createPheromone(pt, this, direction);
 	}
 	
 	/**

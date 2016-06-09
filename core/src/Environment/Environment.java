@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 
 import Agent.Agent;
+import Agent.AntAgent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
 import Tools.SimplexNoise;
@@ -445,7 +446,7 @@ public class Environment {
 				
 			}
 		}*/
-		
+
 		boolean needToCreatePheromone = true;
 		for (EnvironmentObject eo : objects[ab.getX()][ab.getY()]) {
 			if (eo instanceof PheromoneBody) {
@@ -552,7 +553,7 @@ public class Environment {
 	}
 
 	/**
-	 * Gets 
+	 * Gives the ant his hunger points back. 
 	 *
 	 * @param b the AntBody
 	 * @return boolean if there 's enough food to take from the base
@@ -566,6 +567,31 @@ public class Environment {
 		}else{
 			foodInBase[b.getFactionID()] -= WorldConfig.HUNGER_BAR;
 			return WorldConfig.HUNGER_BAR;
+		}
+	}
+
+	/**
+	 * Creates new ants. 
+	 *
+	 * @param b the AntBody
+	 * @return boolean if there 's enough food to take from the base
+	 */
+	public void spawnAnts(AntBody b) {
+		if (foodInBase[b.getFactionID()] > 0 && 															// if there is food at the base
+			WorldConfig.ANT_NUMBER - nbAgentPerBases[b.getFactionID()] > WorldConfig.ANT_POP_NUMBER){		// and a certain number of ants died
+			
+			// Spawning Ants costs food
+			int popNumber = Math.min(WorldConfig.ANT_POP_NUMBER,foodInBase[b.getFactionID()]);
+			foodInBase[b.getFactionID()] -= popNumber;
+			
+			// we spawn each new ants
+			for (int i=0; i < popNumber; i++){
+				AgentBody ab = createAntBody(b.getFaction(), b.getFactionID(), 
+						basePositions[b.getFactionID()].getX(), basePositions[b.getFactionID()].getY());
+				newAgents.add(new AntAgent(ab));
+				objects[ab.getX()][ab.getY()].add(ab);
+			
+			}
 		}
 	}
 

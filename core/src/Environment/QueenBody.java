@@ -6,5 +6,11 @@ public class QueenBody extends AntBody {
 		super(f, fID, d, initX, initY, _Life, env);
 		// TODO Auto-generated constructor stub
 	}
-
+	/**
+	 * Spawns ants.
+	 *
+	 */
+	public void spawnAnts(){
+		environmentReference.spawnAnts(this);
+	}
 }

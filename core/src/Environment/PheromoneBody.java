@@ -1,5 +1,7 @@
 package Environment;
 
+import com.badlogic.gdx.math.Vector2;
+
 /**
  * The Class PheromoneBody.
  */
@@ -18,7 +20,8 @@ public class PheromoneBody extends AgentBody {
 	public int life; 
 	
 	/** the direction of the pheromone */
-	public Direction pheromoneDirection;
+	//public Direction pheromoneDirection;
+	public Vector2 pheromoneDirection;
 	
 	/**
 	 * Instantiates a new pheromone body.
@@ -31,7 +34,7 @@ public class PheromoneBody extends AgentBody {
 	 * @param env the environment
 	 * @param _life the life of the pheromone
 	 */
-	public PheromoneBody(int x, int y, Faction f, int fID, PheromoneType pt, Environment env, int _life, Direction d) {
+	public PheromoneBody(int x, int y, Faction f, int fID, PheromoneType pt, Environment env, int _life, Vector2 d) {
 		environmentReference = env;
 		this.x = x;
 		this.y = y;

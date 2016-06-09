@@ -15,6 +15,7 @@ import Environment.Perceivable;
 import Environment.PheromoneBody;
 import Environment.PheromoneComparator;
 import Environment.PheromoneType;
+import Tools.EnumUtils;
 
 /**
  * Representation of a worker ant.
@@ -318,7 +319,21 @@ public class AntAgent extends Agent {
 	 *         
 	 */
 	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv){
-		switch (list.get(0).getDirection()) {
+		
+		// We get the barycentre
+		Vector2 tmpVect = new Vector2(0.0f, 0.0f);
+		for(Perceivable p : list){
+			Vector2 vect = new Vector2(p.getPheromoneDirection().x,
+									   p.getPheromoneDirection().y);
+			//vect.scl(p.getPheromoneLife());
+			tmpVect.add(vect);
+		}
+		tmpVect.rotate(180.0f);
+		move(EnumUtils.VectorToDirection(tmpVect));
+		//Vector2 tmpVect = list.get(0).getPheromoneDirection().scl(-1.0f);
+		//move(EnumUtils.VectorToDirection(tmpVect));
+		
+		/*switch (list.get(0).getDirection()) {
 		case NORTH:
 			move(Direction.SOUTH);
 			break;
@@ -344,7 +359,7 @@ public class AntAgent extends Agent {
 			move(Direction.SOUTH_EAST);
 			break;
 				
-		}
+		}*/
 		
 		
 		

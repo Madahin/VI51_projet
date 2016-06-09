@@ -5,10 +5,12 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Vector2;
 
 import Agent.Agent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
+import Tools.EnumUtils;
 import Tools.SimplexNoise;
 import Environment.FoodPile;
 /**
@@ -171,10 +173,10 @@ public class Environment {
 		if (b instanceof AntBody) {
 			// around the body
 			// on x
-			for (int i = b.getX() - WorldConfig.ANT_FIELD_OF_VIEW; i < b.getX() + WorldConfig.ANT_FIELD_OF_VIEW; i++) {
+			for (int i = b.getX() - WorldConfig.ANT_FIELD_OF_VIEW; i < b.getX() + WorldConfig.ANT_FIELD_OF_VIEW + 1; i++) {
 				// on y
 				for (int j = b.getY() - WorldConfig.ANT_FIELD_OF_VIEW; j < b.getY()
-						+ WorldConfig.ANT_FIELD_OF_VIEW; j++) {
+						+ WorldConfig.ANT_FIELD_OF_VIEW + 1; j++) {
 					// if the case is in the world
 					if (i >= 0 && i < width && j >= 0 && j < height) {
 						// we run all the object in the case
@@ -395,7 +397,8 @@ public class Environment {
 	 * @param pt the type of pheromone that will be created
 	 * @param ab the body that will create the pheromone
 	 */
-	public void createPheromone(PheromoneType pt, AgentBody ab, Direction d) {
+	public void createPheromone(PheromoneType pt, AgentBody ab) {
+		Direction d = ((AntBody)ab).getDirection();
 		// We want to know if there is a pheromone of the same faction and type
 		// on this
 		// place
@@ -453,7 +456,9 @@ public class Environment {
 						&& ((PheromoneBody) eo).pheromoneType == pt) {
 
 					((PheromoneBody) eo).life = WorldConfig.PHEROMONE_INITIAL_LIFE;
-					((PheromoneBody) eo).pheromoneDirection = d;
+					Vector2 tmpVect = EnumUtils.DirectionToVector(d);
+					((PheromoneBody) eo).pheromoneDirection.add(tmpVect);
+					((PheromoneBody) eo).pheromoneDirection.nor();
 					
 					needToCreatePheromone = false;
 					break;
@@ -462,8 +467,9 @@ public class Environment {
 		}
 
 		if (needToCreatePheromone) {
+
 			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).getFaction(),
-												((AntBody) ab).getFactionID(), pt, this, WorldConfig.PHEROMONE_INITIAL_LIFE, d);
+												((AntBody) ab).getFactionID(), pt, this, WorldConfig.PHEROMONE_INITIAL_LIFE, EnumUtils.DirectionToVector(d));
 			newAgents.add(new PheromoneAgent(pb));
 			objects[ab.getX()][ab.getY()].add(pb);
 		}

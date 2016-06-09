@@ -1,5 +1,7 @@
 package Environment;
 
+import com.badlogic.gdx.math.Vector2;
+
 /**
  * The Class Perceivable represent an object that is perceived by an agent.
  */
@@ -26,8 +28,11 @@ public class Perceivable {
 	/** The pheromone life if it is one. */
 	private int pheromoneLife;
 
-	/** The Direction of the pheromone or the Ant */
+	/** The Direction of the Ant */
 	private Direction direction;
+	
+	/** The direction of the pheromone **/
+	private Vector2 pDirection;
 	
 	/**
 	 * Instantiates a new perceivable.
@@ -53,7 +58,7 @@ public class Perceivable {
 			factionID = ((PheromoneBody) b).factionID;
 			pType = ((PheromoneBody) b).pheromoneType;
 			pheromoneLife = ((PheromoneBody) b).life;
-			direction = ((PheromoneBody) b).pheromoneDirection;
+			pDirection = ((PheromoneBody) b).pheromoneDirection;
 		}
 		
 		
@@ -127,4 +132,7 @@ public class Perceivable {
 		return direction;
 	}
 
+	public Vector2 getPheromoneDirection(){
+		return pDirection;
+	}
 }

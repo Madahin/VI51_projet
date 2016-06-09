@@ -1,5 +1,7 @@
 package Environment;
 
+import Config.WorldConfig;
+
 /**
  * The Class AntBody is the "physical" representation of an ant in an environment.
  */
@@ -20,6 +22,9 @@ public class AntBody extends AgentBody{
 	/** The life expectancy of the ant. */
 	public int life; 
 	
+	/** The time it takes before losing health/life from hunger. */
+	public int hunger; 
+	
 	/**
 	 * Instantiates a new ant body.
 	 *
@@ -37,6 +42,7 @@ public class AntBody extends AgentBody{
 		x = initX;
 		y = initY;
 		life = _Life;
+		hunger = WorldConfig.HUNGER_BAR;
 		environmentReference = env;
 		foodCarried = 0;
 	}
@@ -137,5 +143,13 @@ public class AntBody extends AgentBody{
 	 */
 	public void setDirection(Direction dir){
 		direction = dir;
+	}
+	
+	/**
+	 * Replenish the hunger.
+	 */
+	public void eat() {
+		hunger = environmentReference.eat(this);
+		
 	}
 }

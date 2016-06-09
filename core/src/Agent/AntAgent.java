@@ -43,13 +43,22 @@ public class AntAgent extends Agent {
 		pheromoneTicks = 0;
 	}
 
+
+	
 	/** {@inheritDoc} */
 	@Override
 	public void live() {
 		
 		// Life expectancy is decreasing
-		//((AntBody) body).life--;
-		if (((AntBody) body).life <= 0){
+		if( body == null)
+			return;
+		
+		
+		if (((AntBody) body).hunger > 0)
+			((AntBody) body).hunger--;
+		else if (((AntBody) body).life > 0)
+			((AntBody) body).life--;
+		else {
 			this.destroy();
 			return;
 		}
@@ -117,8 +126,12 @@ public class AntAgent extends Agent {
 		Collections.sort(pheromonesBase, comparator);
 		
 		
+		// We check if the ants needs to eat
+		if (((AntBody) body).hunger == 0 && onBase != null)
+			((AntBody) body).eat();
+		
 		// Here are the decision algorithm
-		// In the first place we want to know in wich state
+		// In the first place we want to know in which state
 		// is the ant
 		if (isCarryingFood) { // If the ant have food
 			// So she have to return it to the base

@@ -77,7 +77,10 @@ public class WorldConfig {
 	public static int BASE_RADIUS = 30;
 	
 	/** The ant's life expectancy. */
-	public static  int LIFE_EXPECTANCY = 50;
+	public static  int LIFE_EXPECTANCY = 2000;
+	
+	/** The ant's hunger bar. */
+	public static  int HUNGER_BAR = 100;
 	
 	/** Maximum number of ants that can be spawned at the time. */
 	public static  int MAX_ANT_POP = 100;

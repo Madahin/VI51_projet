@@ -269,6 +269,8 @@ public class Environment {
 		}
 	}
 
+	
+	
 	/**
 	 * Destroy a body.
 	 *
@@ -278,6 +280,7 @@ public class Environment {
 		
 		//if the agent is an ant he will become food
 		if (b.getClass() == AntBody.class){
+						
 			boolean foodPileExists = false;
 			int foodDropped = Math.max(WorldConfig.MIN_SIZE_FOOD_STACK, Math.min( WorldConfig.MAX_SIZE_FOOD_STACK, 
 					WorldConfig.DEAD_ANT_FOOD_VALUE + ((AntBody)b).getFoodCaried()));
@@ -291,8 +294,8 @@ public class Environment {
 				float percent = (float) (foodDropped / WorldConfig.MAX_SIZE_FOOD_STACK);
 				objects[b.getX()][b.getY()].add(new FoodPile(b.getX(),b.getY(),percent));
 			}
-			nbAgents--;
-			
+  			nbAgents--;
+  			nbAgentPerBases[((AntBody) b).getFactionID()] -= 1;
 			if (nbAgents == cptAgents) {
 				cptAgents = 0;
 				// And we notify all listeners.
@@ -363,6 +366,26 @@ public class Environment {
 		AntBody b = new AntBody(faction, factionID, dir, _x, _y, WorldConfig.LIFE_EXPECTANCY, this);
 
 		objects[_x][_y].add(b);
+		return b;
+	}
+	
+	/**
+	 * Creates an Queen body.
+	 *
+	 * @param faction the faction of the ant
+	 * @param factionID the faction id of the ant
+	 * @param basePosX the position of the base in which the ant will span in x
+	 * @param basePosY the position of the base in which the ant will span in  y
+	 * @return the Queen body
+	 */
+	public AgentBody createQueenBody(Faction faction, int factionID, int basePosX, int basePosY) {
+		nbAgents++;
+		nbAgentPerBases[factionID] += 1;
+		
+		Direction dir = Direction.NORTH;
+		AntBody b = new QueenBody(faction, factionID, dir, basePosX, basePosY, WorldConfig.LIFE_EXPECTANCY, this);
+
+		objects[basePosX][basePosY].add(b);
 		return b;
 	}
 
@@ -526,6 +549,24 @@ public class Environment {
 	 */
 	public int getNbAgent(int n){
 		return nbAgentPerBases[n];
+	}
+
+	/**
+	 * Gets 
+	 *
+	 * @param b the AntBody
+	 * @return boolean if there 's enough food to take from the base
+	 */
+	public int eat(AntBody b) {
+		if (foodInBase[b.getFactionID()] <= 0)
+			return 0;
+		else if ( foodInBase[b.getFactionID()] < WorldConfig.HUNGER_BAR){
+			foodInBase[b.getFactionID()] = 0;
+			return WorldConfig.HUNGER_BAR - foodInBase[b.getFactionID()];
+		}else{
+			foodInBase[b.getFactionID()] -= WorldConfig.HUNGER_BAR;
+			return WorldConfig.HUNGER_BAR;
+		}
 	}
 
 }

@@ -20,13 +20,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import Agent.Agent;
 import Agent.AntAgent;
 import Agent.PheromoneAgent;
+import Agent.QueenAgent;
 import Config.WorldConfig;
 import Environment.AntBody;
 import Environment.BasePosition;
@@ -149,6 +149,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 
 		// Each race have some ants at the beginning
 		for(int n=0; n < bases.length; ++n){
+			agents.add(new QueenAgent(environment.createQueenBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY())));
 			for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
 				agents.add(new AntAgent(environment.createAntBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY())));
 			}

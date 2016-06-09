@@ -68,7 +68,7 @@ public class WorldConfig {
 	public static float FOOD_COVER_PERCENT = 0.50f; // PLEASE CORRECT THIS SHIT
 	
 	/** The default food in an ant base. */
-	public static int DEFAULT_FOOD_IN_BASE = 1000;
+	public static int DEFAULT_FOOD_IN_BASE = 10000;
 	
 	/** The number of ant bases. */
 	public static int BASE_NUMBER = 2;
@@ -83,10 +83,10 @@ public class WorldConfig {
 	public static  int HUNGER_BAR = 100;
 	
 	/** Maximum number of ants that can be spawned at the time. */
-	public static  int MAX_ANT_POP = 100;
+	public static  int ANT_POP_NUMBER = 100;
 	
 	/** Amount of food a dead ant's body becomes. */
-	public static  int DEAD_ANT_FOOD_VALUE = 100;
+	public static  int DEAD_ANT_FOOD_VALUE = 10;
 
 	/**
 	 * Load an XML configuration file.

@@ -149,7 +149,9 @@ public class AntBody extends AgentBody{
 	 * Replenish the hunger.
 	 */
 	public void eat() {
-		hunger = environmentReference.eat(this);
+		hunger = environmentReference.eat(this); 
 		
 	}
+	
+
 }

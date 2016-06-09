@@ -68,7 +68,7 @@ public class EnumUtils {
 			return Direction.WEST;
 		}
 		
-		System.out.println("ZIZI : "+angle);
+		
 		return null;
 	}
 }

@@ -38,7 +38,7 @@ public class SoldierAgent extends AntAgent {
 			}
 		}
 		
-		if(enemies != null){
+		if(!enemies.isEmpty()){
 			enemyAround = true;
 			// we attack the first enemy in sight.
 			attack(enemies.get(0));

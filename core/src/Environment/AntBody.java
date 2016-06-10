@@ -40,13 +40,13 @@ public class AntBody extends AgentBody{
 	 * @param initY the initial position in y
 	 * @param env the environment
 	 */
-	public AntBody(Faction f, int fID, Direction d, int initX, int initY,int _Life, Environment env){
+	public AntBody(Faction f, int fID, Direction d, int initX, int initY, Environment env){
 		faction = f;
 		factionID = fID;
 		direction = d;
 		x = initX;
 		y = initY;
-		life = _Life;
+		life = WorldConfig.ANT_INITIAL_LIFE;
 		hunger = WorldConfig.HUNGER_BAR;
 		environmentReference = env;
 		foodCarried = 0;

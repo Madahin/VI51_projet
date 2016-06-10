@@ -129,8 +129,8 @@ public class AntAgent extends Agent {
 		
 		
 		// We check if the ants needs to eat
-		if (((AntBody) body).hunger == 0 && onBase != null)
-			((AntBody) body).eat();
+		if (((AntBody) body).hunger == 0 /*&& onBase != null*/)
+			eat();
 		
 		// Here are the decision algorithm
 		// In the first place we want to know in which state
@@ -195,6 +195,10 @@ public class AntAgent extends Agent {
 
 	}
 
+	public void eat(){
+		
+	}
+	
 	/**
 	 * Adds the food to the base.
 	 */

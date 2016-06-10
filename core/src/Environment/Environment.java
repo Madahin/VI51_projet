@@ -401,7 +401,7 @@ public class Environment {
 		int _x = (int) dx, _y = (int) dy;
 		
 		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
-		AntBody b = new AntBody(faction, factionID, dir, _x, _y, WorldConfig.LIFE_EXPECTANCY, this);
+		AntBody b = new AntBody(faction, factionID, dir, _x, _y, this);
 
 		objects[_x][_y].add(b);
 		return b;
@@ -421,7 +421,7 @@ public class Environment {
 		nbAgentPerBases[factionID] += 1;
 		
 		Direction dir = Direction.NORTH;
-		AntBody b = new QueenBody(faction, factionID, dir, basePosX, basePosY, WorldConfig.LIFE_EXPECTANCY, this);
+		AntBody b = new QueenBody(faction, factionID, dir, basePosX, basePosY, this);
 
 		objects[basePosX][basePosY].add(b);
 		return b;
@@ -600,7 +600,14 @@ public class Environment {
 	 * @return boolean if there 's enough food to take from the base
 	 */
 	public int eat(AntBody b) {
-		if (foodInBase[b.getFactionID()] <= 0)
+		if(foodInBase[b.getFactionID()] <= 0){
+			return 0;
+		}else{
+			foodInBase[b.getFactionID()] --;
+			return WorldConfig.HUNGER_BAR;
+		}
+		
+		/*if (foodInBase[b.getFactionID()] <= 0)
 			return 0;
 		else if ( foodInBase[b.getFactionID()] < WorldConfig.HUNGER_BAR){
 			foodInBase[b.getFactionID()] = 0;
@@ -608,7 +615,7 @@ public class Environment {
 		}else{
 			foodInBase[b.getFactionID()] -= WorldConfig.HUNGER_BAR;
 			return WorldConfig.HUNGER_BAR;
-		}
+		}*/
 	}
 
 	/**

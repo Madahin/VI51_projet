@@ -42,13 +42,13 @@ public class WorldConfig {
 	public static int ANT_NUMBER = 2500;
 
 	/** How much food an ant can carry. */
-	public static int ANT_FOOD_CARYING = 1;
+	public static int ANT_FOOD_CARYING = 60;
 
 	/** Maximum size of a food stack. */
-	public static int MAX_SIZE_FOOD_STACK = 20;
+	public static int MAX_SIZE_FOOD_STACK = 1200;
 
 	/** Minimum size of a food stack. */
-	public static int MIN_SIZE_FOOD_STACK = 3;
+	public static int MIN_SIZE_FOOD_STACK = 180;
 	
 	/** Maximum size of a pheromone used only to clamp it's color gradient. */
 	public static float MAX_PHEROMONE_LIFE = 200;
@@ -56,6 +56,8 @@ public class WorldConfig {
 	/** The pheromone initial life. */
 	public static int PHEROMONE_INITIAL_LIFE = 500;
 
+	public static int ANT_INITIAL_LIFE = 100;
+	
 	/** The ant field of view. */
 	public static int ANT_FIELD_OF_VIEW = 5;
 

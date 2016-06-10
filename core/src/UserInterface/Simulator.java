@@ -51,6 +51,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private TextButton b_START;
 	private TextButton b_PAUSE;
 	private TextButton b_RESET;
+	private TextButton b_ZOOM_IN;
+	private TextButton b_ZOOM_OUT;
+	private TextButton b_UP;
+	private TextButton b_DOWN;
+	private TextButton b_LEFT;
+	private TextButton b_RIGHT;
 	private boolean SimulatorPaused = false;
 	private boolean EnvironmentInitialised = false;
 	private boolean debug = true;                      ////////////////////////////<-- FOR DEBUG <--///////////////////////////////
@@ -101,9 +107,23 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	     b_START = new TextButton("Start", skin);
 	     b_PAUSE = new TextButton("Pause", skin);
 	     b_RESET = new TextButton("Reset", skin);
+	 	 b_ZOOM_IN = new TextButton(" + ", skin);
+	 	 b_ZOOM_IN.setWidth(30);
+		 b_ZOOM_OUT = new TextButton("  -  ", skin);
+		 b_ZOOM_OUT.setWidth(30);
+		 b_UP = new TextButton("   up  ", skin);
+		 b_DOWN = new TextButton("down", skin);
+		 b_LEFT = new TextButton(" left ", skin);
+		 b_RIGHT = new TextButton("right", skin);
 		 stage.addActor(b_START);
 		 stage.addActor(b_PAUSE);
 		 stage.addActor(b_RESET);
+		 stage.addActor(b_ZOOM_IN);
+		 stage.addActor(b_ZOOM_OUT);
+		 stage.addActor(b_UP);
+		 stage.addActor(b_DOWN);
+		 stage.addActor(b_LEFT);
+		 stage.addActor(b_RIGHT);
 		 
 		 b_START.addListener(new ChangeListener() {
 		        @Override
@@ -123,6 +143,48 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		        @Override
 		        public void changed (ChangeEvent event, Actor actor) {
 		            resetSimulator();
+		        }
+		    });
+		 
+		 b_ZOOM_IN.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		        	camera.zoom *= 0.99f;
+		        }
+		    });
+		 
+		 b_ZOOM_OUT.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		        	camera.zoom *= 1.01f;
+		        }
+		    });
+		 
+		 b_UP.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+					camera.translate(new Vector2(0.0f, 5.0f));
+		        }
+		    });
+		 
+		 b_DOWN.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+					camera.translate(new Vector2(0.0f, -5.0f));
+		        }
+		    });
+		 
+		 b_LEFT.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+					camera.translate(new Vector2(-0.5f, 0.0f));
+		        }
+		    });
+		 
+		 b_RIGHT.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+					camera.translate(new Vector2(0.5f, 0.0f));
 		        }
 		    });
 		 
@@ -199,6 +261,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		b_START.setPosition(width-170, 10);
 		b_PAUSE.setPosition(width-120, 10);
 		b_RESET.setPosition(width-60, 10);
+		b_ZOOM_IN.setPosition(10, 40);
+		b_ZOOM_OUT.setPosition(10, 10);
+		b_UP.setPosition(95, 40);
+		b_DOWN.setPosition(95, 10);
+		b_LEFT.setPosition(50, 10);
+		b_RIGHT.setPosition(150, 10);
 	    stage.getViewport().update(width, height, true);
 	}
 

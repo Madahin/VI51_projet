@@ -1,5 +1,8 @@
 package Environment;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+
 import Config.WorldConfig;
 
 /**
@@ -25,6 +28,8 @@ public class AntBody extends AgentBody{
 	/** The time it takes before losing health/life from hunger. */
 	public int hunger; 
 	
+	public Vector3 behaviourDebug; 
+	
 	/**
 	 * Instantiates a new ant body.
 	 *
@@ -45,6 +50,7 @@ public class AntBody extends AgentBody{
 		hunger = WorldConfig.HUNGER_BAR;
 		environmentReference = env;
 		foodCarried = 0;
+		behaviourDebug = new Vector3(0.0f, 0.0f, 0.0f);
 	}
 
 	/**

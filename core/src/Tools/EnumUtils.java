@@ -44,11 +44,15 @@ public class EnumUtils {
 		
 	}
 	
+	public static int p = 0;
 	public static Direction VectorToDirection(Vector2 v){
+
 		Vector2 vect = new Vector2(v.x, v.y);
-		vect.nor();
-		double angle = Math.atan2(vect.y, vect.x);
 		
+		vect.nor();
+		
+		double angle = Math.atan2(vect.y, vect.x);
+
 		
 		if(angle >= -Math.PI/8.0d && angle <= Math.PI/8.0d){
 			return Direction.EAST;

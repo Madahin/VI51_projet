@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import Environment.AgentBody;
 import Environment.AntBody;
@@ -140,20 +141,23 @@ public class AntAgent extends Agent {
 				// we add the food to the base
 				addFoodToBase();
 				isCarryingFood = false;
-
+				((AntBody) body).behaviourDebug.set(0.0f,1.0f,0.0f);
 			} else if (!bases.isEmpty()) { // if there is base around
 				// we go to the first tile we encounter
 				goToObject(bases.get(0));
+				((AntBody) body).behaviourDebug.set(0.0f,0.0f,1.0f);
 			} else if (!pheromonesBase.isEmpty()) { // if there base pheromone
 													// around
 				// we go to that pheromone
 				pheromonesVector(pheromonesBase, false);
+				((AntBody) body).behaviourDebug.set(0.0f,0.0f,1.0f);
 
 
 			} else { // if there is none to do
 						// we wander
 
 				wander(((AntBody) body).getDirection());
+				((AntBody) body).behaviourDebug.set(1.0f,0.0f,1.0f);
 			}
 			// we produce a Food pheromone
 			createPheromone(PheromoneType.Food);
@@ -168,18 +172,21 @@ public class AntAgent extends Agent {
 				// continue for searching food
 				isCarryingFood = pickUpFood();
 				isCarryingFood = true;
+				((AntBody) body).behaviourDebug.set(0.0f,0.0f,1.0f);
 			} else if (!foods.isEmpty()) { // there is food around
 				// If we detect food we want to go to the first
 				// item we encounter.
 				goToObject(foods.get(0));
+				((AntBody) body).behaviourDebug.set(0.0f,1.0f,0.0f);
 			} else if (!pheromonesFood.isEmpty()) { // there is food pheromone
 													// around
 				// We follow it
 
 				pheromonesVector(pheromonesFood, true);
-			
+				((AntBody) body).behaviourDebug.set(0.0f,1.0f,0.0f);
 			} else { // we don't know what to do so we wander
 				wander(((AntBody) body).getDirection());
+				((AntBody) body).behaviourDebug.set(1.0f,1.0f,0.0f);
 			}
 			// We produce a Base Pheromone
 			createPheromone(PheromoneType.Base);
@@ -328,6 +335,7 @@ public class AntAgent extends Agent {
 			//vect.scl(p.getPheromoneLife());
 			tmpVect.add(vect);
 		}
+		
 		tmpVect.rotate(180.0f);
 		move(EnumUtils.VectorToDirection(tmpVect));
 		//Vector2 tmpVect = list.get(0).getPheromoneDirection().scl(-1.0f);

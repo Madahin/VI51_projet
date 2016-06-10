@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -52,7 +53,8 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private TextButton b_RESET;
 	private boolean SimulatorPaused = false;
 	private boolean EnvironmentInitialised = false;
-	
+	private boolean debug = true;                      ////////////////////////////<-- FOR DEBUG <--///////////////////////////////
+	private Vector3[] vectDebugInfo;
 
 	private int baseRadius = WorldConfig.BASE_RADIUS;
 	private BasePosition bases[];
@@ -135,6 +137,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		 fps = 0;
 		 frameThisSec = 0;
 			
+		 //info debug init
+		 vectDebugInfo = new Vector3[WorldConfig.BASE_NUMBER];
+		 for (int i=0; i<WorldConfig.BASE_NUMBER;i++){
+			 vectDebugInfo[i]= new Vector3(0.0f,0.0f,0.0f);
+		 }
 	}
 	
 	public void initializeEnvironment(){
@@ -326,7 +333,14 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		for(int k=0; k < bases.length; ++k){
 			Color baseColor = bases[k].getColor();
 			m_font.setColor(baseColor.r, baseColor.g, baseColor.b, 1);
-			m_font.draw(m_batch, "Food : " + environment.GetFoodInBase(k) + "; Ants : " + environment.getNbAgent(k), 0, WorldConfig.WINDOW_HEIGHT - k * 15);
+			if (!debug)
+				m_font.draw(m_batch, "Food : " + environment.GetFoodInBase(k) + "; Ants : " + environment.getNbAgent(k), 0, WorldConfig.WINDOW_HEIGHT - k * 15);
+			else{
+
+				m_font.draw(m_batch, "Food : " + environment.GetFoodInBase(k) + "; Ants : " + environment.getNbAgent(k)+ 
+						"; Wander : " + (int) vectDebugInfo[k].x + "; ToFood : " + (int) vectDebugInfo[k].y+ "; ToBase : " + (int) vectDebugInfo[k].z,
+						0, WorldConfig.WINDOW_HEIGHT - k * 15);
+			}
 		}
 		m_batch.end();
 
@@ -370,6 +384,24 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 						}
 					}
 				}
+				
+				// We count the debug info
+				for (int i = 0; i<WorldConfig.BASE_NUMBER; i++){
+					environment.nbWanderBeh[i] = 0;
+					environment.nbFindFoodBeh[i] = 0;
+					environment.nbGoHomeBeh[i] = 0;
+				}
+				
+				for (Agent agent : agents) {
+					if (agent instanceof AntAgent && agent.body != null){
+
+						environment.nbWanderBeh[((AntBody) agent.body).getFactionID()] += ((AntBody) agent.body).behaviourDebug.x;
+						environment.nbFindFoodBeh[((AntBody) agent.body).getFactionID()] += ((AntBody) agent.body).behaviourDebug.y;
+						environment.nbGoHomeBeh[((AntBody) agent.body).getFactionID()] += ((AntBody) agent.body).behaviourDebug.z;
+					}
+				}
+				for (int i = 0; i<WorldConfig.BASE_NUMBER; i++)
+					vectDebugInfo[i].set(environment.nbWanderBeh[i], environment.nbFindFoodBeh[i],environment.nbGoHomeBeh[i]);
 
 			}
 		}

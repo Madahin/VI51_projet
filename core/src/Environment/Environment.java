@@ -56,6 +56,12 @@ public class Environment {
 	/** The list of newly created agents. */
 	private ArrayList<Agent> newAgents;
 
+	/// for debug purpose
+	/** */
+	public int nbWanderBeh[];
+	public int nbFindFoodBeh[];
+	public int nbGoHomeBeh[];
+	
 	/**
 	 * Instantiates a new environment.
 	 *
@@ -80,6 +86,11 @@ public class Environment {
 		bases = new Circle[WorldConfig.BASE_NUMBER];
 		basePositions = new BasePosition[WorldConfig.BASE_NUMBER];
 		foodInBase = new int[WorldConfig.BASE_NUMBER];
+		
+		// create debug info
+		nbWanderBeh = new int[WorldConfig.BASE_NUMBER];
+		nbFindFoodBeh = new int[WorldConfig.BASE_NUMBER];
+		nbGoHomeBeh = new int[WorldConfig.BASE_NUMBER];
 
 		int n = 0;
 		while (n < bases.length) {

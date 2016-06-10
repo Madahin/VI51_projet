@@ -369,12 +369,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 							agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
 
 				} else if (agent instanceof AntAgent && agent.body != null) {
-
-					if (((AntBody) agent.body).getFaction() == Faction.BlackAnt) {
-						shapeRenderer.setColor(Color.BLACK);
-					} else {
-						shapeRenderer.setColor(Color.RED);
-					}
+					shapeRenderer.setColor(bases[((AntBody)agent.body).getFactionID()].getOpaqueColor());
 					shapeRenderer.rect(agent.body.getX() - WorldConfig.WORLD_WIDTH / 2,
 							agent.body.getY() - WorldConfig.WORLD_HEIGHT / 2, 1, 1);
 				}

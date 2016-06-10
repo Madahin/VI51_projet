@@ -16,6 +16,9 @@ public class BasePosition extends Position {
 	/** The base color. */
 	private Color baseColor;
 	
+	/** An opaque version of the base color, for optimisation purpose */
+	private Color opaqueBaseColor;
+	
 	/** The race of which the base belong to. */
 	private Faction race;
 
@@ -32,6 +35,10 @@ public class BasePosition extends Position {
 		radius = (int) c.radius;
 		// Choose a random semi-transparent color
 		baseColor = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
+		
+		opaqueBaseColor = new Color(baseColor);
+		opaqueBaseColor.a = 1f;
+		
 		// Choose a random faction
 		race = Faction.values()[rand.nextInt(Faction.values().length)];
 	}
@@ -62,6 +69,15 @@ public class BasePosition extends Position {
 	 */
 	public Color getColor(){
 		return baseColor;
+	}
+	
+	/**
+	 * Get the color of the base (opaque)
+	 * 
+	 * @return the color of the base (opaque)
+	 */
+	public Color getOpaqueColor(){
+		return opaqueBaseColor;
 	}
 	
 	/**

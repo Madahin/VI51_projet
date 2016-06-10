@@ -79,6 +79,9 @@ public class WorldConfig {
 	/** The ant's life expectancy. */
 	public static  int LIFE_EXPECTANCY = 2000;
 	
+	/** Soldier Attack's */
+	public static int SOLDIER_DAMAGE = 10;
+	
 	/** The ant's hunger bar. */
 	public static  int HUNGER_BAR = 100;
 	

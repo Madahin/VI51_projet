@@ -321,6 +321,30 @@ public class Environment {
 		objects[b.getX()][b.getY()].remove(b);
 	}
 
+	public void attack(AgentBody ab, Perceivable p){
+		// we dealt damage if there any enemy in the other tile
+		AgentBody b = null;
+		for(EnvironmentObject o : objects[p.getX()][p.getY()]){
+			if( o instanceof AntBody && ((AntBody) o).getFactionID() != ((SoldierBody)ab).getFactionID() ){
+				((AntBody) o).life -= WorldConfig.SOLDIER_DAMAGE;
+				b = (AgentBody) o;
+				break;
+			}
+			if( o instanceof SoldierBody && ((SoldierBody) o).getFactionID() != ((SoldierBody)ab).getFactionID() ){
+				((AntBody) o).life -= WorldConfig.SOLDIER_DAMAGE;
+				b = (AgentBody) o;
+				break;
+			}
+		}
+		
+		if(b != null){
+			if(((AntBody)b).life <= 0){
+				destroy(b);
+			}
+		}
+		
+	}
+	
 	public void clear() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {

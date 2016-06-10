@@ -9,5 +9,8 @@ public enum PheromoneType {
 	Food,
 	
 	/** Base. */
-	Base
+	Base,
+	
+	/** Danger */
+	Danger
 }

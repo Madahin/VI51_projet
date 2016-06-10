@@ -45,42 +45,27 @@ public class AntAgent extends Agent {
 		pheromoneTicks = 0;
 	}
 
-
-	
 	/** {@inheritDoc} */
 	@Override
 	public void live() {
-		
+
 		// Life expectancy is decreasing
-		if( body == null)
+		if (body == null)
 			return;
-		
-		
-		if (((AntBody) body).hunger > 0){
+
+		if (((AntBody) body).hunger > 0)
 			((AntBody) body).hunger--;
-		}
-		else{
-			eat();
-			if (((AntBody) body).hunger <= 0){
-				((AntBody) body).life--;
-				if (((AntBody) body).life <= 0){
-					this.destroy();
-					return;
-				}
-			}
-		}
-		
-		/*if (((AntBody) body).hunger > 0){
-			((AntBody) body).hunger--;
-		}
-		else if (((AntBody) body).life > 0){
-			eat();
+		else if (((AntBody) body).life > 0)
 			((AntBody) body).life--;
-		}else {
+		else {
 			this.destroy();
 			return;
-		}*/
-		
+		}
+
+		// We check if the ants needs to eat
+		if (((AntBody) body).hunger == 0 /* && onBase != null */)
+			eat();
+
 		// Filling the goal is a priority
 		if (currentObjective != null) {
 			if (currentObjective.getX() == body.getX() && currentObjective.getY() == body.getY()) {
@@ -142,8 +127,7 @@ public class AntAgent extends Agent {
 		PheromoneComparator comparator = new PheromoneComparator();
 		Collections.sort(pheromonesFood, comparator);
 		Collections.sort(pheromonesBase, comparator);
-		
-		
+
 		// Here are the decision algorithm
 		// In the first place we want to know in which state
 		// is the ant
@@ -153,23 +137,22 @@ public class AntAgent extends Agent {
 				// we add the food to the base
 				addFoodToBase();
 				isCarryingFood = false;
-				((AntBody) body).behaviourDebug.set(0.0f,1.0f,0.0f);
+				((AntBody) body).behaviourDebug.set(0.0f, 1.0f, 0.0f);
 			} else if (!bases.isEmpty()) { // if there is base around
 				// we go to the first tile we encounter
 				goToObject(bases.get(0));
-				((AntBody) body).behaviourDebug.set(0.0f,0.0f,1.0f);
+				((AntBody) body).behaviourDebug.set(0.0f, 0.0f, 1.0f);
 			} else if (!pheromonesBase.isEmpty()) { // if there base pheromone
 													// around
 				// we go to that pheromone
 				pheromonesVector(pheromonesBase, false);
-				((AntBody) body).behaviourDebug.set(0.0f,0.0f,1.0f);
-
+				((AntBody) body).behaviourDebug.set(0.0f, 0.0f, 1.0f);
 
 			} else { // if there is none to do
 						// we wander
 
 				wander(((AntBody) body).getDirection());
-				((AntBody) body).behaviourDebug.set(1.0f,0.0f,1.0f);
+				((AntBody) body).behaviourDebug.set(1.0f, 0.0f, 1.0f);
 			}
 			// we produce a Food pheromone
 			createPheromone(PheromoneType.Food);
@@ -184,21 +167,21 @@ public class AntAgent extends Agent {
 				// continue for searching food
 				isCarryingFood = pickUpFood();
 				isCarryingFood = true;
-				((AntBody) body).behaviourDebug.set(0.0f,0.0f,1.0f);
+				((AntBody) body).behaviourDebug.set(0.0f, 0.0f, 1.0f);
 			} else if (!foods.isEmpty()) { // there is food around
 				// If we detect food we want to go to the first
 				// item we encounter.
 				goToObject(foods.get(0));
-				((AntBody) body).behaviourDebug.set(0.0f,1.0f,0.0f);
+				((AntBody) body).behaviourDebug.set(0.0f, 1.0f, 0.0f);
 			} else if (!pheromonesFood.isEmpty()) { // there is food pheromone
 													// around
 				// We follow it
 
 				pheromonesVector(pheromonesFood, true);
-				((AntBody) body).behaviourDebug.set(0.0f,1.0f,0.0f);
+				((AntBody) body).behaviourDebug.set(0.0f, 1.0f, 0.0f);
 			} else { // we don't know what to do so we wander
 				wander(((AntBody) body).getDirection());
-				((AntBody) body).behaviourDebug.set(1.0f,1.0f,0.0f);
+				((AntBody) body).behaviourDebug.set(1.0f, 1.0f, 0.0f);
 			}
 			// We produce a Base Pheromone
 			createPheromone(PheromoneType.Base);
@@ -207,10 +190,10 @@ public class AntAgent extends Agent {
 
 	}
 
-	public void eat(){
+	public void eat() {
 		((AntBody)body).eat();
 	}
-	
+
 	/**
 	 * Adds the food to the base.
 	 */
@@ -282,50 +265,50 @@ public class AntAgent extends Agent {
 			possibilities.add(Direction.NORTH_WEST);
 			possibilities.add(Direction.NORTH);
 			possibilities.add(Direction.NORTH_EAST);
-			//possibilities.add(Direction.EAST);
-			//possibilities.add(Direction.WEST);
+			// possibilities.add(Direction.EAST);
+			// possibilities.add(Direction.WEST);
 		} else if (LastDirection == Direction.NORTH_EAST) {
 			possibilities.add(Direction.NORTH);
 			possibilities.add(Direction.NORTH_EAST);
 			possibilities.add(Direction.EAST);
-			//possibilities.add(Direction.NORTH_WEST);
-			//possibilities.add(Direction.SOUTH_EAST);
+			// possibilities.add(Direction.NORTH_WEST);
+			// possibilities.add(Direction.SOUTH_EAST);
 		} else if (LastDirection == Direction.EAST) {
 			possibilities.add(Direction.NORTH_EAST);
 			possibilities.add(Direction.EAST);
 			possibilities.add(Direction.SOUTH_EAST);
-			//possibilities.add(Direction.NORTH);
-			//possibilities.add(Direction.SOUTH);
+			// possibilities.add(Direction.NORTH);
+			// possibilities.add(Direction.SOUTH);
 		} else if (LastDirection == Direction.SOUTH_EAST) {
 			possibilities.add(Direction.EAST);
 			possibilities.add(Direction.SOUTH_EAST);
 			possibilities.add(Direction.SOUTH);
-			//possibilities.add(Direction.NORTH_EAST);
-			//possibilities.add(Direction.SOUTH_WEST);
+			// possibilities.add(Direction.NORTH_EAST);
+			// possibilities.add(Direction.SOUTH_WEST);
 		} else if (LastDirection == Direction.SOUTH) {
 			possibilities.add(Direction.SOUTH_EAST);
 			possibilities.add(Direction.SOUTH);
 			possibilities.add(Direction.SOUTH_WEST);
-			//possibilities.add(Direction.EAST);
-			//possibilities.add(Direction.WEST);
+			// possibilities.add(Direction.EAST);
+			// possibilities.add(Direction.WEST);
 		} else if (LastDirection == Direction.SOUTH_WEST) {
 			possibilities.add(Direction.SOUTH);
 			possibilities.add(Direction.SOUTH_WEST);
 			possibilities.add(Direction.WEST);
-			//possibilities.add(Direction.SOUTH_EAST);
-			//possibilities.add(Direction.NORTH_WEST);
+			// possibilities.add(Direction.SOUTH_EAST);
+			// possibilities.add(Direction.NORTH_WEST);
 		} else if (LastDirection == Direction.WEST) {
 			possibilities.add(Direction.SOUTH_WEST);
 			possibilities.add(Direction.WEST);
 			possibilities.add(Direction.NORTH_WEST);
-			//possibilities.add(Direction.NORTH);
-			//possibilities.add(Direction.SOUTH);
+			// possibilities.add(Direction.NORTH);
+			// possibilities.add(Direction.SOUTH);
 		} else if (LastDirection == Direction.NORTH_WEST) {
 			possibilities.add(Direction.WEST);
 			possibilities.add(Direction.NORTH_WEST);
 			possibilities.add(Direction.NORTH);
-			//possibilities.add(Direction.NORTH_EAST);
-			//possibilities.add(Direction.SOUTH_WEST);
+			// possibilities.add(Direction.NORTH_EAST);
+			// possibilities.add(Direction.SOUTH_WEST);
 		}
 
 		move(possibilities.get(rand.nextInt(possibilities.size())));
@@ -333,140 +316,93 @@ public class AntAgent extends Agent {
 	}
 
 	/**
-	 * Pheromones vector.
-	 * this methods define with all pheromones perceived the right vector to follow for each ants
+	 * Pheromones vector. this methods define with all pheromones perceived the
+	 * right vector to follow for each ants
+	 * 
 	 * @param list
 	 *            the list of pheromones perceived
 	 * @param inv
 	 *            the inv if we want to go toward the pheromonesor not
-	 *         
+	 * 
 	 */
-	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv){
-		
+	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv) {
+
 		// We get the barycentre
 		Vector2 tmpVect = new Vector2(0.0f, 0.0f);
-		for(Perceivable p : list){
-			Vector2 vect = new Vector2(p.getPheromoneDirection().x,
-									   p.getPheromoneDirection().y);
-			//vect.scl(p.getPheromoneLife());
+		for (Perceivable p : list) {
+			Vector2 vect = new Vector2(p.getPheromoneDirection().x, p.getPheromoneDirection().y);
+			// vect.scl(p.getPheromoneLife());
 			tmpVect.add(vect);
 		}
-		
-		
+
 		tmpVect.rotate(180.0f);
-	
 		move(EnumUtils.VectorToDirection(tmpVect));
-		//Vector2 tmpVect = list.get(0).getPheromoneDirection().scl(-1.0f);
-		//move(EnumUtils.VectorToDirection(tmpVect));
-		
-		/*switch (list.get(0).getDirection()) {
-		case NORTH:
-			move(Direction.SOUTH);
-			break;
-		case NORTH_EAST:
-			move(Direction.SOUTH_WEST);		
-			break;
-		case EAST:
-			move(Direction.WEST);
-			break;
-		case SOUTH_EAST:
-			move(Direction.NORTH_WEST);
-			break;
-		case SOUTH:
-			move(Direction.NORTH);
-			break;
-		case SOUTH_WEST:
-			move(Direction.NORTH_EAST);
-			break;
-		case WEST:
-			move(Direction.EAST);
-			break;
-		case NORTH_WEST:
-			move(Direction.SOUTH_EAST);
-			break;
-				
-		}*/
-		
-		
-		
-		/*ArrayList<Vector2> vectors = new ArrayList<Vector2>();
-		for(Perceivable p : list){
+		// Vector2 tmpVect = list.get(0).getPheromoneDirection().scl(-1.0f);
+		// move(EnumUtils.VectorToDirection(tmpVect));
 
-			Vector2 tmpVect = new Vector2(p.getX() - body.getX(), p.getY() - body.getY());
-			tmpVect.scl(p.getPheromoneLife());
-			tmpVect.nor();
-			vectors.add(tmpVect);
-		}
-		Vector2 finalVect = new Vector2(0.0f, 0.0f);
+		/*
+		 * switch (list.get(0).getDirection()) { case NORTH:
+		 * move(Direction.SOUTH); break; case NORTH_EAST:
+		 * move(Direction.SOUTH_WEST); break; case EAST: move(Direction.WEST);
+		 * break; case SOUTH_EAST: move(Direction.NORTH_WEST); break; case
+		 * SOUTH: move(Direction.NORTH); break; case SOUTH_WEST:
+		 * move(Direction.NORTH_EAST); break; case WEST: move(Direction.EAST);
+		 * break; case NORTH_WEST: move(Direction.SOUTH_EAST); break;
+		 * 
+		 * }
+		 */
 
-		for (Vector2 vect : vectors) {
-			finalVect.add(vect);
-		}
+		/*
+		 * ArrayList<Vector2> vectors = new ArrayList<Vector2>();
+		 * for(Perceivable p : list){
+		 * 
+		 * Vector2 tmpVect = new Vector2(p.getX() - body.getX(), p.getY() -
+		 * body.getY()); tmpVect.scl(p.getPheromoneLife()); tmpVect.nor();
+		 * vectors.add(tmpVect); } Vector2 finalVect = new Vector2(0.0f, 0.0f);
+		 * 
+		 * for (Vector2 vect : vectors) { finalVect.add(vect); }
+		 * 
+		 * 
+		 * if(inv) finalVect.scl(-1.0f);
+		 */
 
-		
-		if(inv)
-			finalVect.scl(-1.0f);*/
-		
-		/*Vector2 finalVect = new Vector2(0.0f , 0.0f);
-		Perceivable first = list.get(0);
-		Perceivable last = list.get(list.size()-1);
-		int diffX;
-		int diffY;
-		if(!inv){
-			diffX = last.getX() - first.getX();
-			diffY = last.getY() - first.getY();
-		}else{
-			diffX = first.getX() - last.getX();
-			diffY = first.getY() - last.getY();
-		}
-		finalVect.x = diffX;
-		finalVect.y = diffY;*/
-		
-		/*double angle = Math.atan2(finalVect.x, finalVect.y);
-		
-		if(angle > -Math.PI/8.0d && angle <= Math.PI/8.0d){
-			move(Direction.EAST);
-		}else if(angle > Math.PI/8.0d && angle <= 3*Math.PI/8.0d ){
-			move(Direction.NORTH_EAST);
-		}else if(angle > 3*Math.PI/8.0d && angle <= 5*Math.PI/8.0d){
-			move(Direction.NORTH);
-		}else if(angle > 5*Math.PI/8.0d && angle <= 7*Math.PI/8.0d){
-			move(Direction.NORTH_WEST);
-		}else if(angle > 7*Math.PI/8.0d && angle <= -7*Math.PI/8.0d){
-			move(Direction.WEST);
-		}else if(angle > -3*Math.PI/8.0d && angle <= -Math.PI/8.0d){
-			move(Direction.SOUTH_EAST);
-		}else if(angle > -5*Math.PI/8.0d && angle <= -3*Math.PI/8.0d){
-			move(Direction.SOUTH);
-		}else if(angle > -7*Math.PI/8.0d && angle <= -5*Math.PI/8.0d){
-			move(Direction.SOUTH_WEST);
-		}*/
-		
-		
-		/*if(finalVect.x == 0){
-			if(finalVect.y > 0){
+		/*
+		 * Vector2 finalVect = new Vector2(0.0f , 0.0f); Perceivable first =
+		 * list.get(0); Perceivable last = list.get(list.size()-1); int diffX;
+		 * int diffY; if(!inv){ diffX = last.getX() - first.getX(); diffY =
+		 * last.getY() - first.getY(); }else{ diffX = first.getX() -
+		 * last.getX(); diffY = first.getY() - last.getY(); } finalVect.x =
+		 * diffX; finalVect.y = diffY;
+		 */
 
-				move(Direction.NORTH);
-			} else if (finalVect.y < 0) {
-				move(Direction.SOUTH);
-			}
-		} else if (finalVect.x > 0) {
-			if (finalVect.y == 0) {
-				move(Direction.EAST);
-			} else if (finalVect.y > 0) {
-				move(Direction.NORTH_EAST);
-			} else {
-				move(Direction.SOUTH_EAST);
-			}
-		} else {
-			if (finalVect.y == 0) {
-				move(Direction.WEST);
-			} else if (finalVect.y > 0) {
-				move(Direction.NORTH_WEST);
-			} else {
-				move(Direction.SOUTH_WEST);
-			}
-		}*/
+		/*
+		 * double angle = Math.atan2(finalVect.x, finalVect.y);
+		 * 
+		 * if(angle > -Math.PI/8.0d && angle <= Math.PI/8.0d){
+		 * move(Direction.EAST); }else if(angle > Math.PI/8.0d && angle <=
+		 * 3*Math.PI/8.0d ){ move(Direction.NORTH_EAST); }else if(angle >
+		 * 3*Math.PI/8.0d && angle <= 5*Math.PI/8.0d){ move(Direction.NORTH);
+		 * }else if(angle > 5*Math.PI/8.0d && angle <= 7*Math.PI/8.0d){
+		 * move(Direction.NORTH_WEST); }else if(angle > 7*Math.PI/8.0d && angle
+		 * <= -7*Math.PI/8.0d){ move(Direction.WEST); }else if(angle >
+		 * -3*Math.PI/8.0d && angle <= -Math.PI/8.0d){
+		 * move(Direction.SOUTH_EAST); }else if(angle > -5*Math.PI/8.0d && angle
+		 * <= -3*Math.PI/8.0d){ move(Direction.SOUTH); }else if(angle >
+		 * -7*Math.PI/8.0d && angle <= -5*Math.PI/8.0d){
+		 * move(Direction.SOUTH_WEST); }
+		 */
+
+		/*
+		 * if(finalVect.x == 0){ if(finalVect.y > 0){
+		 * 
+		 * move(Direction.NORTH); } else if (finalVect.y < 0) {
+		 * move(Direction.SOUTH); } } else if (finalVect.x > 0) { if
+		 * (finalVect.y == 0) { move(Direction.EAST); } else if (finalVect.y >
+		 * 0) { move(Direction.NORTH_EAST); } else { move(Direction.SOUTH_EAST);
+		 * } } else { if (finalVect.y == 0) { move(Direction.WEST); } else if
+		 * (finalVect.y > 0) { move(Direction.NORTH_WEST); } else {
+		 * move(Direction.SOUTH_WEST); } }
+		 */
 
 	}
 

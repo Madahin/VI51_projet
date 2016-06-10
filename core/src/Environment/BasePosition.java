@@ -37,7 +37,7 @@ public class BasePosition extends Position {
 		baseColor = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
 		
 		opaqueBaseColor = new Color(baseColor);
-		opaqueBaseColor.a = 1;
+		opaqueBaseColor.a = 1f;
 		
 		// Choose a random faction
 		race = Faction.values()[rand.nextInt(Faction.values().length)];

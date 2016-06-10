@@ -56,14 +56,30 @@ public class AntAgent extends Agent {
 			return;
 		
 		
-		if (((AntBody) body).hunger > 0)
+		if (((AntBody) body).hunger > 0){
 			((AntBody) body).hunger--;
-		else if (((AntBody) body).life > 0)
+		}
+		else{
+			eat();
+			if (((AntBody) body).hunger <= 0){
+				((AntBody) body).life--;
+				if (((AntBody) body).life <= 0){
+					this.destroy();
+					return;
+				}
+			}
+		}
+		
+		/*if (((AntBody) body).hunger > 0){
+			((AntBody) body).hunger--;
+		}
+		else if (((AntBody) body).life > 0){
+			eat();
 			((AntBody) body).life--;
-		else {
+		}else {
 			this.destroy();
 			return;
-		}
+		}*/
 		
 		// Filling the goal is a priority
 		if (currentObjective != null) {
@@ -127,10 +143,6 @@ public class AntAgent extends Agent {
 		Collections.sort(pheromonesFood, comparator);
 		Collections.sort(pheromonesBase, comparator);
 		
-		
-		// We check if the ants needs to eat
-		if (((AntBody) body).hunger == 0 /*&& onBase != null*/)
-			eat();
 		
 		// Here are the decision algorithm
 		// In the first place we want to know in which state
@@ -196,7 +208,7 @@ public class AntAgent extends Agent {
 	}
 
 	public void eat(){
-		
+		((AntBody)body).eat();
 	}
 	
 	/**
@@ -340,7 +352,9 @@ public class AntAgent extends Agent {
 			tmpVect.add(vect);
 		}
 		
+		
 		tmpVect.rotate(180.0f);
+	
 		move(EnumUtils.VectorToDirection(tmpVect));
 		//Vector2 tmpVect = list.get(0).getPheromoneDirection().scl(-1.0f);
 		//move(EnumUtils.VectorToDirection(tmpVect));

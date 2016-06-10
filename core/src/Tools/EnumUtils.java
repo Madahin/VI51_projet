@@ -51,8 +51,13 @@ public class EnumUtils {
 		
 		vect.nor();
 		
-		double angle = Math.atan2(vect.y, vect.x);
+		/* return an angle between 180 and -180 */ 
+		double angle = vect.angle() -180.0f;
+		/* we convert from dregrees to radians */
+		angle = angle*Math.PI/180.0d;
+		
 
+		
 		
 		if(angle >= -Math.PI/8.0d && angle <= Math.PI/8.0d){
 			return Direction.EAST;

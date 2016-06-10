@@ -395,8 +395,8 @@ public class Environment {
 		double r = Math.sqrt(rand.nextDouble());
 		double theta = rand.nextDouble() * 2 * Math.PI;
 
-		double dx = baseRadius * r * Math.cos(theta) + basePosX;
-		double dy = baseRadius * r * Math.sin(theta) + basePosY;
+		double dx = (baseRadius/2.0f) * r * Math.cos(theta) + basePosX;
+		double dy = (baseRadius/2.0f) * r * Math.sin(theta) + basePosY;
 
 		int _x = (int) dx, _y = (int) dy;
 		

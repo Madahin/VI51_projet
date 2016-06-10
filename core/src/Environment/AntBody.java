@@ -11,13 +11,13 @@ public class AntBody extends AgentBody{
 	private final Faction faction;
 	
 	/** The id of the faction in which the ant belong. */
-	private final int factionID;
+	protected final int factionID;
 	
 	/** The direction in which the ant is moving. */
-	private Direction direction;
+	protected Direction direction;
 	
 	/** The quantity of food carried. */
-	private int foodCarried;
+	protected int foodCarried;
 	
 	/** The life expectancy of the ant. */
 	public int life; 

@@ -491,7 +491,7 @@ public class Environment {
 				if (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID()
 						&& ((PheromoneBody) eo).pheromoneType == pt) {
 
-					((PheromoneBody) eo).life = WorldConfig.PHEROMONE_INITIAL_LIFE;
+					((PheromoneBody) eo).life += WorldConfig.PHEROMONE_INITIAL_LIFE;
 					Vector2 tmpVect = EnumUtils.DirectionToVector(d);
 					((PheromoneBody) eo).pheromoneDirection.add(tmpVect);
 					((PheromoneBody) eo).pheromoneDirection.nor();

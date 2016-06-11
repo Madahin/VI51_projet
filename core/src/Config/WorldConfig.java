@@ -54,12 +54,12 @@ public class WorldConfig {
 	public static float MAX_PHEROMONE_LIFE = 200;
 
 	/** The pheromone initial life. */
-	public static int PHEROMONE_INITIAL_LIFE = 500;
+	public static int PHEROMONE_INITIAL_LIFE = 10;
 
 	public static int ANT_INITIAL_LIFE = 100;
 	
 	/** The ant field of view. */
-	public static int ANT_FIELD_OF_VIEW = 5;
+	public static int ANT_FIELD_OF_VIEW = 3;
 
 	/** smoothing the food generation. */
 	public static boolean SMOOTH_FOOD_GENERATION = true;

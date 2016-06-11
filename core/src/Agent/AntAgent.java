@@ -335,7 +335,7 @@ public class AntAgent extends Agent {
 			tmpVect.add(vect);
 		}
 
-		tmpVect.rotate(180.0f);
+		//tmpVect.rotate(180.0f);
 		move(EnumUtils.VectorToDirection(tmpVect));
 		// Vector2 tmpVect = list.get(0).getPheromoneDirection().scl(-1.0f);
 		// move(EnumUtils.VectorToDirection(tmpVect));

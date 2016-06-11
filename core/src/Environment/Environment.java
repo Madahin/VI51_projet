@@ -407,6 +407,25 @@ public class Environment {
 		return b;
 	}
 	
+	public AgentBody createSoldierBody(Faction faction, int factionID, int basePosX, int basePosY){
+		nbAgents++;
+		nbAgentPerBases[factionID] += 1;
+		
+		Random rand = new Random();
+		double r = Math.sqrt(rand.nextDouble());
+		double theta = rand.nextDouble() * 2 * Math.PI;
+		
+		double dx = (baseRadius/2.0f) * r * Math.cos(theta) + basePosX;
+		double dy = (baseRadius/2.0f) * r * Math.sin(theta) + basePosY;
+		
+		int _x = (int) dx, _y = (int) dy;
+		
+		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
+		SoldierBody b = new SoldierBody(faction, factionID, dir, _x, _y, this);
+		
+		return b;
+	}
+	
 	/**
 	 * Creates an Queen body.
 	 *

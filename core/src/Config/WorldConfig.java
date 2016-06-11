@@ -56,7 +56,11 @@ public class WorldConfig {
 	/** The pheromone initial life. */
 	public static int PHEROMONE_INITIAL_LIFE = 10;
 
+	/** The farmers initial life */
 	public static int ANT_INITIAL_LIFE = 100;
+	
+	/** The soldier initial life */
+	public static int SOLDIER_INITIAL_LIFE = 200;
 	
 	/** The ant field of view. */
 	public static int ANT_FIELD_OF_VIEW = 3;
@@ -64,6 +68,8 @@ public class WorldConfig {
 	/** smoothing the food generation. */
 	public static boolean SMOOTH_FOOD_GENERATION = true;
 
+	public static float PERCENTAGE_SOLDIER = 0.2f;
+	
 	/** The food cover intensity. */
 	public static float FOOD_COVER_INTENSITY = 1.0f;
 	

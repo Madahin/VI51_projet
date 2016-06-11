@@ -22,7 +22,8 @@ public class SoldierAgent extends AntAgent {
 	@Override
 	public void live() {
 		// TODO Auto-generated method stub
-		
+		if(body == null)
+			return;
 		
 		ArrayList<Perceivable> perceptions = getPerception();
 		

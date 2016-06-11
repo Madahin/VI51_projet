@@ -28,6 +28,7 @@ import Agent.Agent;
 import Agent.AntAgent;
 import Agent.PheromoneAgent;
 import Agent.QueenAgent;
+import Agent.SoldierAgent;
 import Config.WorldConfig;
 import Environment.AntBody;
 import Environment.BasePosition;
@@ -157,9 +158,21 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// Each race have some ants at the beginning
 		for(int n=0; n < bases.length; ++n){
 			agents.add(new QueenAgent(environment.createQueenBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY())));
-			for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
+			
+			int soldiers =(int) ((float)WorldConfig.ANT_NUMBER * WorldConfig.PERCENTAGE_SOLDIER);
+			int farmers = WorldConfig.ANT_NUMBER - soldiers;
+			
+			for(int i = 0 ; i < farmers ; i++){
 				agents.add(new AntAgent(environment.createAntBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY())));
 			}
+			
+			for(int i = 0 ; i < soldiers ; i++){
+				agents.add(new SoldierAgent(environment.createSoldierBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY() )) );
+			}
+			
+			/*for (int i = 0; i < WorldConfig.ANT_NUMBER; i++) {
+				agents.add(new AntAgent(environment.createAntBody(bases[n].getRace(), n, bases[n].getX(), bases[n].getY())));
+			}*/
 		}
 
 		environment.addListener(this);

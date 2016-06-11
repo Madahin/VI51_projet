@@ -110,13 +110,13 @@ public class AntAgent extends Agent {
 						&& p.getFactionID() == ((AntBody) body).getFactionID()) { // Pheromone
 																					// of
 																					// faction
-					if (p.getPheromoneType() == PheromoneType.Base) { // Base
+					if (p.getPheromoneType() == PheromoneType.Base ) { // Base
 																		// type
 						pheromonesBase.add(p);
 					} else { // pheromone type == Food
 						pheromonesFood.add(p);
 					}
-				} else if (p.getFactionID() == ((AntBody) body).getFactionID()) { // Base
+				} else if (p.getType().equals(BaseBody.class) &&  p.getFactionID() == ((AntBody) body).getFactionID()) { // Base
 					bases.add(p);
 				}
 			}

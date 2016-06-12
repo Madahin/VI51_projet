@@ -17,6 +17,7 @@ public class PheromoneAgent extends Agent {
 	 *            the direction in which the direction is toward
 	 */
 	public PheromoneAgent(PheromoneBody b) {
+		super();
 		body = b;
 	}
 

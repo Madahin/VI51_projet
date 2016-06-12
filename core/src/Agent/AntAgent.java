@@ -39,6 +39,7 @@ public class AntAgent extends Agent {
 	 *            the "physical" representation of the ant in the environment
 	 */
 	public AntAgent(AgentBody b) {
+		super();
 		currentObjective = null;
 		body = b;
 		isCarryingFood = false;
@@ -262,8 +263,6 @@ public class AntAgent extends Agent {
 	 *            the last direction
 	 */
 	public void wander(Direction LastDirection) {
-		Random rand = new Random();
-
 		ArrayList<Direction> possibilities = new ArrayList<Direction>();
 
 		if (LastDirection == Direction.NORTH) {

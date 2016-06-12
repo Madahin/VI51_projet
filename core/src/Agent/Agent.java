@@ -1,10 +1,13 @@
 package Agent;
 
 import java.util.List;
+import java.util.Random;
 
+import Config.WorldConfig;
 import Environment.AgentBody;
 import Environment.Direction;
 import Environment.Perceivable;
+import Tools.SeededRandom;
 
 /**
  * An abstract Agent.
@@ -13,6 +16,18 @@ public abstract class Agent {
 
 	/** The "physical" representation of the agent in the environment. */
 	protected AgentBody body;
+	
+	/**
+	 * The random number generator used by the agent
+	 */
+	protected Random rand;
+	
+	/**
+	 * Initialise an abstract agent
+	 */
+	protected Agent(){
+		rand = SeededRandom.getGenerator();
+	}
 
 	/**
 	 * Generate one tick of the agent life.

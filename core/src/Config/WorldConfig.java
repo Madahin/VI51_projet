@@ -90,6 +90,9 @@ public class WorldConfig {
 
 	/** Amount of food a dead ant's body becomes. */
 	public static int DEAD_ANT_FOOD_VALUE = 10;
+	
+	/** The seed used by the random number generator, -1 is a random seed */
+	public static long RANDOM_SEED = 0;
 
 	/**
 	 * Load an XML configuration file.

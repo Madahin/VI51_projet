@@ -5,6 +5,8 @@ import java.util.Random;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 
+import Tools.SeededRandom;
+
 /**
  * The Class BasePosition is a representation of a base for the purpose of being
  * used by a GUI.
@@ -32,7 +34,7 @@ public class BasePosition extends Position {
 	public BasePosition(Circle c) {
 		this((int) c.x, (int) c.y);
 
-		Random rand = new Random();
+		Random rand = SeededRandom.getGenerator();
 
 		radius = (int) c.radius;
 		// Choose a random semi-transparent color

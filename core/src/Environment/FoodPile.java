@@ -3,6 +3,7 @@ package Environment;
 import java.util.Random;
 
 import Config.WorldConfig;
+import Tools.SeededRandom;
 
 /**
  * The Class FoodPile represente a foodPile
@@ -39,7 +40,7 @@ public class FoodPile extends StaticObject {
 	 */
 	public FoodPile(int _x, int _y, int min, int max) {
 		this(_x, _y);
-		Random rand = new Random();
+		Random rand = SeededRandom.getGenerator();
 		foodAmount = rand.nextInt(max - min) + min;
 
 	}

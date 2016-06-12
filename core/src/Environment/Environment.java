@@ -13,6 +13,7 @@ import Agent.AntAgent;
 import Agent.PheromoneAgent;
 import Config.WorldConfig;
 import Tools.EnumUtils;
+import Tools.SeededRandom;
 import Tools.SimplexNoise;
 
 /**
@@ -88,7 +89,7 @@ public class Environment {
 		listeners = new ArrayList<EnvironmentListener>();
 
 		// Create Bases
-		Random rand = new Random();
+		Random rand = SeededRandom.getGenerator();
 
 		bases = new Circle[WorldConfig.BASE_NUMBER];
 		basePositions = new BasePosition[WorldConfig.BASE_NUMBER];
@@ -419,7 +420,7 @@ public class Environment {
 		nbAgentPerBases[factionID] += 1;
 
 		// Spawn the body in a random position inside the base
-		Random rand = new Random();
+		Random rand = SeededRandom.getGenerator();
 		double r = Math.sqrt(rand.nextDouble());
 		double theta = rand.nextDouble() * 2 * Math.PI;
 

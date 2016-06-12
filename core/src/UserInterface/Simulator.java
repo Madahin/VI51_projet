@@ -153,111 +153,112 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// Gdx.graphics.requestRendering();
 
 		// Buttons Init
-		Gdx.input.setInputProcessor(stage);
-		stage = new Stage(new ScreenViewport());
-		Gdx.input.setInputProcessor(stage);
 
-		skin = new Skin(Gdx.files.internal("ui/defaultskin.json"));
-		b_START = new TextButton("Start", skin);
-		b_PAUSE = new TextButton("Pause", skin);
-		b_RESET = new TextButton("Reset", skin);
-		b_ZOOM_IN = new TextButton(" + ", skin);
-		b_ZOOM_IN.setWidth(30);
-		b_ZOOM_OUT = new TextButton("  -  ", skin);
-		b_ZOOM_OUT.setWidth(30);
-		b_UP = new TextButton("   up  ", skin);
-		b_DOWN = new TextButton("down", skin);
-		b_LEFT = new TextButton(" left ", skin);
-		b_RIGHT = new TextButton("right", skin);
-		stage.addActor(b_START);
-		stage.addActor(b_PAUSE);
-		stage.addActor(b_RESET);
-		stage.addActor(b_ZOOM_IN);
-		stage.addActor(b_ZOOM_OUT);
-		stage.addActor(b_UP);
-		stage.addActor(b_DOWN);
-		stage.addActor(b_LEFT);
-		stage.addActor(b_RIGHT);
+	     Gdx.input.setInputProcessor(stage);
+	     stage = new Stage(new ScreenViewport());
+	     Gdx.input.setInputProcessor(stage);
+	      
+	     skin = new Skin( Gdx.files.internal( "ui/defaultskin.json" ));
+	     b_START = new TextButton("Start", skin);
+	     b_PAUSE = new TextButton("Pause", skin);
+	     b_RESET = new TextButton("Reset", skin);
+	 	 b_ZOOM_IN = new TextButton(" + ", skin);
+	 	 b_ZOOM_IN.setWidth(30);
+		 b_ZOOM_OUT = new TextButton("  -  ", skin);
+		 b_ZOOM_OUT.setWidth(30);
+		 b_UP = new TextButton("   up  ", skin);
+		 b_DOWN = new TextButton("down", skin);
+		 b_LEFT = new TextButton(" left ", skin);
+		 b_RIGHT = new TextButton("right", skin);
+		 stage.addActor(b_START);
+		 stage.addActor(b_PAUSE);
+		 stage.addActor(b_RESET);
+		 stage.addActor(b_ZOOM_IN);
+		 stage.addActor(b_ZOOM_OUT);
+		 stage.addActor(b_UP);
+		 stage.addActor(b_DOWN);
+		 stage.addActor(b_LEFT);
+		 stage.addActor(b_RIGHT);
+		 
+		 b_START.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            startSimulator();
+		        }
+		    });
+		 
+		 b_PAUSE.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            pauseSimulator();
+		        }
+		    });
+		 
+		 b_RESET.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		            resetSimulator();
+		        }
+		    });
+		 
+		 b_ZOOM_IN.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		        	camera.zoom *= 0.99f;
+		        }
+		    });
+		 
+		 b_ZOOM_OUT.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+		        	camera.zoom *= 1.01f;
+		        }
+		    });
+		 
+		 b_UP.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+					camera.translate(new Vector2(0.0f, 5.0f));
+		        }
+		    });
+		 
+		 b_DOWN.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+					camera.translate(new Vector2(0.0f, -5.0f));
+		        }
+		    });
+		 
+		 b_LEFT.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+					camera.translate(new Vector2(-5.0f, 0.0f));
+		        }
+		    });
+		 
+		 b_RIGHT.addListener(new ChangeListener() {
+		        @Override
+		        public void changed (ChangeEvent event, Actor actor) {
+					camera.translate(new Vector2(5.0f, 0.0f));
+		        }
+		    });
+		 
+//		 TextField text=new TextField("",skin);
+//		 stage.addActor(text);
 
-		b_START.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				startSimulator();
-			}
-		});
-
-		b_PAUSE.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				pauseSimulator();
-			}
-		});
-
-		b_RESET.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				resetSimulator();
-			}
-		});
-
-		b_ZOOM_IN.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				camera.zoom *= 0.99f;
-			}
-		});
-
-		b_ZOOM_OUT.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				camera.zoom *= 1.01f;
-			}
-		});
-
-		b_UP.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				camera.translate(new Vector2(0.0f, 5.0f));
-			}
-		});
-
-		b_DOWN.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				camera.translate(new Vector2(0.0f, -5.0f));
-			}
-		});
-
-		b_LEFT.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				camera.translate(new Vector2(-0.5f, 0.0f));
-			}
-		});
-
-		b_RIGHT.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				camera.translate(new Vector2(0.5f, 0.0f));
-			}
-		});
-
-		// TextField text=new TextField("",skin);
-		// stage.addActor(text);
-
-		// CheckBox box=new CheckBox("done",skin);
-		// stage.addActor(box);
-
-		// FPS initialisation
-		elapsedTime = TimeUtils.millis();
-		fps = 0;
-		frameThisSec = 0;
-
-		// info debug init
-		vectDebugInfo = new Vector3[WorldConfig.BASE_NUMBER];
-		for (int i = 0; i < WorldConfig.BASE_NUMBER; i++) {
-			vectDebugInfo[i] = new Vector3(0.0f, 0.0f, 0.0f);
-		}
+//		 CheckBox box=new CheckBox("done",skin);
+//		 stage.addActor(box);
+		 
+		 // FPS initialisation
+		 elapsedTime = TimeUtils.millis();
+		 fps = 0;
+		 frameThisSec = 0;
+			
+		 //info debug init
+		 vectDebugInfo = new Vector3[WorldConfig.BASE_NUMBER];
+		 for (int i=0; i<WorldConfig.BASE_NUMBER;i++){
+			 vectDebugInfo[i]= new Vector3(0.0f,0.0f,0.0f);
+		 }
 	}
 
 	/**

@@ -21,7 +21,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -71,7 +73,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	/** The reset button. */
 	private TextButton b_RESET;
 
-	/** The zoom in buttp,. */
+	/** The zoom in button */
 	private TextButton b_ZOOM_IN;
 
 	/** The zoom out button. */
@@ -89,6 +91,12 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	/** The right button. */
 	private TextButton b_RIGHT;
 
+	/** The debug Button */
+	private CheckBox b_DEBUG;
+	
+	/** The pheromone Button */
+	private CheckBox b_PHEROMONE;
+	
 	/** true if the simulator should be paused. */
 	private boolean SimulatorPaused = false;
 
@@ -96,8 +104,11 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	private boolean EnvironmentInitialised = false;
 
 	/** true if we are in debug mode. */
-	private boolean debug = true;
+	private boolean debug = false;
 
+	/** Boolean that indicates whether the pheromones are displayed */
+	private boolean displayPheromones = true;
+	
 	// TODO : Change this to a good 'ol struct
 	private Vector3[] vectDebugInfo;
 
@@ -170,6 +181,9 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		 b_DOWN = new TextButton("down", skin);
 		 b_LEFT = new TextButton(" left ", skin);
 		 b_RIGHT = new TextButton("right", skin);
+		 b_DEBUG = new CheckBox(" Debug mode", skin);
+		 b_PHEROMONE = new CheckBox(" Pheromones", skin);
+		 b_PHEROMONE.setChecked(true);
 		 stage.addActor(b_START);
 		 stage.addActor(b_PAUSE);
 		 stage.addActor(b_RESET);
@@ -179,6 +193,25 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		 stage.addActor(b_DOWN);
 		 stage.addActor(b_LEFT);
 		 stage.addActor(b_RIGHT);
+		 stage.addActor(b_DEBUG);
+		 stage.addActor(b_PHEROMONE);
+		 
+		 b_PHEROMONE.addListener(new ChangeListener() {
+			
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				displayPheromones = !displayPheromones;
+			}
+		});
+		 
+		 b_DEBUG.addListener(new ChangeListener(){
+
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				debug = !debug;
+			}
+			 
+		 });
 		 
 		 b_START.addListener(new ChangeListener() {
 		        @Override
@@ -331,6 +364,9 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		b_DOWN.setPosition(95, 10);
 		b_LEFT.setPosition(50, 10);
 		b_RIGHT.setPosition(150, 10);
+		b_DEBUG.setPosition(10, 70);
+		b_PHEROMONE.setPosition(10, 90);
+		
 		stage.getViewport().update(width, height, true);
 	}
 
@@ -432,7 +468,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 			}
 
 			for (Agent agent : agents) {
-				if (agent instanceof PheromoneAgent && agent.getBody() != null) {
+				if (displayPheromones && agent instanceof PheromoneAgent && agent.getBody() != null) {
 					if (((PheromoneBody) agent.getBody()).pheromoneType == PheromoneType.Base) {
 						shapeRenderer.setColor(ColorUtils.BasePheromoneColor(((PheromoneBody) agent.getBody()).life));
 					} else {
@@ -463,17 +499,19 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// Render some text
 		spriteBatch.begin();
 		// FPS
-		fontRenderer.setColor(Color.YELLOW);
-		fontRenderer.draw(spriteBatch, "" + fps, WorldConfig.WINDOW_WIDTH - 20, WorldConfig.WINDOW_HEIGHT);
+		if(debug){
+			fontRenderer.setColor(Color.YELLOW);
+			fontRenderer.draw(spriteBatch, "" + fps, WorldConfig.WINDOW_WIDTH - 20, WorldConfig.WINDOW_HEIGHT);
+		}
 		// ant info
 		for (int k = 0; k < bases.length; ++k) {
 			Color baseColor = bases[k].getColor();
 			fontRenderer.setColor(baseColor.r, baseColor.g, baseColor.b, 1);
-			if (!debug)
+			/*if (!debug)
 				fontRenderer.draw(spriteBatch,
 						"Food : " + environment.getFoodInBase(k) + "; Ants : " + environment.getNbAgent(k), 0,
-						WorldConfig.WINDOW_HEIGHT - k * 15);
-			else {
+						WorldConfig.WINDOW_HEIGHT - k * 15);*/
+			if (debug){
 
 				fontRenderer.draw(spriteBatch,
 						"Food : " + environment.getFoodInBase(k) + "; Ants : " + environment.getNbAgent(k)

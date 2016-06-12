@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		
 		if(arg.length >= 1){
-			WorldConfig.Load(arg[0]);
+			WorldConfig.load(arg[0]);
 		}
 		
 		config.width = WorldConfig.WINDOW_WIDTH;

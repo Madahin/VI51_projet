@@ -2,10 +2,10 @@ package Agent;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 import Environment.AgentBody;
 import Environment.AntBody;
@@ -53,17 +53,19 @@ public class AntAgent extends Agent {
 		if (body == null)
 			return;
 
-		if (((AntBody) body).hunger > 0)
-			((AntBody) body).hunger--;
-		else if (((AntBody) body).life > 0)
-			((AntBody) body).life--;
+		// Decrease the hunger base
+		// When hunger is 0, deacrese life
+		if (((AntBody) body).getHunger() > 0)
+			((AntBody) body).decreaseHunger(1);
+		else if (((AntBody) body).getHunger() > 0)
+			((AntBody) body).decreaseLife(1);
 		else {
 			this.destroy();
 			return;
 		}
 
 		// We check if the ants needs to eat
-		if (((AntBody) body).hunger == 0 /* && onBase != null */)
+		if (((AntBody) body).getHunger() == 0 /* && onBase != null */)
 			eat();
 
 		// Filling the goal is a priority
@@ -82,12 +84,12 @@ public class AntAgent extends Agent {
 			}
 		}
 
-		ArrayList<Perceivable> perceptions = getPerception();
+		List<Perceivable> perceptions = getPerception();
 
-		ArrayList<Perceivable> pheromonesFood = new ArrayList<Perceivable>();
-		ArrayList<Perceivable> pheromonesBase = new ArrayList<Perceivable>();
-		ArrayList<Perceivable> foods = new ArrayList<Perceivable>();
-		ArrayList<Perceivable> bases = new ArrayList<Perceivable>();
+		List<Perceivable> pheromonesFood = new ArrayList<Perceivable>();
+		List<Perceivable> pheromonesBase = new ArrayList<Perceivable>();
+		List<Perceivable> foods = new ArrayList<Perceivable>();
+		List<Perceivable> bases = new ArrayList<Perceivable>();
 		Perceivable onFood = null;
 		Perceivable onBase = null;
 
@@ -110,13 +112,13 @@ public class AntAgent extends Agent {
 						&& p.getFactionID() == ((AntBody) body).getFactionID()) { // Pheromone
 																					// of
 																					// faction
-					if (p.getPheromoneType() == PheromoneType.Base ) { // Base
+					if (p.getPheromoneType() == PheromoneType.Base) { // Base
 																		// type
 						pheromonesBase.add(p);
 					} else { // pheromone type == Food
 						pheromonesFood.add(p);
 					}
-				} else if (p.getType().equals(BaseBody.class) &&  p.getFactionID() == ((AntBody) body).getFactionID()) { // Base
+				} else if (p.getType().equals(BaseBody.class) && p.getFactionID() == ((AntBody) body).getFactionID()) { // Base
 					bases.add(p);
 				}
 			}
@@ -190,8 +192,11 @@ public class AntAgent extends Agent {
 
 	}
 
+	/**
+	 * Try to eat
+	 */
 	public void eat() {
-		((AntBody)body).eat();
+		((AntBody) body).eat();
 	}
 
 	/**
@@ -325,7 +330,7 @@ public class AntAgent extends Agent {
 	 *            the inv if we want to go toward the pheromonesor not
 	 * 
 	 */
-	public void pheromonesVector(ArrayList<Perceivable> list, boolean inv) {
+	public void pheromonesVector(List<Perceivable> list, boolean inv) {
 
 		// We get the barycentre
 		Vector2 tmpVect = new Vector2(0.0f, 0.0f);
@@ -335,7 +340,7 @@ public class AntAgent extends Agent {
 			tmpVect.add(vect);
 		}
 
-		//tmpVect.rotate(180.0f);
+		// tmpVect.rotate(180.0f);
 		move(EnumUtils.VectorToDirection(tmpVect));
 		// Vector2 tmpVect = list.get(0).getPheromoneDirection().scl(-1.0f);
 		// move(EnumUtils.VectorToDirection(tmpVect));
@@ -430,7 +435,7 @@ public class AntAgent extends Agent {
 		pheromoneTicks += 1;
 
 		if (pheromoneTicks == 1) {
-			((AntBody) this.body).createPheromone(pt);
+			((AntBody) body).createPheromone(pt);
 			pheromoneTicks = 0;
 		}
 	}

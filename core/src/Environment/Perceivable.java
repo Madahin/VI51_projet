@@ -6,45 +6,46 @@ import com.badlogic.gdx.math.Vector2;
  * The Class Perceivable represent an object that is perceived by an agent.
  */
 public class Perceivable {
-	
+
 	/** The position of the object in x. */
 	private final int x;
-	
+
 	/** The position of the object in y. */
 	private final int y;
-	
+
 	/** The type of the object. */
 	private final Class<? extends EnvironmentObject> type;
-	
+
 	/** The faction of the object if it has one. */
 	private Faction faction;
-	
+
 	/** The faction idof the object if it has one. */
 	private int factionID;
-	
+
 	/** The type of pheromone if it is one. */
 	private PheromoneType pType;
-	
+
 	/** The pheromone life if it is one. */
 	private int pheromoneLife;
 
 	/** The Direction of the Ant */
 	private Direction direction;
-	
+
 	/** The direction of the pheromone **/
 	private Vector2 pDirection;
-	
+
 	/**
 	 * Instantiates a new perceivable.
 	 *
-	 * @param b the object from which the perceivable is created
+	 * @param b
+	 *            the object from which the perceivable is created
 	 */
 	public Perceivable(EnvironmentObject b) {
 		x = b.getX();
 		y = b.getY();
 		type = b.getClass();
-		
-		if(b instanceof BaseBody){
+
+		if (b instanceof BaseBody) {
 			factionID = ((BaseBody) b).getFactionID();
 		}
 
@@ -60,8 +61,6 @@ public class Perceivable {
 			pheromoneLife = ((PheromoneBody) b).life;
 			pDirection = ((PheromoneBody) b).pheromoneDirection;
 		}
-		
-		
 
 	}
 
@@ -100,13 +99,13 @@ public class Perceivable {
 	public Faction getFaction() {
 		return faction;
 	}
-	
+
 	/**
 	 * Gets the faction id.
 	 *
 	 * @return the faction id
 	 */
-	public int getFactionID(){
+	public int getFactionID() {
 		return factionID;
 	}
 
@@ -127,12 +126,22 @@ public class Perceivable {
 	public Class<? extends EnvironmentObject> getType() {
 		return type;
 	}
-	
-	public Direction getDirection(){
+
+	/**
+	 * Gets the direction in which the object is going.
+	 *
+	 * @return the direction of the object
+	 */
+	public Direction getDirection() {
 		return direction;
 	}
 
-	public Vector2 getPheromoneDirection(){
+	/**
+	 * Gets the direction in which the pheromone is going.
+	 *
+	 * @return the direction of the object
+	 */
+	public Vector2 getPheromoneDirection() {
 		return pDirection;
 	}
 }

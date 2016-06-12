@@ -1,6 +1,7 @@
 package Environment;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Circle;
@@ -13,70 +14,76 @@ import Agent.PheromoneAgent;
 import Config.WorldConfig;
 import Tools.EnumUtils;
 import Tools.SimplexNoise;
-import Environment.FoodPile;
+
 /**
  * The Class Environment.
  */
 public class Environment {
-	
+
 	/** The width of the world. */
 	private int width;
-	
+
 	/** The height of the world. */
 	private int height;
-	
-	/** The nb agents in the environment. */
+
+	/** The number of agents in the environment. */
 	private int nbAgents;
-	
+
 	/** the counter of agent who lived this tick. */
 	private int cptAgents;
 
 	/** The stock of food in each base. */
 	private int foodInBase[];
-	
+
 	/** The number of agent per bases. */
 	private int nbAgentPerBases[];
 
 	/** The graphical representation of each bases. */
 	private Circle bases[];
-	
+
 	/** The bases radius. */
 	private int baseRadius;
-	
+
 	/** The bases positions. */
 	private BasePosition basePositions[];
 
 	/** The listeners. */
-	private ArrayList<EnvironmentListener> listeners;
-	
-	/** The objects in each cell of the world. */
-	private ArrayList<EnvironmentObject>[][] objects;
-	
-	// TODO : a vérifier je suis pas sur de ce que je raconte
-	/** The list of newly created agents. */
-	private ArrayList<Agent> newAgents;
+	private List<EnvironmentListener> listeners;
 
-	/// for debug purpose
-	/** */
+	/** The objects in each cell of the world. */
+	private List<IEnvironmentObject>[][] objects;
+
+	// TODO : a verifier je suis pas sur de ce que je raconte
+	/** The list of newly created agents. */
+	private List<Agent> newAgents;
+
+	/** The number of wonderer ants. */
 	public int nbWanderBeh[];
+
+	/** The number of ants who are trying to find food. */
 	public int nbFindFoodBeh[];
+
+	/** The number of ants who are going home. */
 	public int nbGoHomeBeh[];
-	
+
 	/**
 	 * Instantiates a new environment.
 	 *
-	 * @param w the width of the world
-	 * @param h the height of the world
-	 * @param radius the radius of an ant base
+	 * @param w
+	 *            the width of the world
+	 * @param h
+	 *            the height of the world
+	 * @param radius
+	 *            the radius of an ant base
 	 */
 	@SuppressWarnings("unchecked")
-	public Environment(int w, int h, int radius) {
+	public Environment(int w, int h) {
 		width = w;
 		height = h;
 		nbAgents = 0;
 		cptAgents = 0;
 		newAgents = new ArrayList<Agent>();
-		baseRadius = radius;
+		baseRadius = WorldConfig.BASE_RADIUS;
 
 		listeners = new ArrayList<EnvironmentListener>();
 
@@ -86,7 +93,7 @@ public class Environment {
 		bases = new Circle[WorldConfig.BASE_NUMBER];
 		basePositions = new BasePosition[WorldConfig.BASE_NUMBER];
 		foodInBase = new int[WorldConfig.BASE_NUMBER];
-		
+
 		// create debug info
 		nbWanderBeh = new int[WorldConfig.BASE_NUMBER];
 		nbFindFoodBeh = new int[WorldConfig.BASE_NUMBER];
@@ -97,8 +104,8 @@ public class Environment {
 			// We place a circle in a random place
 			Circle c = new Circle();
 			c.radius = baseRadius;
-			c.x = rand.nextInt(width - 2 * radius) + radius;
-			c.y = rand.nextInt(height - 2 * radius) + radius;
+			c.x = rand.nextInt(width - 2 * baseRadius) + baseRadius;
+			c.y = rand.nextInt(height - 2 * baseRadius) + baseRadius;
 
 			// We check if the circle overlap with another circle
 			boolean overlap = false;
@@ -116,20 +123,20 @@ public class Environment {
 				n += 1;
 			}
 		}
-		
+
 		nbAgentPerBases = new int[WorldConfig.BASE_NUMBER];
 
 		objects = new ArrayList[width][height];
 
 		// Simplex noise factor
-		// Magically  chosen to look good
+		// Magically chosen to look good
 		final float d1 = 50;
 		final float d2 = 75;
 		final float d3 = 150;
 
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				objects[i][j] = new ArrayList<EnvironmentObject>();
+				objects[i][j] = new ArrayList<IEnvironmentObject>();
 
 				// Applying the factor is like zooming on the noise
 				// by adding different level of zoom, we can achieve
@@ -139,14 +146,16 @@ public class Environment {
 				noise += (float) SimplexNoise.noise(i / d3, j / d3);
 
 				// This little trick is used to add grain to the noise
-				// it create something a lot more messy so it's deactivated by default
+				// it create something a lot more messy so it's deactivated by
+				// default
 				if (!WorldConfig.SMOOTH_FOOD_GENERATION) {
 					float g = (float) SimplexNoise.noise(i, j) * 20;
 					g = g - (int) g;
 					noise += g;
 				}
 
-				// by varying FOOD_COVER_INTENSITY we set the quantity of food present on the map
+				// by varying FOOD_COVER_INTENSITY we set the quantity of food
+				// present on the map
 				if (noise > (1f - WorldConfig.FOOD_COVER_INTENSITY)) {
 					objects[i][j].add(new FoodPile(i, j, noise));
 				}
@@ -162,9 +171,10 @@ public class Environment {
 	}
 
 	/**
-	 * Adds an environment listener, can technicaly feed multiple GUI.
+	 * Adds an environment listener, can technically feed multiple GUI.
 	 *
-	 * @param el the environment listenener
+	 * @param el
+	 *            the environment listenener
 	 */
 	public void addListener(EnvironmentListener el) {
 		listeners.add(el);
@@ -173,11 +183,12 @@ public class Environment {
 	/**
 	 * Gets the list of perceived object in the POV of a body.
 	 *
-	 * @param b the body who own the POV
+	 * @param b
+	 *            the body who own the POV
 	 * @return the list of perceived object
 	 */
-	public ArrayList<Perceivable> getPerception(AgentBody b) {
-		ArrayList<Perceivable> perceptions = new ArrayList<Perceivable>();
+	public List<Perceivable> getPerception(AgentBody b) {
+		List<Perceivable> perceptions = new ArrayList<Perceivable>();
 		// if there is an ant we just want the other agent
 		// around him
 
@@ -185,18 +196,19 @@ public class Environment {
 		if (b instanceof AntBody) {
 			// around the body
 			// on x
-			for (int i = b.getX() - WorldConfig.ANT_FIELD_OF_VIEW; i < b.getX() + WorldConfig.ANT_FIELD_OF_VIEW + 1; i++) {
+			for (int i = b.getX() - WorldConfig.ANT_FIELD_OF_VIEW; i < b.getX() + WorldConfig.ANT_FIELD_OF_VIEW
+					+ 1; i++) {
 				// on y
-				for (int j = b.getY() - WorldConfig.ANT_FIELD_OF_VIEW; j < b.getY()
-						+ WorldConfig.ANT_FIELD_OF_VIEW + 1; j++) {
+				for (int j = b.getY() - WorldConfig.ANT_FIELD_OF_VIEW; j < b.getY() + WorldConfig.ANT_FIELD_OF_VIEW
+						+ 1; j++) {
 					// if the case is in the world
 					if (i >= 0 && i < width && j >= 0 && j < height) {
 						// we run all the object in the case
-						for (EnvironmentObject body : objects[i][j]) {
+						for (IEnvironmentObject body : objects[i][j]) {
 							// we check only the ants and if this is not the
 							// self body
 							if (/* body instanceof AntBody && */ body != b) {
-								perceptions.add(new Perceivable(body));
+								perceptions.add(new Perceivable((EnvironmentObject) body));
 							}
 						}
 					}
@@ -209,8 +221,10 @@ public class Environment {
 	/**
 	 * Move a body in a direction.
 	 *
-	 * @param d the direction in which the body should move
-	 * @param b the body who will move
+	 * @param d
+	 *            the direction in which the body should move
+	 * @param b
+	 *            the body who will move
 	 */
 	public void move(Direction d, AgentBody b) {
 		cptAgents++;
@@ -233,7 +247,8 @@ public class Environment {
 		} else {
 
 			// Alternative 1
-			// If a body meet a wall of the world, he goes to the opposite direction
+			// If a body meet a wall of the world, he goes to the opposite
+			// direction
 			if ((b.getX() + vectX < 0 && (d == Direction.WEST) || d == Direction.NORTH_WEST
 					|| d == Direction.SOUTH_WEST))
 				((AntBody) b).setDirection(Direction.EAST);
@@ -283,68 +298,77 @@ public class Environment {
 		}
 	}
 
-	
-	
 	/**
 	 * Destroy a body.
 	 *
-	 * @param b the body to be destroyed
+	 * @param b
+	 *            the body to be destroyed
 	 */
 	public void destroy(AgentBody b) {
-		
-		//if the agent is an ant he will become food
-		if (b.getClass() == AntBody.class){
-						
+
+		// if the agent is an ant he will become food
+		if (b.getClass() == AntBody.class) {
+
 			boolean foodPileExists = false;
-			int foodDropped = Math.max(WorldConfig.MIN_SIZE_FOOD_STACK, Math.min( WorldConfig.MAX_SIZE_FOOD_STACK, 
-					WorldConfig.DEAD_ANT_FOOD_VALUE + ((AntBody)b).getFoodCaried()));
-			for (EnvironmentObject o : objects[b.getX()][b.getY()]) {
+			int foodDropped = Math.max(WorldConfig.MIN_SIZE_FOOD_STACK, Math.min(WorldConfig.MAX_SIZE_FOOD_STACK,
+					WorldConfig.DEAD_ANT_FOOD_VALUE + ((AntBody) b).getFoodCaried()));
+			for (IEnvironmentObject o : objects[b.getX()][b.getY()]) {
 				if (o instanceof FoodPile) {
-					((FoodPile) o).DropFood(foodDropped);
+					((FoodPile) o).dropFood(foodDropped);
 					foodPileExists = true;
 				}
 			}
-			if(!foodPileExists){
+			if (!foodPileExists) {
 				float percent = (float) (foodDropped / WorldConfig.MAX_SIZE_FOOD_STACK);
-				objects[b.getX()][b.getY()].add(new FoodPile(b.getX(),b.getY(),percent));
+				objects[b.getX()][b.getY()].add(new FoodPile(b.getX(), b.getY(), percent));
 			}
-  			nbAgents--;
-  			nbAgentPerBases[((AntBody) b).getFactionID()] -= 1;
+			nbAgents--;
+			nbAgentPerBases[((AntBody) b).getFactionID()] -= 1;
 			if (nbAgents == cptAgents) {
 				cptAgents = 0;
 				// And we notify all listeners.
 				notifyListeners();
 			}
 		}
-		
-		
+
 		objects[b.getX()][b.getY()].remove(b);
 	}
 
-	public void attack(AgentBody ab, Perceivable p){
+	/**
+	 * Attack.
+	 *
+	 * @param ab
+	 *            the ab
+	 * @param p
+	 *            the p
+	 */
+	public void attack(AgentBody ab, Perceivable p) {
 		// we dealt damage if there any enemy in the other tile
 		AgentBody b = null;
-		for(EnvironmentObject o : objects[p.getX()][p.getY()]){
-			if( o instanceof AntBody && ((AntBody) o).getFactionID() != ((SoldierBody)ab).getFactionID() ){
+		for (IEnvironmentObject o : objects[p.getX()][p.getY()]) {
+			if (o instanceof AntBody && ((AntBody) o).getFactionID() != ((SoldierBody) ab).getFactionID()) {
 				((AntBody) o).life -= WorldConfig.SOLDIER_DAMAGE;
 				b = (AgentBody) o;
 				break;
 			}
-			if( o instanceof SoldierBody && ((SoldierBody) o).getFactionID() != ((SoldierBody)ab).getFactionID() ){
+			if (o instanceof SoldierBody && ((SoldierBody) o).getFactionID() != ((SoldierBody) ab).getFactionID()) {
 				((AntBody) o).life -= WorldConfig.SOLDIER_DAMAGE;
 				b = (AgentBody) o;
 				break;
 			}
 		}
-		
-		if(b != null){
-			if(((AntBody)b).life <= 0){
+
+		if (b != null) {
+			if (((AntBody) b).life <= 0) {
 				destroy(b);
 			}
 		}
-		
+
 	}
-	
+
+	/**
+	 * Clear.
+	 */
 	public void clear() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -352,17 +376,17 @@ public class Environment {
 			}
 		}
 	}
-	
+
 	/**
 	 * Notify the listeners that a tick as ended.
 	 */
 	public void notifyListeners() {
 		// build food positions
-		ArrayList<FoodStackPosition> foods = new ArrayList<FoodStackPosition>();
+		List<FoodStackPosition> foods = new ArrayList<FoodStackPosition>();
 
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				for (EnvironmentObject o : objects[i][j]) {
+				for (IEnvironmentObject o : objects[i][j]) {
 					if (o instanceof FoodPile) {
 						foods.add(new FoodStackPosition((FoodPile) o));
 					}
@@ -380,10 +404,14 @@ public class Environment {
 	/**
 	 * Creates an ant body.
 	 *
-	 * @param faction the faction of the ant
-	 * @param factionID the faction id of the ant
-	 * @param basePosX the position of the base in which the ant will span in x
-	 * @param basePosY the position of the base in which the ant will span in  y
+	 * @param faction
+	 *            the faction of the ant
+	 * @param factionID
+	 *            the faction id of the ant
+	 * @param basePosX
+	 *            the position of the base in which the ant will span in x
+	 * @param basePosY
+	 *            the position of the base in which the ant will span in y
 	 * @return the ant body
 	 */
 	public AgentBody createAntBody(Faction faction, int factionID, int basePosX, int basePosY) {
@@ -395,31 +423,35 @@ public class Environment {
 		double r = Math.sqrt(rand.nextDouble());
 		double theta = rand.nextDouble() * 2 * Math.PI;
 
-		double dx = (baseRadius/2.0f) * r * Math.cos(theta) + basePosX;
-		double dy = (baseRadius/2.0f) * r * Math.sin(theta) + basePosY;
+		double dx = (baseRadius / 2.0f) * r * Math.cos(theta) + basePosX;
+		double dy = (baseRadius / 2.0f) * r * Math.sin(theta) + basePosY;
 
 		int _x = (int) dx, _y = (int) dy;
-		
+
 		Direction dir = Direction.values()[rand.nextInt(Direction.values().length)];
 		AntBody b = new AntBody(faction, factionID, dir, _x, _y, this);
 
 		objects[_x][_y].add(b);
 		return b;
 	}
-	
+
 	/**
 	 * Creates an Queen body.
 	 *
-	 * @param faction the faction of the ant
-	 * @param factionID the faction id of the ant
-	 * @param basePosX the position of the base in which the ant will span in x
-	 * @param basePosY the position of the base in which the ant will span in  y
+	 * @param faction
+	 *            the faction of the ant
+	 * @param factionID
+	 *            the faction id of the ant
+	 * @param basePosX
+	 *            the position of the base in which the ant will span in x
+	 * @param basePosY
+	 *            the position of the base in which the ant will span in y
 	 * @return the Queen body
 	 */
 	public AgentBody createQueenBody(Faction faction, int factionID, int basePosX, int basePosY) {
 		nbAgents++;
 		nbAgentPerBases[factionID] += 1;
-		
+
 		Direction dir = Direction.NORTH;
 		AntBody b = new QueenBody(faction, factionID, dir, basePosX, basePosY, this);
 
@@ -430,63 +462,56 @@ public class Environment {
 	/**
 	 * Creates a pheromone.
 	 *
-	 * @param pt the type of pheromone that will be created
-	 * @param ab the body that will create the pheromone
+	 * @param pt
+	 *            the type of pheromone that will be created
+	 * @param ab
+	 *            the body that will create the pheromone
 	 */
 	public void createPheromone(PheromoneType pt, AgentBody ab) {
-		Direction d = ((AntBody)ab).getDirection();
+		Direction d = ((AntBody) ab).getDirection();
 		// We want to know if there is a pheromone of the same faction and type
 		// on this
 		// place
-		
+
 		// Spread of the pheromone
-		/*int halfValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 3;
-		int spread1Value = WorldConfig.PHEROMONE_INITIAL_LIFE / 21;
-		int spread2Value = WorldConfig.PHEROMONE_INITIAL_LIFE / 48;
-		
-		for(int i = ab.getX() - 2 ; i < ab.getX() + 2 ; i ++){
-			for(int j = ab.getY() - 2 ; j < ab.getY() + 2 ; j ++){
-				
-				if (i >= 0 && i < width && j >= 0 && j < height){
-					boolean needToCreatePheromone = true;
-					for (EnvironmentObject eo : objects[i][j]) {
-						if (eo instanceof PheromoneBody) {
-							if (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID()
-									&& ((PheromoneBody) eo).pheromoneType == pt) {
-								if(i == ab.getX() && j == ab.getY()){
-									((PheromoneBody) eo).life += halfValue;
-								}else if(Math.abs(ab.getX() - i) == 1 || Math.abs(ab.getY() - j) == 1){
-									((PheromoneBody) eo).life += spread1Value;
-								}else{
-									((PheromoneBody) eo).life += spread2Value;
-								}
-								((PheromoneBody) eo).life = Math.max(((PheromoneBody) eo).life, WorldConfig.PHEROMONE_INITIAL_LIFE);
-								needToCreatePheromone = false;
-								break;
-							}
-						}
-					}
-	
-					if (needToCreatePheromone) {
-						PheromoneBody pb;
-						if(i == ab.getX() && j == ab.getY()){
-							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, halfValue);
-						}else if(Math.abs(ab.getX() - i) == 1 || Math.abs(ab.getY() - j) == 1){
-							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, spread1Value);
-						}else{
-							pb = new PheromoneBody(i, j, ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this, spread2Value);
-						}
-						
-						newAgents.add(new PheromoneAgent(pb));
-						objects[i][j].add(pb);
-					}
-				}
-				
-			}
-		}*/
+		/*
+		 * int halfValue = WorldConfig.PHEROMONE_INITIAL_LIFE / 3; int
+		 * spread1Value = WorldConfig.PHEROMONE_INITIAL_LIFE / 21; int
+		 * spread2Value = WorldConfig.PHEROMONE_INITIAL_LIFE / 48;
+		 * 
+		 * for(int i = ab.getX() - 2 ; i < ab.getX() + 2 ; i ++){ for(int j =
+		 * ab.getY() - 2 ; j < ab.getY() + 2 ; j ++){
+		 * 
+		 * if (i >= 0 && i < width && j >= 0 && j < height){ boolean
+		 * needToCreatePheromone = true; for (EnvironmentObject eo :
+		 * objects[i][j]) { if (eo instanceof PheromoneBody) { if
+		 * (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID() &&
+		 * ((PheromoneBody) eo).pheromoneType == pt) { if(i == ab.getX() && j ==
+		 * ab.getY()){ ((PheromoneBody) eo).life += halfValue; }else
+		 * if(Math.abs(ab.getX() - i) == 1 || Math.abs(ab.getY() - j) == 1){
+		 * ((PheromoneBody) eo).life += spread1Value; }else{ ((PheromoneBody)
+		 * eo).life += spread2Value; } ((PheromoneBody) eo).life =
+		 * Math.max(((PheromoneBody) eo).life,
+		 * WorldConfig.PHEROMONE_INITIAL_LIFE); needToCreatePheromone = false;
+		 * break; } } }
+		 * 
+		 * if (needToCreatePheromone) { PheromoneBody pb; if(i == ab.getX() && j
+		 * == ab.getY()){ pb = new PheromoneBody(i, j, ((AntBody)
+		 * ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this,
+		 * halfValue); }else if(Math.abs(ab.getX() - i) == 1 ||
+		 * Math.abs(ab.getY() - j) == 1){ pb = new PheromoneBody(i, j,
+		 * ((AntBody) ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this,
+		 * spread1Value); }else{ pb = new PheromoneBody(i, j, ((AntBody)
+		 * ab).getFaction(), ((AntBody) ab).getFactionID(), pt, this,
+		 * spread2Value); }
+		 * 
+		 * newAgents.add(new PheromoneAgent(pb)); objects[i][j].add(pb); } }
+		 * 
+		 * } }
+		 */
 
 		boolean needToCreatePheromone = true;
-		for (EnvironmentObject eo : objects[ab.getX()][ab.getY()]) {
+		for (IEnvironmentObject eo : objects[ab.getX()][ab.getY()]) {
 			if (eo instanceof PheromoneBody) {
 				if (((PheromoneBody) eo).factionID == ((AntBody) ab).getFactionID()
 						&& ((PheromoneBody) eo).pheromoneType == pt) {
@@ -495,7 +520,7 @@ public class Environment {
 					Vector2 tmpVect = EnumUtils.DirectionToVector(d);
 					((PheromoneBody) eo).pheromoneDirection.add(tmpVect);
 					((PheromoneBody) eo).pheromoneDirection.nor();
-					
+
 					needToCreatePheromone = false;
 					break;
 				}
@@ -505,7 +530,8 @@ public class Environment {
 		if (needToCreatePheromone) {
 
 			PheromoneBody pb = new PheromoneBody(ab.getX(), ab.getY(), ((AntBody) ab).getFaction(),
-												((AntBody) ab).getFactionID(), pt, this, WorldConfig.PHEROMONE_INITIAL_LIFE, EnumUtils.DirectionToVector(d));
+					((AntBody) ab).getFactionID(), pt, this, WorldConfig.PHEROMONE_INITIAL_LIFE,
+					EnumUtils.DirectionToVector(d));
 			newAgents.add(new PheromoneAgent(pb));
 			objects[ab.getX()][ab.getY()].add(pb);
 		}
@@ -514,19 +540,20 @@ public class Environment {
 	/**
 	 * Pick up food.
 	 *
-	 * @param b the body that will pick up the food
+	 * @param b
+	 *            the body that will pick up the food
 	 * @return true, if successful
 	 */
 	public boolean pickUpFood(AgentBody b) {
 		boolean isGettingFood = false;
-		EnvironmentObject haveToRemove = null;
+		IEnvironmentObject haveToRemove = null;
 
-		for (EnvironmentObject o : objects[b.getX()][b.getY()]) {
+		for (IEnvironmentObject o : objects[b.getX()][b.getY()]) {
 			if (o instanceof FoodPile) {
-				((AntBody)b).setFoodCarried(((FoodPile) o).TakeFood());
+				((AntBody) b).setFoodCarried(((FoodPile) o).takeFood());
 				isGettingFood = true;
 
-				if (((FoodPile) o).IsEmpty()) {
+				if (((FoodPile) o).isEmpty()) {
 
 					haveToRemove = o;
 				}
@@ -550,7 +577,8 @@ public class Environment {
 	/**
 	 * Adds the food to a base.
 	 *
-	 * @param b the body that will add the food to it's faction base
+	 * @param b
+	 *            the body that will add the food to it's faction base
 	 */
 	public void addFoodToBase(AgentBody b) {
 		foodInBase[((AntBody) b).getFactionID()] += ((AntBody) b).popFoodCaried();
@@ -576,69 +604,77 @@ public class Environment {
 	/**
 	 * Gets the amount of food in a base.
 	 *
-	 * @param n the id of the base we sek the amount from
+	 * @param n
+	 *            the id of the base we sek the amount from
 	 * @return the current amount of food in the base
 	 */
-	public int GetFoodInBase(int n) {
+	public int getFoodInBase(int n) {
 		return foodInBase[n];
 	}
-	
+
 	/**
 	 * Gets the number of agent in a faction.
 	 *
-	 * @param n the id of a faction
+	 * @param n
+	 *            the id of a faction
 	 * @return the number agent in the faction
 	 */
-	public int getNbAgent(int n){
+	public int getNbAgent(int n) {
 		return nbAgentPerBases[n];
 	}
 
 	/**
-	 * Gives the ant his hunger points back. 
+	 * Gives the ant his hunger points back.
 	 *
-	 * @param b the AntBody
+	 * @param b
+	 *            the AntBody
 	 * @return boolean if there 's enough food to take from the base
 	 */
 	public int eat(AntBody b) {
-		if(foodInBase[b.getFactionID()] <= 0){
+		if (foodInBase[b.getFactionID()] <= 0) {
 			return 0;
-		}else{
-			foodInBase[b.getFactionID()] --;
+		} else {
+			foodInBase[b.getFactionID()]--;
 			return WorldConfig.HUNGER_BAR;
 		}
-		
-		/*if (foodInBase[b.getFactionID()] <= 0)
-			return 0;
-		else if ( foodInBase[b.getFactionID()] < WorldConfig.HUNGER_BAR){
-			foodInBase[b.getFactionID()] = 0;
-			return WorldConfig.HUNGER_BAR - foodInBase[b.getFactionID()];
-		}else{
-			foodInBase[b.getFactionID()] -= WorldConfig.HUNGER_BAR;
-			return WorldConfig.HUNGER_BAR;
-		}*/
+
+		/*
+		 * if (foodInBase[b.getFactionID()] <= 0) return 0; else if (
+		 * foodInBase[b.getFactionID()] < WorldConfig.HUNGER_BAR){
+		 * foodInBase[b.getFactionID()] = 0; return WorldConfig.HUNGER_BAR -
+		 * foodInBase[b.getFactionID()]; }else{ foodInBase[b.getFactionID()] -=
+		 * WorldConfig.HUNGER_BAR; return WorldConfig.HUNGER_BAR; }
+		 */
 	}
 
 	/**
-	 * Creates new ants. 
+	 * Creates new ants.
 	 *
-	 * @param b the AntBody
+	 * @param b
+	 *            the AntBody
 	 * @return boolean if there 's enough food to take from the base
 	 */
 	public void spawnAnts(AntBody b) {
-		if (foodInBase[b.getFactionID()] > 0 && 															// if there is food at the base
-			WorldConfig.ANT_NUMBER - nbAgentPerBases[b.getFactionID()] > WorldConfig.ANT_POP_NUMBER){		// and a certain number of ants died
-			
+		if (foodInBase[b.getFactionID()] > 0 && // if there is food at the base
+				WorldConfig.ANT_NUMBER - nbAgentPerBases[b.getFactionID()] > WorldConfig.ANT_POP_NUMBER) { // and
+																											// a
+																											// certain
+																											// number
+																											// of
+																											// ants
+																											// died
+
 			// Spawning Ants costs food
-			int popNumber = Math.min(WorldConfig.ANT_POP_NUMBER,foodInBase[b.getFactionID()]);
+			int popNumber = Math.min(WorldConfig.ANT_POP_NUMBER, foodInBase[b.getFactionID()]);
 			foodInBase[b.getFactionID()] -= popNumber;
-			
+
 			// we spawn each new ants
-			for (int i=0; i < popNumber; i++){
-				AgentBody ab = createAntBody(b.getFaction(), b.getFactionID(), 
-						basePositions[b.getFactionID()].getX(), basePositions[b.getFactionID()].getY());
+			for (int i = 0; i < popNumber; i++) {
+				AgentBody ab = createAntBody(b.getFaction(), b.getFactionID(), basePositions[b.getFactionID()].getX(),
+						basePositions[b.getFactionID()].getY());
 				newAgents.add(new AntAgent(ab));
 				objects[ab.getX()][ab.getY()].add(ab);
-			
+
 			}
 		}
 	}

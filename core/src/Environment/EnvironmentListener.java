@@ -1,7 +1,7 @@
 package Environment;
 
-import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.List;
 
 import Agent.Agent;
 
@@ -25,5 +25,5 @@ public interface EnvironmentListener extends EventListener {
 	 * @param foods the position of each food stake
 	 * @param newAgentList the new agent list
 	 */
-	public void environmentChanged(BasePosition basePos[], ArrayList<FoodStackPosition> foods, ArrayList<Agent> newAgentList);
+	public void environmentChanged(BasePosition basePos[], List<FoodStackPosition> foods, List<Agent> newAgentList);
 }

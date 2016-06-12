@@ -1,7 +1,7 @@
 package Environment;
 
 /**
- * The Class BaseBody is the "physical" representation of a base in an environment.
+ * The Class BaseBody is the "physical" representation of a base tile in an environment.
  */
 public class BaseBody extends StaticObject {
 

@@ -17,7 +17,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The application configuration.
  */
@@ -49,15 +48,16 @@ public class WorldConfig {
 
 	/** Minimum size of a food stack. */
 	public static int MIN_SIZE_FOOD_STACK = 180;
-	
+
 	/** Maximum size of a pheromone used only to clamp it's color gradient. */
 	public static float MAX_PHEROMONE_LIFE = 200;
 
 	/** The pheromone initial life. */
 	public static int PHEROMONE_INITIAL_LIFE = 10;
 
+	/** Ant life bar */
 	public static int ANT_INITIAL_LIFE = 100;
-	
+
 	/** The ant field of view. */
 	public static int ANT_FIELD_OF_VIEW = 3;
 
@@ -66,48 +66,50 @@ public class WorldConfig {
 
 	/** The food cover intensity. */
 	public static float FOOD_COVER_INTENSITY = 1.0f;
-	
+
 	public static float FOOD_COVER_PERCENT = 0.50f; // PLEASE CORRECT THIS SHIT
-	
+
 	/** The default food in an ant base. */
 	public static int DEFAULT_FOOD_IN_BASE = 10000;
-	
+
 	/** The number of ant bases. */
 	public static int BASE_NUMBER = 2;
-	
+
 	/** The radius of an ant base. */
 	public static int BASE_RADIUS = 30;
-	
+
 	/** The ant's life expectancy. */
-	public static  int LIFE_EXPECTANCY = 2000;
-	
+	public static int LIFE_EXPECTANCY = 2000;
+
 	/** Soldier Attack's */
 	public static int SOLDIER_DAMAGE = 10;
-	
+
 	/** The ant's hunger bar. */
-	public static  int HUNGER_BAR = 100;
-	
+	public static int HUNGER_BAR = 100;
+
 	/** Maximum number of ants that can be spawned at the time. */
-	public static  int ANT_POP_NUMBER = 100;
-	
+	public static int ANT_POP_NUMBER = 100;
+
 	/** Amount of food a dead ant's body becomes. */
-	public static  int DEAD_ANT_FOOD_VALUE = 10;
+	public static int DEAD_ANT_FOOD_VALUE = 10;
 
 	/**
 	 * Load an XML configuration file.
 	 *
-	 * @param filename the filename of the configuration file
+	 * @param filename
+	 *            the filename of the configuration file
 	 */
-	public static void Load(String filename) {
+	public static void load(String filename) {
 		// We use reflection to get every static fields
 		Field[] declaredFields = WorldConfig.class.getDeclaredFields();
 		List<Field> staticFields = new ArrayList<Field>();
+
 		for (Field field : declaredFields) {
-		    if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
-		        staticFields.add(field);
-		    }
+			if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+				staticFields.add(field);
+			}
 		}
-		
+
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
 		try {
@@ -123,21 +125,22 @@ public class WorldConfig {
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					final Element elem = (Element) node;
 					final String name = elem.getAttribute("name");
-					
-					Field field = FindField(name, staticFields);
-					
-					if(field != null){
+
+					Field field = findField(name, staticFields);
+
+					if (field != null) {
 						try {
-							// Simple parsing, since we have every field with reflexion, it's easy
+							// Simple parsing, since we have every field with
+							// reflexion, it's easy
 							// to put each data were it belong.
-							if(field.getType().equals(int.class)){
+							if (field.getType().equals(int.class)) {
 								field.setInt(null, Integer.parseInt(elem.getTextContent()));
-							}else if(field.getType().equals(float.class)){
+							} else if (field.getType().equals(float.class)) {
 								field.setFloat(null, Float.parseFloat(elem.getTextContent()));
-							}else if(field.getType().equals(boolean.class)){
+							} else if (field.getType().equals(boolean.class)) {
 								field.setBoolean(null, Boolean.parseBoolean(elem.getTextContent()));
 							}
-							
+
 						} catch (IllegalArgumentException e) {
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
@@ -152,29 +155,29 @@ public class WorldConfig {
 
 		catch (final ParserConfigurationException e) {
 			e.printStackTrace();
-		}
-		catch (final SAXException e) {
+		} catch (final SAXException e) {
 			e.printStackTrace();
-		}
-		catch (final IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		} catch (final NumberFormatException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	/**
 	 * Find a field in a list of static field by name.
 	 *
-	 * @param name the name of the field we are seeking
-	 * @param fields the list of fields we are searching in
+	 * @param name
+	 *            the name of the field we are seeking
+	 * @param fields
+	 *            the list of fields we are searching in
 	 * @return the field if we found it, null otherwise
 	 */
-	private static Field FindField(String name, List<Field> fields){
+	private static Field findField(String name, List<Field> fields) {
 		Field res = null;
-		for(Field field : fields){
-			if(field.getName().equals(name)){
+		for (Field field : fields) {
+			if (field.getName().equals(name)) {
 				res = field;
 				break;
 			}

@@ -177,14 +177,14 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		 b_LEFT.addListener(new ChangeListener() {
 		        @Override
 		        public void changed (ChangeEvent event, Actor actor) {
-					camera.translate(new Vector2(-0.5f, 0.0f));
+					camera.translate(new Vector2(-5.0f, 0.0f));
 		        }
 		    });
 		 
 		 b_RIGHT.addListener(new ChangeListener() {
 		        @Override
 		        public void changed (ChangeEvent event, Actor actor) {
-					camera.translate(new Vector2(0.5f, 0.0f));
+					camera.translate(new Vector2(5.0f, 0.0f));
 		        }
 		    });
 		 

@@ -6,11 +6,21 @@
 	<setting name="WORLD_HEIGHT">500</setting>
 	<setting name="WORLD_WIDTH">500</setting>
 	<setting name="ANT_NUMBER">2500</setting>
-	<setting name="ANT_FOOD_CARYING">1</setting>
-	<setting name="MAX_SIZE_FOOD_STACK">20</setting>
-	<setting name="MIN_SIZE_FOOD_STACK">3</setting>
-	<setting name="PHEROMONE_INITIAL_LIFE">25</setting>
-	<setting name="ANT_FIELD_OF_VIEW">5</setting>
+	<setting name="ANT_FOOD_CARYING">60</setting>
+	<setting name="MAX_SIZE_FOOD_STACK">1200</setting>
+	<setting name="MIN_SIZE_FOOD_STACK">100</setting>
+	<setting name="MAX_PHEROMONE_LIFE">200</setting>
+	<setting name="PHEROMONE_INITIAL_LIFE">10</setting>
+	<setting name="ANT_INITIAL_LIFE">100</setting>
+	<setting name="ANT_FIELD_OF_VIEW">3</setting>
 	<setting name="SMOOTH_FOOD_GENERATION">true</setting>
-	<setting name="FOOD_COVER_PERCENT">1</setting>
+	<setting name="FOOD_COVER_INTENSITY">1.0</setting>
+    <setting name="DEFAULT_FOOD_IN_BASE"></setting>
+	<setting name="BASE_NUMBER">2</setting>
+	<setting name="BASE_RADIUS">30</setting>
+	<setting name="LIFE_EXPECTANCY">2000</setting>
+	<setting name="SOLDIER_DAMAGE">10</setting>
+	<setting name="HUNGER_BAR">100</setting>
+	<setting name="ANT_POP_NUMBER">100</setting>
+	<setting name="DEAD_ANT_FOOD_VALUE">10</setting>
 </settings>

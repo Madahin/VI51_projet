@@ -92,7 +92,7 @@ public class WorldConfig {
 	public static int DEAD_ANT_FOOD_VALUE = 10;
 	
 	/** The seed used by the random number generator, -1 is a random seed */
-	public static long RANDOM_SEED = 0;
+	public static long RANDOM_SEED = -1;
 
 	/**
 	 * Load an XML configuration file.
@@ -140,8 +140,9 @@ public class WorldConfig {
 								field.setFloat(null, Float.parseFloat(elem.getTextContent()));
 							} else if (field.getType().equals(boolean.class)) {
 								field.setBoolean(null, Boolean.parseBoolean(elem.getTextContent()));
+							} else if (field.getType().equals(long.class)) {
+								field.setLong(null, Long.parseLong(elem.getTextContent()));
 							}
-
 						} catch (IllegalArgumentException e) {
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {

@@ -23,4 +23,5 @@
 	<setting name="HUNGER_BAR">100</setting>
 	<setting name="ANT_POP_NUMBER">100</setting>
 	<setting name="DEAD_ANT_FOOD_VALUE">10</setting>
+	<setting name="RANDOM_SEED">-1</setting>
 </settings>

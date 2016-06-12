@@ -501,7 +501,9 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 		// FPS
 		if(debug){
 			fontRenderer.setColor(Color.YELLOW);
-			fontRenderer.draw(spriteBatch, "" + fps, WorldConfig.WINDOW_WIDTH - 20, WorldConfig.WINDOW_HEIGHT);
+			fontRenderer.draw(spriteBatch, "FPS : " + fps, WorldConfig.WINDOW_WIDTH - 70, WorldConfig.WINDOW_HEIGHT);
+			String secString = "Seconds since start : " + simu.tickNumber;
+			fontRenderer.draw(spriteBatch, secString, 0, WorldConfig.WINDOW_HEIGHT - bases.length * 15);
 		}
 		// ant info
 		for (int k = 0; k < bases.length; ++k) {
@@ -520,6 +522,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 						0, WorldConfig.WINDOW_HEIGHT - k * 15);
 			}
 		}
+		
 		spriteBatch.end();
 
 		stage.draw();
@@ -531,6 +534,9 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 	 */
 	public class SimulationThread extends Thread {
 
+		/** Tick number */
+		public long tickNumber = 0;
+		
 		/** The is running. */
 		public boolean isRunning = true;
 
@@ -591,6 +597,7 @@ public class Simulator extends ApplicationAdapter implements EnvironmentListener
 					vectDebugInfo[i].set(environment.nbWanderBeh[i], environment.nbFindFoodBeh[i],
 							environment.nbGoHomeBeh[i]);
 
+				tickNumber++;
 			}
 		}
 
